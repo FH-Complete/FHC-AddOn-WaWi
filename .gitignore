@@ -1,4 +1,6 @@
 .htaccess
 changes.txt
 *~
-
+system/vorlage_zip/Bestellschein.odt
+system/vorlage_zip/Bestellschein.content.php
+system/vorlage_zip/Bestellschein.styles.php
