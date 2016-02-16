@@ -1,0 +1,80 @@
+@import url("chrome://navigator/skin/");
+tree treecol 
+{
+	background-color: #82DCFF; 	/*F2F2FC*/
+}
+
+treechildren::-moz-tree-row(selected) { background-color: #50D1E1; }
+treechildren::-moz-tree-row(odd) { background-color: #EEEEEE; }
+treechildren::-moz-tree-row(odd, selected) { background-color: #50D1E1; }
+treechildren::-moz-tree-row(even, selected) { background-color: #50D1E1; }
+treechildren::-moz-tree-cell-text(selected) { color: #000000; }
+treechildren::-moz-tree-cell-text(odd, selected) { color: #000000; }
+
+/* Lehrveranstaltung */
+treechildren::-moz-tree-row(lehrveranstaltung_lv)
+{
+	background-color: yellow;
+}
+
+/* Modul */
+treechildren::-moz-tree-row(lehrveranstaltung_modul)
+{
+	background-color: blue;
+}
+
+/* Lehrfach */
+treechildren::-moz-tree-row(lehrveranstaltung_lf)
+{
+	background-color: green;
+}
+
+/* Lehreinheit */
+treechildren::-moz-tree-row(lehrveranstaltung_)
+{
+	background-color: red;
+}
+menubar,menulist,toolbar,tabpanels,tabbox,iframe,box,hbox,vbox,tree,description
+{
+	border-width: 0px;
+  	border-color: #AAAAAA;
+  	padding: 0px;
+}
+
+
+button.change
+{
+	border-style:solid;
+	padding:0px;
+	margin:	0px;
+}
+
+.hbox-tree
+{
+	padding: 5px;
+}
+
+.style-groupbox
+{
+   padding-bottom: 5px;
+}
+
+.pflichtfeld
+{
+	/*Formatierungen fuer die Pflichtfelder*/
+}
+
+treechildren::-moz-tree-checkbox 
+{
+  /* unchecked checkbox treecells. This style MUST come before treechildren::-moz-tree-checkbox(checked) otherwise it won't take effect.  */
+  list-style-image: url("../skin/images/round.png");
+}
+
+treechildren::-moz-tree-checkbox(checked)
+{
+  /* css for checked cells. cbox-check.gif isn't available in Firefox 1, 2, and 3 on Mac OS X, so you should specify a URL to an image
+     in your extension or elsewhere. */
+  /*list-style-image: url("chrome://global/skin/checkbox/cbox-check.gif");*/
+  list-style-image: url("../skin/images/cbox-check.gif");
+}
+

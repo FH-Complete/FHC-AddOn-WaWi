@@ -16,21 +16,17 @@
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307, USA.
  *
  */
-require_once('../../../config/vilesci.config.inc.php');
-require_once('../../../include/functions.inc.php');
-require_once('../../../include/benutzerberechtigung.class.php');
 
-echo '<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN"
-        "http://www.w3.org/TR/html4/strict.dtd">
-<html>
-<head>
-	<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
-	<link rel="stylesheet" href="../../../skin/fhcomplete.css" type="text/css">
-	<link rel="stylesheet" href="../../../skin/vilesci.css" type="text/css">
-	<title>Template</title>
-</head>
-<body>
-<h1>Template</h1>';
+
+// Basispfad von FHC herausfinden
+// Warum? -> wenn AddOn via Symlink in das AddOn-Verzeichnis eingebunden wird, 
+// funktioniert das einbinden durch ../../../config/xy.config.inc.php nicht
+$basepath = dirname(dirname(dirname(dirname($_SERVER['SCRIPT_FILENAME'])))).DIRECTORY_SEPARATOR;
+require_once($basepath.'config/vilesci.config.inc.php');
+require_once($basepath.'include/functions.inc.php');
+require_once($basepath.'include/benutzerberechtigung.class.php');
+
+
 
 $uid = get_uid();
 $rechte = new benutzerberechtigung();
@@ -38,7 +34,19 @@ $rechte->getBerechtigungen($uid);
 
 if(!$rechte->isBerechtigt('basis/addon'))
 {
+        echo '<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN"
+        "http://www.w3.org/TR/html4/strict.dtd">
+        <html>
+        <head>
+                <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+                <link rel="stylesheet" href="../../../skin/fhcomplete.css" type="text/css">
+                <link rel="stylesheet" href="../../../skin/vilesci.css" type="text/css">
+                <title>Template</title>
+        </head>
+        <body>
+        <h1>WAWI</h1>';
 	die('Sie haben keine Berechtigung fuer diese Seite');
 }
-echo 'Template Addon Vilesci Integration';
+    header('Location: indexFrameset.php');
+//echo '<a href="indexFrameset.php">Addon WAWI starten</a>';
 ?>

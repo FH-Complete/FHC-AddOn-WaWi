@@ -1,0 +1,257 @@
+/* Copyright (C) 2010 Technikum-Wien
+ *
+ * This program is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as
+ * published by the Free Software Foundation; either version 2 of the
+ * License, or (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307, USA.
+ *
+ * Authors: Christian Paminger <christian.paminger@technikum-wien.at>,
+ *          Andreas Oesterreicher <andreas.oesterreicher@technikum-wien.at> and
+ *          Karl Burkhart <burkhart@technikum-wien.at>.
+ */
+@charset "utf-8";
+
+img
+{
+	border:0;
+}
+
+A:link 
+{
+	text-decoration: none;
+	color: blue;
+}
+		
+A:visited 
+{
+	text-decoration: none;
+	color: blue;
+}
+
+A:focus
+{
+	cursor:hand; 
+}
+A:hover
+{
+	text-decoration: underline;
+	color: black;
+	cursor:hand;
+}
+A:active 
+{
+	text-decoration: underline;
+	color: blue;
+}
+
+.cursor:hover
+{
+	cursor: pointer;
+	text-decoration: underline; 
+	
+}
+
+BODY,H1,H2,H3,H4,H5,H6,P,I,TD,TH 
+{
+	font-family: Verdana,Lucida,Helvetica,Arial;
+	color:black;
+}
+
+H1
+{
+	font-size: 14pt;
+}
+
+body.menue
+{
+	background-color: #D0DCE0;
+	font-size: 10pt;
+}
+
+INPUT, SELECT    
+{
+	font-family: Courier New,Arial,TimesNewRoman;
+	font-size: 10pt;
+	border: 1px solid #ccc;
+}
+
+BODY 
+{  
+	background-color:#F5F5F5;
+	margin-left:5pt;
+}
+
+ul 
+{
+	padding-left: 10px;
+}
+
+table.aufteilung 
+{
+	background:lightgray;
+}
+table.dark td
+{
+	background:lightgray;
+}
+
+.number
+{
+	text-align: right;
+}
+.number_negative
+{
+	text-align: right;
+	color: red;
+}
+.number_positive
+{
+	text-align: right;
+	color: green;
+}
+
+option.rechnung_nichtfreigegeben
+{
+	background-color: lightpink;
+}
+
+option.rechnung_freigegebenvorhanden
+{
+	background-color: lightyellow;
+}
+
+option.rechnung_freigegeben
+{
+	background-color: lightgreen;
+}
+
+p.freigegeben
+{
+	color:green; 
+}
+
+input[type="submit"],input[type="button"]
+{
+	cursor: pointer;
+}
+
+.inaktiv
+{
+	text-decoration: line-through;
+}
+	
+/*
+:invalid { 
+  border-color: #e88;
+  -webkit-box-shadow: 0 0 5px rgba(255, 0, 0, .5);
+  -moz-box-shadow: 0 0 5px rgba(255, 0, 0, .5);
+  -o-box-shadow: 0 0 5px rgba(255, 0, 0, .5);
+  -ms-box-shadow: 0 0 5px rgba(255, 0, 0, .5);
+  box-shadow:0 0 5px rgba(255, 0, 0, .5);
+}
+
+:required {
+  border-color: #88a;
+  -webkit-box-shadow: 0 0 5px rgba(0, 0, 255, .3);
+  -moz-box-shadow: 0 0 5px rgba(0, 0, 255, .3);
+  -o-box-shadow: 0 0 5px rgba(0, 0, 255, .3);
+  -ms-box-shadow: 0 0 5px rgba(0, 0, 255, .3);
+  box-shadow: 0 0 5px rgba(0, 0, 255, .3);
+}*/
+
+input, textarea {
+  -webkit-transition: all 0.30s ease-in-out;
+  -moz-transition: all 0.30s ease-in-out;
+  -ms-transition: all 0.30s ease-in-out;
+  -o-transition: all 0.30s ease-in-out;
+  outline: none; 
+  border: 1px solid #DDDDDD;
+}
+ 
+input[type=text]:focus, select:focus,textarea:focus {
+  box-shadow: 0 0 5px rgba(81, 203, 238, .3);
+  border: 1px solid rgba(81, 203, 238, 1);
+}
+
+
+select {
+    background-color: white;
+}
+
+input[type=radio] {
+    background-color: white;    
+}
+
+
+input {
+  
+  border:1px solid #ccc;
+  /*display:block;
+  margin-bottom:15px;
+  margin-top:5px;
+  outline: none;*/
+}
+
+form:invalid {
+  box-shadow: none;
+}
+
+input[type=submit] {
+  background: #336699;
+  color: #F5F5F5;
+  padding:1px 10px 1px 10px;
+}
+
+ul#angeboteListe
+{
+margin: 0;
+padding: 0;
+list-style-type: none;
+display: inline;
+}
+
+ul#angeboteListe li { display: inline; }
+
+ul#angeboteListe li a
+{
+text-decoration: none;
+padding: .1em 0.5em;
+margin-left: 1px;
+/*color: #fff;
+background-color: #036;*/
+}
+
+ul#angeboteListe li a:hover
+{
+/*color: #fff;
+background-color: #369;*/
+}
+
+/*
+.form_hint {
+    background: #d45252;
+    border-radius: 3px 3px 3px 3px;
+    color: white;
+    margin-left:8px;
+    padding: 1px 6px;
+    z-index: 999; 
+    position: absolute;
+    
+}
+
+.form_hint::before {
+    content: "\25C0"; 
+    color:#d45252;
+    position: absolute;
+    top:1px;
+    left:-6px;
+} */

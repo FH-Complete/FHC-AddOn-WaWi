@@ -1,0 +1,938 @@
+@charset "utf-8";
+/* Allgemein */
+body
+{
+	background-color: white;	
+	font-family: Arial, Helvetica, sans-serif;
+	font-size: 13px;
+	height: 100%;
+	width: 100%;
+	margin:0px;
+	border-width:0px;
+	border-style:none;
+	padding:0px;
+}
+body.main /* Workaround fuer Farbverlauf im IE statt ShadowBox */
+{
+	background-color: white;
+	font-family: Arial, Helvetica, sans-serif;
+	font-size: 13px;
+	height: 100%;
+	width: 100%;
+	margin:0px;
+	border-width: 2px;
+	border-style: none;
+	padding:0px;
+	filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#cccccc',endColorstr='#ffffff');
+}
+html
+{
+	height: 100%;
+}
+iframe
+{
+	margin:0px;
+	padding:0px;
+	height: 100%;
+	top: 15%;
+	/*
+	border-width:1px;
+	border-style:solid;
+	border-color: #A5AFB6;
+	*/
+}
+textarea
+{
+	font-family: Arial, Helvetica, sans-serif;
+}
+form
+{
+	font-family: Arial, Helvetica, sans-serif;
+}
+p
+{
+	margin-top: 0px;
+}
+hr
+{
+	color:#CCCCCC;
+	height:1px;
+}
+ul
+{
+	padding-left: 0px;
+	padding-top: 2px;
+	padding-bottom: 2px;
+	margin-left: 6px;
+}
+ol
+{
+	padding-left: 13px;
+	padding-top: 2px;
+	padding-bottom: 2px;
+	margin-left: 6px;
+}
+ul li
+{
+	list-style-image:url(images/square_blue.png);
+	padding-left: 0px;
+	padding-top: 2px;
+	padding-bottom: 2px;
+	margin-left: 6px;
+}
+li.ui-menu-item
+{
+	list-style-image:none;
+}
+#menue
+{
+	/* bottom: 2%; */
+	width: 17%;
+	height: 81%;
+	z-index: 10;
+	padding: 0px;
+	margin: 0px;
+} 
+html>body #menue
+{
+	position:absolute;
+}
+
+#content
+{
+	/* bottom: 2%; */
+	width:81%;
+	height:81%;
+	left:18%;
+	z-index: 10;
+	padding: 0px;
+	margin: 0px;
+}
+#content /* Hack für IE8 */
+{	
+	*width: 75\%;
+	*left: 21\%;
+}
+html>body #content
+{
+	position:absolute;
+}
+
+/*   Druckausgabe */
+@media print 
+{
+	.home_logo
+	{
+		display:none;
+	}
+	/*.header_line
+	{
+		display:none;
+	}*/
+	
+	#menue
+	{
+		display:none;
+	}
+	#GlobalMenu
+	{
+		display:none;
+	}
+	
+	#content
+	{
+		width:800px;
+		height:900px;
+		left:0px;
+		overflow: hidden;
+	}
+}
+input.TextBox					
+{
+	background-color: White;
+}
+/* Such-Feld CIS-Suche */
+input.search					
+{
+	background-color: #E9ECEE;
+	border-width: 1px;
+	border-style:solid;
+	border-color: #A5AFB6;
+}
+#globalsearch					
+{
+	background-color: #E9ECEE;
+	border-width: 1px;
+	border-style:solid;
+	border-color: #A5AFB6;
+	height: 25px;
+}
+/* Login-Button CIS-Seite */
+input.cis_login
+{
+	cursor: pointer;
+	color: #666666;
+	font-size: 20px;
+	border: 1px solid #A5AFB6;
+	background-color: #E9ECEE;
+	width: 150px;
+	height: 35px;
+}
+#GlobalMenu
+{
+	margin-top: 3px;
+	text-align: right;
+}
+.home_logo
+{
+	background-image:url(styles/tw/TWLogo_klein.jpg);
+	width:170px;
+	height:53px;
+}
+div.tip
+{
+	position: absolute;
+	display: none;
+	width: 300px;
+	background-color: #f7f7ee;
+	padding: 3px 7px 4px 6px;
+	border: 1px solid #336;
+	background-color: #f7f7ee;
+	text-align: left;
+}
+#header
+{
+	vertical-align:middle;
+}
+
+/* 
+==== Links ==== 
+*/
+a /*allgmeiner Link, Hauptmenuelinks*/
+{
+	color: #0086CC; /*tw-blau*/
+	text-decoration: none;
+	cursor: pointer;
+}
+a:hover /*link ohne Item-Definition*/
+{
+	color: #0086CC; /*tw-blau*/ 
+	text-decoration: underline;
+}
+a.ItemTesttool
+{
+	color: #008381;
+	line-height:25px;
+	display:block;
+}
+a:hover.ItemTesttool
+{
+	color: black;
+	line-height:25px;
+}
+a.HyperItem /* ? */
+{
+	color: Black; text-decoration: none;
+	font-weight: bold;
+}
+a:hover.HyperItem /* ? */
+{
+	color: #008381; text-decoration: none;
+	font-weight: bold;
+}
+a[onClick]:hover.Item /* ? */
+{
+	color: Black; text-decoration: none;
+}
+a:hover.Item /*allgemeine Links, Hauptmenuelink*/
+{
+	color: #0086CC; /*tw-blau*/ 
+	text-decoration: underline;
+}
+a.Item2 /* zB in den Lehrveranstaltungen (Buttons) verwendet bei den Lektoren */
+{
+	color: Black; text-decoration: none;
+}
+a:hover.Item2 /* zB in den Lehrveranstaltungen (Buttons) verwendet bei den Lektoren */
+{
+	color: #008381; text-decoration: none;
+}
+a.MenuItem /* Hauptmenuelink zum aufklappen */
+{
+	color: #0086CC; text-decoration: none;
+	font-weight: bold;
+}
+a:hover.MenuItem /* Hauptmenuelink zum aufklappen */
+{
+	color: #0086CC; /*tw-blau*/ 
+	text-decoration: none;
+	font-weight: bold;
+}
+a:focus.MenuItem /* Hauptmenuelink zum aufklappen */
+{
+	color: #0086CC; /*tw-blau*/ 
+	text-decoration: none;
+	font-weight: bold;
+}
+A.stpl_detail 
+{ 
+	font-size:x-small; 
+	color:#000000;
+	text-decoration:none;
+}
+A.stpl_detail:hover
+{ 
+	font-size:x-small;
+	color:#000000; 
+	text-decoration:underline;
+	/*cursor:hand;*/
+}
+a.head
+{
+   color:#ffffff;
+}
+a.head:hover
+{
+	color:#000000;
+}
+
+
+/* 
+==== Tables ====
+*/
+TABLE
+{
+	font-size: 13px;
+}
+TABLE.header
+{
+	width:100%;
+	height:100%;
+	/* background-image:url(../skin/images/header.png); */ 
+	/* background-repeat:no-repeat; */ 
+	background-color: white;
+	position: relative;
+}
+TABLE.header_content
+{
+	height: 13%; 
+	width: 100%;
+	position: absolute; 
+	z-index:4;	
+}
+TABLE.cmstable /* Die Haupttable aller CMS-Contentseiten */
+{
+	margin: 0px;
+	padding: 0px;
+	border: none;
+	width: 100%;
+}
+TABLE.tabcontent
+{
+	margin: 0px;
+	padding: 0px;
+	border-style: none;
+	width: 100%;
+	background-color: white;
+	vertical-align: top;
+	border-spacing:0;
+}
+TABLE.menue
+{
+	margin: 0px;
+	padding: 0px;
+	border-style: none;
+	width: 100%;
+}
+TABLE.menue TD
+{
+	padding-bottom: 2px;
+	padding-top: 2px;
+}
+TABLE.tabcontent2
+{
+	margin: 0px;
+	padding: 0px;
+	border-style: none;
+}
+TABLE.tabborder
+{
+	width: 100%;
+	/*border: 1px solid black; foo*/
+}
+TABLE#tabterm
+{
+	margin:auto;
+}
+td.rand /* Seitenraender des CIS */
+{
+	display:none;
+}
+td.boxshadow /* Farbverlauf im Hintergrund der CIS*/
+{
+	position: relative;
+	width:94%;
+	height: 100%;
+	box-shadow: 0px 100px 0px 0px #FFFFFF, /* Unterer weisser Rand bei sehr kleinen Aufloesungen */
+				0px 0px 5px 5px #888, /* schmaler dunkler Schatten */
+				/*0px 300px 5px 5px #888, /* schmaler dunkler Schatten unten bei sehr kleinen Aufloesungen*/
+				20px 20px 70px 30px #DDDDDD, /* heller Verlauf rechts */
+				-20px 20px 70px 30px #DDDDDD; /* heller Verlauf links */
+}
+td.ContentHeader
+{
+	background-color: #A5AFB6; /*#DCE4EF;*/
+	font-weight: bold;
+	height: 19px;
+}
+td.ContentHeader2
+{
+	color: #0086CC; /*tw-blau */
+	font-weight: normal;
+}
+td.ContentHeader3					
+{
+	color: #0086CC;; /*tw-blau */
+	font-weight: bold;
+}
+td.MarkLine
+{
+	background-color: #F2F2F2; /*wie EEEEEE; also grau fast weiss */ 
+}
+td.Inaktiv  /*fuer Inaktive Items bei der Raumbeschreibung */ 
+{ 
+  background-color: #F2F2F2; /*wie EEEEEE; also grau fast weiss */
+  color: #CFCFCF;
+  text-decoration: line-through;
+}
+td.ItemTesttool /*fuer die Button-Optik beim Testtool*/
+{
+	color: #008381;
+	line-height:25px;
+	background-image: url(../skin/images/testtool_button.png);
+	background-position:center;
+	background-repeat:repeat-x;
+}
+td.ItemTesttoolLeft
+{
+	color: #008381;
+	line-height:25px;
+	background-image: url(../skin/images/testtool_buttonleft.png);
+	background-position:left;
+	background-repeat:no-repeat;
+}
+td.ItemTesttoolRight
+{
+	color: #008381;
+	line-height:25px;
+	background-image: url(../skin/images/testtool_buttonright.png);
+	background-position:right;
+	background-repeat:no-repeat;
+}
+td:hover.ItemTesttool
+{
+	color: black;
+	line-height:25px;
+	background-image: url(../skin/images/testtool_button_hover.png);
+	background-position:center;
+	background-repeat:repeat-x;
+}
+td.tdwidth10
+{
+	width: 5px;
+	/* width: 10px; */
+}
+td.tdwidth30
+{
+	width: 30px;
+}
+td.tdgreen
+{
+	background-color: #CCFFCC;
+}
+td.tdborder
+{
+	text-align: center;
+	border:2px solid black;
+	background-color: #ffffff;
+}
+td.tdwrap
+{
+	white-space: nowrap;
+	color: #0086CC;
+}
+td.tdvertical /* Für Ausrichtung der Icons bei der LV-Übersicht */
+{
+	vertical-align: top;
+	padding: 10px 0 10px 0;
+	width: 33.33%;
+	/* height: 100px; */
+}
+td.menubox /* Navigationsboxen in den CIS-Contentseiten */
+{
+	width: 20%;
+	height: 10px;
+	background-color: #eeeeee;
+	padding: 20px 15px 20px 15px;
+	vertical-align: middle;
+}
+td.menubox p
+{
+	line-height: 110%;
+}
+td.cmscontent
+{
+	vertical-align: top;
+	padding-right: 25px;
+	padding-left: 0px;
+}
+td.teambox
+{
+	vertical-align: top;
+	padding-top: 20px;
+	/* height: 1000px; */ /* Damit die menubox im IE mit der richtigen höhe angezeigt wird */
+}
+tr.header
+{
+	position: relative;
+}
+TR.liste
+{
+	background-color: #D3DCE3; /*grau wie #DDDDDD*/
+}
+TR.liste0						
+{
+	background-color: #FFFFFF; /*wei�*/
+}
+TR.liste1						
+{
+	background-color: #EEEEEE; /*grau fast wei�*/
+}
+TR.tryellow
+{
+	background-color: #FFFF99;
+}
+
+/* private/profile/zeitsperre.php */
+TABLE#zeitsperren
+{  
+	/*border: 1px solid black; foo*/
+	width:100%;
+}
+TABLE#zeitsperren TH
+{
+	background-color: #DDDDDD; /*hellgrau*/
+}
+TABLE#zeitsperren TH.feiertag
+{
+	background-color: #FFFF00; /*grelles gelb*/
+}
+TABLE#zeitsperren TD.feiertag
+{
+	background-color: #FFFF22; /*bissi helleres gelb*/
+}
+TABLE#zeitsperren TD
+{
+	background-color: #EEEEEE; /*grau fast wei�*/
+}
+
+/* 
+==== Stundenplan ==== 
+*/
+
+TABLE.stdplan
+{  
+	margin: 0px;
+	padding: 0px;
+	/* border: 1px solid; */	
+	width: 100%;
+	background-color: white;
+	vertical-align: top;
+	border-spacing:1;
+}
+TABLE.stdplan TH
+{
+	background-color: #A5AFB6;
+}
+TABLE.stdplan TD
+{
+	background-color: #E9ECEE;
+}
+.row-even { /*liste1*/
+ background-color:#f2f2f2;
+}
+
+.row-odd { /*liste0*/
+  background-color:#ffffff;
+}
+
+/* 
+==== Fonts ====
+*/
+
+h1
+{ 
+	color: black; 
+	padding: 0px;
+	padding-bottom: 20px;
+	/* padding-left: 10px; */
+	/* width:20%; */
+	margin:0px;
+	white-space:nowrap;
+	font-size: 20px;
+	/* letter-spacing: 2px;
+	border-bottom:solid 1px #0086CC;*/
+	font-weight:normal;
+}
+h1 td
+{ 
+	color: #ffffff; 
+	background-color: #009e84;
+}
+h2
+{ 
+	margin: 0px;
+	padding-top: 0px;
+	padding-bottom: 15px;
+	/* padding-left: 10px; */
+	font-weight: bold;
+	font-size: 15px;
+}
+h3 
+{ 
+	margin: 0px;
+	padding-top: 0px; /* 20px */
+	padding-bottom: 2px;
+	font-weight: bold;
+	font-size:13px;
+}
+h4 
+{ 	
+	margin: 0px;
+	padding: 0px;  
+	text-decoration: underline;
+	font-weight: normal;
+	font-size:13px; 
+}
+.error
+{
+	color: #ff0000;
+}
+#news .news
+{
+	width: 99%;
+	background-color: #A5AFB6; /* grauvariante A5AFB6 */
+}
+#news .news .titel table
+{
+	padding: 3px 10px 3px 10px;
+	color: #ffffff;
+	font-weight: 500;
+}
+#news .news .text
+{
+	background-color: #E9ECEE; /* grauvariante E9ECEE */
+	padding: 10px;
+}
+
+/* Margin von ersten und letzten P tag entfernen, da sonst
+   breite Raender entstehen koenne*/
+#news .news .text p:first-child
+{
+	margin-top:0px;
+
+}
+#news .news .text p:last-child
+{
+	margin-bottom:0px;
+}
+
+/* 
+==== Images ====
+*/
+img.testtoolfrage
+{
+	max-width:400px;
+	max-height:300px;
+}
+img.testtoolvorschlag
+{
+	max-width:200px;
+	max-height:150px;
+}
+img
+{
+	border: 0;
+}
+img.lvplanbutton
+{
+	border:0;
+	vertical-align: bottom;
+}
+img#layout
+{
+	border: 1px solid #AAAAAA;
+}
+img.lv
+{
+	width: 40px;
+	height: 40px;
+	padding-bottom: 5px;
+}
+img.header_left
+{
+	display: none;
+}
+img.header_right
+{
+	display: none;
+}
+img.header_logo
+{
+	position: absolute;
+	left: 16px;
+	top: 3%;
+	z-index: 5000;
+	max-height: 7%;
+	max-width: 11%;
+}
+/*
+==== Farben ====
+*/
+
+.grey
+{
+	color: #999999;
+}
+#bgcolor0					
+{
+	background-color: #CC0000;
+}
+#bgcolor1					
+{
+	background-color: #FF2200;
+}
+#bgcolor2					
+{
+	background-color: #FF9922;
+}
+#bgcolor3					
+{
+	background-color: #FFFF55;
+}
+#bgcolor4					
+{
+	background-color: #88FF88;
+}
+#bgcolor5					
+{
+	background-color: #AAFFAA;
+}
+#bgcolor6					
+{
+	background-color: #CCFFCC;
+}
+.studentnote
+{
+	font-weight:bold;
+}
+.benotungstool_tabs
+{
+	border-top: 1px solid gray;
+	border-left: 1px solid gray;
+	border-right: 1px solid gray;
+	text-align: center;
+}
+.benotungstool_tabs_active
+{
+	border-top: 2px solid gray;
+	border-left: 2px solid gray;
+	border-right: 2px solid gray;
+	background-color: #eeeeee;
+	text-align: center;
+}
+.benotungstool_subtab
+{
+	border-top: 1px solid gray;
+	border-bottom: 1px solid gray;
+}
+.error
+{
+	color: #ff0000;
+}
+.ok
+{
+	color: green;
+}
+.ausblenden {display:none;}
+.einblenden {display:block;}	
+
+/* Inaktive Elemente in einem DropDown */
+option.inactive
+{
+	text-decoration:line-through;
+}
+
+/* Difference Engine */
+.diffchange-inline
+{
+	background-color: yellow;
+}
+.diff-deletedline
+{
+	background-color: lightgray;
+}
+.diff-marker
+{
+	background-color: none;
+}
+.diff-addedline
+{
+	background-color: lightgreen;
+}
+
+.suchmarker
+{
+	font-weight: bold;
+	text-decoration: underline;
+	font-size: medium;
+}
+.suchergebnis:hover
+{
+	background-color: #EEEEEE;
+}
+.suchergebnis a
+{
+	font-weight: bold;
+}
+.suchicon
+{
+	margin:0px;
+}
+.suchicon:hover
+{
+	cursor:pointer;
+	cursor:hand;
+}
+	
+/* 
+==== Kalender-Jump-Effekt im LV-Plan ====
+*/
+div.hoverbox div.preview div.hoverbox_inhalt
+{
+	display:none;
+	vertical-align: top;
+}
+div.preview
+{
+	position: relative;
+	vertical-align: top;
+}
+div.hoverbox div.preview:hover div.hoverbox_inhalt
+{
+	display: block;
+	position: absolute;
+	top: 15px;
+	left: -190px;
+	z-index: 2;
+	border:1px;
+	border-color:grey;
+	background-color:white;
+}
+table.hoverbox
+{
+	border:1px;
+	border-style:solid;
+	border-color:grey;
+	padding: 5px;
+}
+
+/*
+==== Gestaltung des Hauptmenues ====
+*/
+
+ul.menu
+{
+	padding:0;
+	margin:0;
+	font-family:Arial, Helvetica, sans-serif;
+	color:#0086CC;
+	font-size:13px;
+	line-height:15px;
+	width:200px;
+	list-style-type:none;
+}
+#menu
+{
+	padding:0;
+	margin:0;
+	font-family:Arial, Helvetica, sans-serif;
+	color:#0086CC;
+	font-size:13px;
+	line-height:18px;
+	width:150%;
+	list-style-type:none;
+}
+#menu a 
+{
+	display:block;
+	padding:0 0 0 5px;
+	outline:none;
+	text-decoration:none;
+}
+#menu li 
+{
+	margin:0 0 0 10px;
+	padding: 5px 0 0 0;
+	display:block;
+	border:1px solid #FFFFFF;
+}
+#menu a.selected 
+{
+	padding:0 0 0 5px;
+}
+#menu a:hover
+{
+	text-decoration: underline;
+}
+#menu a.leaf 
+{
+	color: #616B71;
+	padding-left: 5px;
+}
+
+/*
+==== Menubox-Effekt am Seitenrand. Nettes Feature aber dzt. nicht sinnvoll einsetzbar ====
+*/
+
+/*
+div.hoverbox div.preview div.hoverbox_inhalt
+{
+	display:none;
+}
+
+div.preview
+{
+	position:relative;
+}
+
+	
+div.hoverbox div.preview:hover div.hoverbox_inhalt
+{
+	display: block;
+	position: absolute;
+	top: -21px;
+	left: -158px;
+	z-index: 1;
+	border:1px;
+	border-color:grey;
+	background-color:white;
+}
+table.hoverbox
+{
+	
+	border:1px;
+	border-style:solid;
+	border-color:grey;
+}
+*/

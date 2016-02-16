@@ -1,0 +1,68 @@
+@import url("chrome://global/skin/");
+
+
+button
+{
+	font-size: x-small;
+	min-width: 10px;
+}
+menubar,menupopup,toolbar,tabpanels,tabbox,iframe,box,hbox,vbox,tree,label,description
+{
+	border: 0px;
+  	border-top: 0px;
+  	border-bottom: 0px;
+  	border-left: 0px;
+  	border-right: 0px;
+  	border-top-width: 0px;
+  	border-bottom-width: 0px;
+  	border-left-width: 0px;
+  	border-right-width: 0px;
+  	padding-top: 0px;
+  	padding-bottom: 0px;
+  	padding-left: 0px;
+  	padding-right: 0px;
+}
+popup
+{
+	background-color: lightgray;
+	border: 1px solid gray;
+}
+popup>menuitem
+{
+	color: black;
+}
+
+tree treecol {
+	background-color: #FFFFCC; 
+	border: 1px solid black;	
+}
+
+tree {
+	font-size:9pt;
+	font-family:Arial;	
+}
+
+label,textbox {
+	font-size:9pt;
+	font-family:Arial;
+}
+
+treechildren::-moz-tree-row(selected) { background-color: #FFFFAA; }
+treechildren::-moz-tree-row(odd) { background-color: #EEEEEE; }
+treechildren::-moz-tree-row(odd, selected) { background-color: #FFFFAA; }
+treechildren::-moz-tree-row(even, selected) { background-color: #FFFFAA; }
+treechildren::-moz-tree-cell-text(selected) { color: #000000; }
+treechildren::-moz-tree-cell-text(odd, selected) { color: #000000; }
+treechildren::-moz-tree-checkbox 
+{
+  /* unchecked checkbox treecells. This style MUST come before treechildren::-moz-tree-checkbox(checked) otherwise it won't take effect.  */
+  list-style-image: url("../skin/images/round.png");
+}
+
+treechildren::-moz-tree-checkbox(checked)
+{
+  /* css for checked cells. cbox-check.gif isn't available in Firefox 1, 2, and 3 on Mac OS X, so you should specify a URL to an image
+     in your extension or elsewhere. */
+  /*list-style-image: url("chrome://global/skin/checkbox/cbox-check.gif");*/
+  list-style-image: url("../skin/images/cbox-check.gif");
+}
