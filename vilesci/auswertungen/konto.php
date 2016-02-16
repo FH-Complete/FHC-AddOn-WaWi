@@ -60,13 +60,13 @@ if(count($kst_array)==0)
 	<link rel="stylesheet" href="../../skin/wawi.css" type="text/css">
 	<link rel="stylesheet" href="../../skin/tablesort.css" type="text/css">
 		
-	<script type="text/javascript" src="../../include/js/jquery.js"></script> 
-	<script type="text/javascript" src="../../include/js/jquery.metadata.js"></script> 
-	<script type="text/javascript" src="../../include/js/jquery.tablesorter.js"></script>
+	<script type="text/javascript" src="../../../../include/js/jquery1.9.min.js"></script>	 
+	<script type="text/javascript" src="../../../../include/js/jquery.metadata.js"></script> 
+	<script type="text/javascript" src="../../../../include/js/jquery.tablesorter.js"></script>
 	<script type="text/javascript">
  	function alleMarkieren(checked)
  	{
- 	 	checkbox = $(':checkbox').attr('checked',checked);
+ 	 	checkbox = $(':checkbox').prop('checked',checked);
  	}
 	</script>
 </head>
@@ -197,8 +197,8 @@ if(isset($_POST['show']))
 		else
 			$class='class="inaktiv"';
 		echo '<tr>
-				<td><input type="checkbox" name="kst[]" value="'.$kst->kostenstelle_id.'"></td>
-				<td nowrap '.$class.'>'.$kst->bezeichnung.' </td>
+				<td><input type="checkbox" name="kst[]" id="'.$kst->kostenstelle_id.'" value="'.$kst->kostenstelle_id.'"></td>
+				<td nowrap '.$class.'><label for="'.$kst->kostenstelle_id.'">'.$kst->bezeichnung.'</label> </td>
 			</tr>';
 		$anzahl++;
 	}
@@ -209,8 +209,8 @@ if(isset($_POST['show']))
 	<br />
 	<table>
 	<tr>
-		<td><input type="checkbox" name="allemarkieren" onclick="alleMarkieren(this.checked)"></td>
-		<td>Alle markieren</td>
+		<td><input type="checkbox" id="allemarkieren" name="allemarkieren" onclick="alleMarkieren(this.checked)"></td>
+		<td><label for="allemarkieren">Alle markieren</label></td>
 	</tr>
 	</table>
 	<br />

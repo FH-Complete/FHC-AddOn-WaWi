@@ -647,11 +647,12 @@ if(!tableExists($schemaName,$tableName))
                 GRANT SELECT ON $tableName TO web;
 		GRANT SELECT, UPDATE, INSERT, DELETE ON $tableName TO vilesci;
                     
-                INSERT INTO $tableName(bestellstatus_kurzbz,beschreibung) VALUES('Freigabe','Freigabe der Bestellung');
-                INSERT INTO $tableName(bestellstatus_kurzbz,beschreibung) VALUES('Storno','Stornierung einer Bestellung');
-                INSERT INTO $tableName(bestellstatus_kurzbz,beschreibung) VALUES('Lieferung','Ware wurde geliefert');
-                INSERT INTO $tableName(bestellstatus_kurzbz,beschreibung) VALUES('Bestellung','Ware wurde bestellt');
-                INSERT INTO $tableName(bestellstatus_kurzbz,beschreibung) VALUES('Abgeschickt','Bestellvorgang wurde eingeleitet');
+                INSERT INTO $schemaName.$tableName(bestellstatus_kurzbz,beschreibung) VALUES('Freigabe','Freigabe der Bestellung');
+                INSERT INTO $schemaName.$tableName(bestellstatus_kurzbz,beschreibung) VALUES('Storno','Stornierung einer Bestellung');
+                INSERT INTO $schemaName.$tableName(bestellstatus_kurzbz,beschreibung) VALUES('Lieferung','Ware wurde geliefert');
+                INSERT INTO $schemaName.$tableName(bestellstatus_kurzbz,beschreibung) VALUES('Bestellung','Ware wurde bestellt');
+                INSERT INTO $schemaName.$tableName(bestellstatus_kurzbz,beschreibung) VALUES('Abgeschickt','Bestellvorgang wurde eingeleitet');
+                INSERT INTO $schemaName.$tableName(bestellstatus_kurzbz,beschreibung) VALUES('Abgeschickt-Erneut','Bestellung wurde nochmal abgeschickt');
 
                 ";
 
@@ -661,7 +662,21 @@ if(!tableExists($schemaName,$tableName))
 		echo ' $tableName: Tabelle $tableName hinzugefuegt!<br>';
 
 }
-
+else
+{
+    if (!bestellstatusExists('Abgeschickt-Erneut'))
+    {
+        $qry=" INSERT INTO $schemaName.$tableName(bestellstatus_kurzbz,beschreibung) VALUES('Abgeschickt-Erneut','Bestellung wurde nochmal abgeschickt');";
+        if(!$db->db_query($qry))
+            echo '<strong>$tableName: '.$db->db_last_error().'</strong><br>';
+        else 
+            echo " $tableName: Bestellstatus 'Abgeschickt-Erneut'  hinzugefuegt!<br>";
+    }
+    else
+    {
+        echo "Bestellstatus 'Abgeschickt-Erneut' existiert bereits<br>";
+    }
+}
 
 
 
@@ -1685,5 +1700,20 @@ WHERE table_schema='$schema' AND table_name='$tableName' AND column_name='$colum
     }
     return false;
 }        
+
+function bestellstatusExists($status)
+{
+    global $db;
+    $qry="
+    SELECT EXISTS (SELECT 1 
+FROM wawi.tbl_bestellstatus 
+WHERE  bestellstatus_kurzbz='$status');";
+    $r=$db->db_query($qry);
+    if($row = $db->db_fetch_object($r))
+    {
+        if ($row->exists == 't') return true;
+    }
+    return false;
+}
 
 ?>

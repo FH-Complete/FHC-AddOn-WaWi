@@ -19,7 +19,8 @@
  *          Andreas Oesterreicher <andreas.oesterreicher@technikum-wien.at> and
  *          Karl Burkhart <burkhart@technikum-wien.at>.
  */
-require_once '../config/wawi.config.inc.php';
+$basepath = $_SERVER['DOCUMENT_ROOT'];
+require_once $basepath.'/config/wawi.config.inc.php';
 require_once('auth.php');
 
 require_once '../include/wawi_konto.class.php';
@@ -29,20 +30,20 @@ require_once '../include/wawi_bestelldetail.class.php';
 require_once '../include/wawi_aufteilung.class.php'; 
 require_once '../include/wawi_bestellstatus.class.php';
 require_once '../include/wawi_zahlungstyp.class.php';
-require_once '../include/datum.class.php';
-require_once '../include/firma.class.php';
+require_once $basepath.'/include/datum.class.php';
+require_once $basepath.'/include/firma.class.php';
 ?>
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
 "http://www.w3.org/TR/html4/loose.dtd">
 <html>
 <head>
-	<title>Checksrikpt für Bestellungen</title>	
+	<title>Offene Freigabe/Lieferung</title>	
 	<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
 	<link rel="stylesheet" href="../skin/tablesort.css" type="text/css"/>
 	<link rel="stylesheet" href="../skin/jquery.css" type="text/css"/>
 	<link rel="stylesheet" href="../skin/fhcomplete.css" type="text/css"/>
 	<link rel="stylesheet" href="../skin/wawi.css" type="text/css"/>
-	<script type="text/javascript" src="../include/js/jquery.js"></script> 
+	<script type="text/javascript" src="../../../include/js/jquery1.9.min.js"></script>	
 	<script type="text/javascript">
 	function checkKst()
 	{
@@ -57,32 +58,54 @@ require_once '../include/firma.class.php';
 	
 </head>
 <body>
-<h1>Check Bestellungen</h1>
+
 <?php 
 $min = (isset($_POST['min'])?$_REQUEST['min']:'1');
 $max = (isset($_POST['max'])?$_REQUEST['max']:'42');
 $type = (isset($_GET['type'])?$_GET['type']:'');
 
-echo '
+if ($type == 'nichtgeliefert')
+	echo "<h1>Offene Lieferung</h1>";
+else
+	echo "<h1>Offene Freigabe</h1>";
+?>
 <table>
 	<tr>
 	<td>
 		<form action ="check_bestellung.php" method="post" name="checkForm">
 		<table>
-			<tr><td>min (Wochen): </td><td><input type="text" name="min" id="min" value="'.$min.'"></td></tr>
-			<tr><td>max (Wochen): </td><td><input type="text" name="max" id="max" value="'.$max.'"></td></tr>
+			<tr><td>min (Wochen): </td><td><input type="text" name="min" id="min" value="<?php echo $min ?>"></td></tr>
+			<tr><td>max (Wochen): </td><td><input type="text" name="max" id="max" value="<?php echo $max ?>"></td></tr>
 			<tr><td>&nbsp;</td><td><input type="submit" name="submit" value="anzeigen" onclick="return checkKst();"></td></tr>
 		</table>
 		</form>
 	</td>
 	<td width="100px">&nbsp;</td>
 	<td valign="top">
+<?php
+
+if ($type != 'nichtgeliefert')
+{
+?>
 		<form action ="check_bestellung.php?type=nichtgeliefert" method="post" name="checkForm">
-			<input type="submit" name="submit" value="Nicht gelieferte Bestellungen anzeigen"></td></tr>
+			<input type="submit" name="submit" value="Nicht gelieferte Bestellungen anzeigen">
 		</form>
+<?php
+}
+else
+{
+?>
+	<form action ="check_bestellung.php" method="post" name="checkForm">
+		<input type="submit" name="submit" value="Offene Freigaben anzeigen">
+	</form>
+<?php
+}
+?>
 	</td>
 	</tr>
-</table>';
+</table>
+
+<?php
 
 echo '
 	<script type="text/javascript">
@@ -97,8 +120,7 @@ echo '
 	</script>';
 
 	$date = new datum(); 
-	$firma = new firma();
-	
+	$firma = new firma();	
 	$bestellung = new wawi_bestellung();
 	if($type=='nichtgeliefert')
 		$bestellung->loadBestellungNichtGeliefert();
@@ -117,10 +139,11 @@ echo '
 				<th>Bestell_ID</th>
 				<th>Firma</th>
 				<th>Erstellung</th>
-				<th>Freigegeben</th>
-				<th>Geliefert</th>
-				<th>Bestellt</th>
-				<th>Brutto</th>
+				'.
+				($type=='nichtgeliefert'?
+					'<th>Freigegeben</th><th>Bestellt</th><th>Lieferdatum</th>':
+					'<th>Geliefert</th><th>Bestellt</th>').
+				'<th>Brutto</th>
 				<th>Titel</th>
 				<th>Letze Änderung</th>
 			</tr>
@@ -138,7 +161,10 @@ echo '
 			$firmenname = $firma->name; 
 		}
 		if($row->freigegeben)
+		{			
 			$freigegeben = 'ja';
+			if ($type!='nichtgeliefert') continue;
+		}
 		else
 			$freigegeben = 'nein';
 		
@@ -154,10 +180,13 @@ echo '
 					<td>'.$row->bestell_nr.'</td>
 					<td>'.$row->bestellung_id.'</td>
 					<td>'.$firmenname.'</td>
-					<td>'.$date->formatDatum($row->insertamum, "d.m.Y").'</td>
-					<td>'.$freigegeben.'</td>
-					<td>'.$geliefert.'</td>
+					<td>'.$date->formatDatum($row->insertamum, "d.m.Y").'</td>'.
+					($type!='nichtgeliefert'?
+					'<td>'.$geliefert.'</td>
+					<td>'.$bestellt.'</td>'  :
+					'<td>'.$freigegeben.'</td>
 					<td>'.$bestellt.'</td>
+					<td>'.$row->liefertermin.'</td>').'
 					<td align="right">'.number_format($brutto, 2, ",",".").'</td>
 					<td>'.$row->titel.'</td>
 					<td nowrap>'.$date->formatDatum($row->updateamum, "d.m.Y").' '.$row->updatevon.'</td>

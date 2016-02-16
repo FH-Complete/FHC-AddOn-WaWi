@@ -358,12 +358,15 @@ if(isset($_POST['deleteBtnStorno']) && isset($_POST['id']))
 	<title>WaWi Bestellung</title>	
 	<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
 	<link rel="stylesheet" href="../skin/tablesort.css" type="text/css"/>
-	<link rel="stylesheet" href="../skin/jquery.css" type="text/css"/>
+<!--	<link rel="stylesheet" href="../skin/jquery.css" type="text/css"/> -->
+    <link rel="stylesheet" href="../skin/jquery-ui.min.css" type="text/css"/>
 	<link rel="stylesheet" href="../skin/fhcomplete.css" type="text/css"/>
 	<link rel="stylesheet" href="../skin/wawi.css" type="text/css"/>
 <!--	<script type="text/javascript" src="../include/js/jquery.js"></script> -->
 	<script type="text/javascript" src="../../../include/js/jquery1.9.min.js"></script>	
-	<link rel="stylesheet" type="text/css" href="../skin/jquery-ui-1.9.2.custom.min.css"/>	
+<!--	<link rel="stylesheet" type="text/css" href="../skin/jquery-ui-1.9.2.custom.min.css"/>	-->
+    <link rel="stylesheet" type="text/css" href="../skin/jquery-ui.structure.min.css"/>	
+	<link rel="stylesheet" type="text/css" href="../skin/jquery-ui.theme.min.css"/>	
     <link rel="stylesheet" href="../skin/font-awesome-4.5.0/css/font-awesome.min.css">
 	
 	<script type="text/javascript">
@@ -1489,6 +1492,7 @@ if($_GET['method']=='update')
 					{
 						if(!$status->isStatiVorhanden($bestellung_new->bestellung_id, 'Freigabe', $o))
 						{
+
 							$rechte_fg = new benutzerberechtigung();
 							$uids = $rechte_fg->getFreigabeBenutzer(null, $o); 
 							if(empty($uids))
@@ -1509,6 +1513,22 @@ if($_GET['method']=='update')
 					}
 				
 			}
+
+			// Speichern dass Bestellung erneut abgeschickt wurde, damit
+			// Zentraleinkauf weiß, wann das letzte Mal urgiert wurde
+			$status_abgeschickt = new wawi_bestellstatus(); 							
+			$bestellung_new->load($bestellung_id); 													
+			$status_abgeschickt->bestellung_id = $bestellung_id; ; 
+			$status_abgeschickt->bestellstatus_kurzbz ='Abgeschickt-Erneut'; 
+			$status_abgeschickt->uid = $user; 
+			$status_abgeschickt->oe_kurzbz = ''; 
+			$status_abgeschickt->datum = date('Y-m-d H:i:s'); 
+			$status_abgeschickt->insertvon = $user; 
+			$status_abgeschickt->insertamum = date('Y-m-d H:i:s'); 
+			$status_abgeschickt->updatevon = $user;
+			$status_abgeschickt->updateamum = date('Y-m-d H:i:s'); 
+			if(!$status_abgeschickt->save())
+				echo "Fehler beim Setzen auf Status Abgeschickt-Erneut.";	
 				
 		}
 		$_GET['method']='update';
@@ -1781,6 +1801,8 @@ if($_GET['method']=='update')
 		      value: step
 		     });
 	     };
+
+	     
 	     
 	  });
 </script>\n
@@ -1819,7 +1841,7 @@ EOT;
 	
 	echo "<h2>Bearbeiten</h2>";
 	
-	echo "<form action =\"bestellung.php?method=update&amp;bestellung=$bestellung->bestellung_id\" method='post' name='editForm' id='editForm' onSubmit='document.getElementById(\"filter_kst\").disabled=false;'>\n";
+	echo "<form action =\"bestellung.php?method=update&amp;bestellung=$bestellung->bestellung_id\" method='post' name='editForm' id='editForm' onSubmit='maybeSubmit()'>\n";
 	echo "<h4>Bestellnummer: ".$bestellung->bestell_nr;
 	echo '	<a href= "bestellung.php?method=copy&amp;id='.$bestellung->bestellung_id.'"> <img src="../skin/images/copy.png" title="Bestellung kopieren" class="cursor"></a>';
 	echo '	<a href= "rechnung.php?method=update&amp;bestellung_id='.$bestellung->bestellung_id.'"> <img src="../skin/images/Calculator.png" title="Rechnung anlegen" class="cursor"></a>';
@@ -1930,8 +1952,26 @@ EOT;
 		echo '<option value='.$ko->bkategorie_id.' '.$selected.'>'.$ko->beschreibung."</option>\n";
 	}
 	
+	echo "</select> </td>";
+/*
+	echo "<SELECT name='filter_konto' id='konto' style='width: 230px;'>\n"; 
+	foreach($konto->result as $ko)
+	{ 
+		$selected ='';
+		if($ko->konto_id == $bestellung->konto_id)
+		{
+			$selected = 'selected';	
+			$konto_vorhanden = true; 
+		}		
+		echo '<option value='.$ko->konto_id.' '.$selected.'>'.$ko->kurzbz."</option>\n";
+	}
+	//wenn die konto_id von der bestellung nicht in den Konten die der Kostenstelle zugeordnet sind befidet --> selbst hinschreiben
+	if(!$konto_vorhanden)
+	{
+		echo '<option value='.$bestellung->konto_id.' selected>'.$konto_bestellung->kurzbz."</option>\n";
+	}
 	echo "</select></td>";
-        
+        */
         
         /*
 	echo "	<td>Konto: </td>\n";
@@ -1971,8 +2011,8 @@ EOT;
 	}		
 	echo "</select></td></tr>\n"; 
 	echo "<tr>\n"; 	
-	echo "	<td>Interne Bemerkungen: </td>\n";
-	echo "	<td><textarea name='bemerkung' cols=\"70\" rows=\"2\" style='width: 482px;'>$bestellung->bemerkung</textarea></td>\n";
+	echo "	<td rowspan=\"2\">Interne Bemerkungen: </td>\n";
+	echo "	<td rowspan=\"2\"><textarea name='bemerkung' cols=\"70\" rows=\"2\" style='width: 482px;'>$bestellung->bemerkung</textarea></td>\n";
 	echo "	<td>Status:</td>\n"; 
 	echo "	<td width ='200px'>\n";
 	echo "<span id='btn_bestellt'>";	
@@ -2040,6 +2080,28 @@ EOT;
 	}
 	
 	echo"</td></tr>\n"; 
+
+	echo "<tr><td>Konto</td><td>";
+
+	echo "<SELECT name='filter_konto' id='konto' style='width: 230px;'>\n"; 
+	foreach($konto->result as $ko)
+	{ 
+		$selected ='';
+		if($ko->konto_id == $bestellung->konto_id)
+		{
+			$selected = 'selected';	
+			$konto_vorhanden = true; 
+		}		
+		echo '<option value='.$ko->konto_id.' '.$selected.'>'.$ko->kurzbz."</option>\n";
+	}
+	//wenn die konto_id von der bestellung nicht in den Konten die der Kostenstelle zugeordnet sind befidet --> selbst hinschreiben
+	if(!$konto_vorhanden)
+	{
+		echo '<option value='.$bestellung->konto_id.' selected>'.$konto_bestellung->kurzbz."</option>\n";
+	}
+	echo "</select></td>";
+        
+	echo "<td> </td></tr>";
 		
 	echo "<tr>\n";
 	echo"<td>Tags:</td>\n"; 
@@ -2668,9 +2730,25 @@ EOT;
 			{
 				return false;
 			}
+
 			*/
+			
+			warnungSummeIst0();
 			FelderSperren(false);			
 		}
+
+		function warnungSummeIst0() {
+			var nettoSummeHTML = $("#netto").html();
+			var nettoSumme = parseFloat(nettoSummeHTML);
+			if (nettoSumme == 0.0 ) {
+				alert("Achtung Bestellsumme ist 0!");
+			}
+		}
+
+		function maybeSubmit() {
+	     	warnungSummeIst0();
+	     	document.getElementById("filter_kst").disabled=false;
+	     }
 		
 		// beim verlassen der textbox ändere . in ,
 		function replaceKomma(rowid)
@@ -2788,6 +2866,9 @@ EOT;
 	
 	if($status->isStatiVorhanden($bestellung->bestellung_id, 'Abgeschickt'))
 		echo "Bestellung wurde am ".$date->formatDatum($status->datum,'d.m.Y')." zur Freigabe abgeschickt."; 
+
+	if($status->isStatiVorhanden($bestellung->bestellung_id, 'Abgeschickt-Erneut'))
+		echo "<br>Bestellung wurde zuletzt am ".$date->formatDatum($status->datum,'d.m.Y')." erneut zur Freigabe abgeschickt.";
 
 	if($bestellung->isFreigegeben($bestellung->bestellung_id))
 		echo "<p class='freigegeben'>Die Bestellung wurde vollständig freigegeben</p>"; 

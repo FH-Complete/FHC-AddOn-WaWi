@@ -62,13 +62,13 @@ $datum_obj = new datum();
 	<link rel="stylesheet" href="../../skin/wawi.css" type="text/css">
 	
 			
-	<script type="text/javascript" src="../../include/js/jquery.js"></script> 
+	<script type="text/javascript" src="../../../../include/js/jquery1.9.min.js"></script>	
 	<script type="text/javascript">
  	function alleMarkieren(checked)
  	{
  	 	inputs = document.getElementsByTagName('input');
 
- 	 	for each(i in inputs)
+ 	 	foreach(i in inputs)
  	 	{
  	 	 	if(i.type=='checkbox')
  	 	 	{
@@ -244,14 +244,20 @@ $datum_obj = new datum();
 		
 		$kostenstelle = new wawi_kostenstelle();
 		$kostenstelle->load($id);
+
+		if($kostenstelle->aktiv)
+			$class='';
+		else 
+		{
+			$class='class="inaktiv"';
+			// inaktive nicht anzeigen [WM] 16.2.2016
+			continue;
+		}
 				
 		echo '<tr>';
 
 		echo '<td>',$id,'</td>';
-		if($kostenstelle->aktiv)
-			$class='';
-		else
-			$class='class="inaktiv"';
+
 		echo '<td '.$class.'>',$kostenstelle->bezeichnung,'</td>';
 		echo '<td>',$kostenstelle->kurzbz,'</td>';
 		echo '<td class="number"><a href="../bestellung.php?method=suche&evon=',$vondatum,'&ebis=',$endedatum,'&filter_kostenstelle=',$id,'&submit=true">',number_format($brutto['bestellung'],2,',','.'),'</td>';

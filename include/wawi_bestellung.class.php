@@ -1061,10 +1061,10 @@ class wawi_bestellung extends basis_db
 				$bestellung->besteller_uid = $row->besteller_uid;
 				$bestellung->lieferadresse = $row->lieferadresse;
 				$bestellung->kostenstelle_id = $row->kostenstelle_id;
-                                $bestellung->zuordnung_uid = $row->zuordnung_uid;
-                                $bestellung->zuordnung_raum = $row->zuordnung_raum;
-                                $bestellung->zuordnung = $row->zuordnung;
-                                $bestellung->bkategorie_id = $row->bkategorie;
+                $bestellung->zuordnung_uid = $row->zuordnung_uid;
+                $bestellung->zuordnung_raum = $row->zuordnung_raum;
+                $bestellung->zuordnung = $row->zuordnung;
+                $bestellung->bkategorie_id = $row->bkategorie_id;
 				$bestellung->konto_id = $row->konto_id;
 				$bestellung->rechnungsadresse = $row->rechnungsadresse;
 				$bestellung->firma_id = $row->firma_id;
@@ -1128,7 +1128,7 @@ class wawi_bestellung extends basis_db
                                 $bestellung->zuordnung_uid = $row->zuordnung_uid;
                                 $bestellung->zuordnung_raum = $row->zuordnung_raum;
                                 $bestellung->zuordnung = $row->zuordnung;
-                                $bestellung->bkategorie_id = $row->bkategorie;
+                                $bestellung->bkategorie_id = $row->bkategorie_id;
 				$bestellung->konto_id = $row->konto_id;
 				$bestellung->rechnungsadresse = $row->rechnungsadresse;
 				$bestellung->firma_id = $row->firma_id;
