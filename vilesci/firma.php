@@ -27,7 +27,7 @@
  */
 $basepath = $_SERVER['DOCUMENT_ROOT'];
 require_once $basepath.'/config/wawi.config.inc.php';
-require_once('auth.php');
+//require_once('auth.php');
 require_once('../include/wawi_benutzerberechtigung.class.php');
 require_once($basepath.'/include/firma.class.php');
 require_once($basepath.'/include/standort.class.php');
@@ -40,7 +40,7 @@ require_once($basepath.'/include/nation.class.php');
 "http://www.w3.org/TR/html4/loose.dtd">
 <html>
 <head>
-	<title>WaWi Lieferanten</title>	
+	<title>WaWi Lieferanten/Firmen</title>	
 	<link rel="stylesheet" href="../skin/wawi.css" type="text/css"/>
 	<link rel="stylesheet" href="../skin/tablesort.css" type="text/css"/>
 	<link rel="stylesheet" href="../skin/jquery.css" type="text/css">	
@@ -148,7 +148,7 @@ if(isset($_POST['save']))
 		
 		$firma->name=$name;
 		$firma->anmerkung=$anmerkung;
-                $firma->lieferbedingungen=$lieferbedingungen;
+        $firma->lieferbedingungen=$lieferbedingungen;
 		
 		if($firma->save())
 		{
@@ -457,13 +457,13 @@ if($method=='new' || $method=='update')
 	$kundennummer_erhalter_id='';
 	$kundennummer_gmbh='';
 	$kundennummer_gmbh_id='';
-        $lieferbedingungen = '';
+    $lieferbedingungen = '';
 	
 	if($method=='new')
-		echo '<h1>Neuen Lieferanten</h1>';
+		echo '<h1>Neuen Lieferanten/Firma</h1>';
 	else
 	{
-		echo '<h1>Lieferant Bearbeiten</h1>';
+		echo '<h1>Lieferant/Firma Bearbeiten</h1>';
 
 		if(!is_numeric($id))
 			die('ID ist ungueltig');
@@ -471,10 +471,11 @@ if($method=='new' || $method=='update')
 		//Firma Laden
 		$firma = new firma();
 		if(!$firma->load($id))
-			die('Lieferant konnte nicht geladen werden');
+			die('Lieferant/Firma konnte nicht geladen werden');
 		
 		$name = $firma->name;                
 		$anmerkung = $firma->anmerkung;
+		$lieferbedingungen = $firma->lieferbedingungen;
 		$firma_id = $firma->firma_id;
 		
 		$firma_oe = new firma();
@@ -610,7 +611,7 @@ if($method=='new' || $method=='update')
 		<td><input type="text" name="kundennummer_gmbh" maxlength="128" value="'.$kundennummer_gmbh.'"/></td>
 	</tr>
         <tr>
-		<td>Lieferbedingungen:</td>
+		<td>Liefer- u.<br>Zahlungsbedingungen:</td>
 		<td><textarea name="lieferbedingungen" cols="50" rows="3" maxlength="255">'.$lieferbedingungen.'</textarea></td>
 	</tr>
 	<tr>
@@ -661,7 +662,7 @@ if($method=='search')
 {
 	$filter = (isset($_POST['filter'])?$_POST['filter']:'');
 	
-	echo '<H1>Lieferant suchen</H1>';
+	echo '<H1>Lieferant/Firma suchen</H1>';
 	echo '<form action="'.$_SERVER['PHP_SELF'].'?method=search" method="POST">';
 	echo '<input type="text" size="30" name="filter" value="'.$filter.'">';
 	echo ' <input type="submit" name="send" value="Suchen">';
@@ -670,7 +671,7 @@ if($method=='search')
 	if($filter!='')
 	{
 		$firma = new firma();
-		if($firma->searchFirma($filter))
+		if($firma->searchByName($filter))
 		{
 			echo '<br /><br />
 				<script type="text/javascript">

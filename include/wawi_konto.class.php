@@ -430,7 +430,7 @@ class wawi_konto extends basis_db
 					WHERE 
 						kst.konto_id = konto.konto_id 
 						AND kst.kostenstelle_id ='.$this->db_add_param($kostenstelle_id, FHC_INTEGER).' 
-					ORDER by konto.beschreibung ASC;';
+					ORDER by konto.kontonr ASC;';
 			
 			if(!$this->db_query($qry))
 			{

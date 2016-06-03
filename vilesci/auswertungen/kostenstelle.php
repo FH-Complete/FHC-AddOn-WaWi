@@ -24,7 +24,7 @@
  */
 $basepath = $_SERVER['DOCUMENT_ROOT'];
 require_once($basepath.'/config/wawi.config.inc.php');
-require_once('../auth.php');
+//require_once('../auth.php');
 require_once('../../include/wawi_benutzerberechtigung.class.php');
 require_once($basepath.'/include/functions.inc.php');
 require_once('../../include/wawi_rechnung.class.php');
@@ -83,10 +83,14 @@ $datum_obj = new datum();
 <?php
 
 	$db = new basis_db();
+	$filter_aktive = true;
+	if (!isset($_REQUEST['nuraktive'])) {
+		$filter_aktive = false;
+	}
+	echo '<form action="'.$_SERVER['PHP_SELF'].'" method="GET">';
 	echo '<table><tr><td>';
 	//Geschaeftsjahr	
-	echo '
-	<form action="'.$_SERVER['PHP_SELF'].'" method="GET">
+	echo '	
 	Geschäftsjahr
 	<SELECT name="geschaeftsjahr" >';
 	$gj = new geschaeftsjahr();
@@ -105,14 +109,12 @@ $datum_obj = new datum();
 	}
 	echo '
 	</SELECT>
-	<input type="submit" value="Anzeigen" name="show">
-	</form>';
+	<input type="submit" value="Anzeigen" name="show_geschaeftsjahr">';
 
-	echo '</td><td width="100px"> &nbsp; </td><td>';
+	echo '</td><td width="60px"> &nbsp; </td><td>';
 	
 	//Kalenderjahr	
 	echo '
-	<form action="'.$_SERVER['PHP_SELF'].'" method="GET">
 	Kalenderjahr
 	<SELECT name="kalenderjahr" >';
 		
@@ -128,11 +130,17 @@ $datum_obj = new datum();
 	}
 	echo '
 	</SELECT>
-	<input type="submit" value="Anzeigen" name="show">
-	</form>';
+	<input type="submit" value="Anzeigen" name="show_kalenderjahr">';
 	
-	echo '</td></tr></table>';
-	if(isset($_REQUEST['kalenderjahr']))
+	echo '</td>';
+	echo '</td><td width="60px"> &nbsp; </td>';
+	echo '<td>';
+	echo '<label><input type="checkbox" name="nuraktive" value="1" '.($filter_aktive?'checked':'').'/> nur aktive Konten</label>';
+	
+	echo '</td>';
+	echo '</tr></table>';
+	echo '</form>';
+	if(isset($_REQUEST['kalenderjahr']) && isset($_REQUEST['show_kalenderjahr']))
 	{
 		//Kalenderjahr
 		$vondatum = $kalenderjahr.'-01-01';
@@ -195,7 +203,7 @@ $datum_obj = new datum();
 	else
 		die('Fehler bei Datenbankzugriff');
 
-	echo '<span style="font-size: small">Zeitraum: ',$datum_obj->formatDatum($vondatum,'d.m.Y'),' - ',$datum_obj->formatDatum($endedatum,'d.m.Y').'</span>';
+	echo '<span style="font-size: small">Zeitraum: ',$datum_obj->formatDatum($vondatum,'d.m.Y'),' - ',$datum_obj->formatDatum($endedatum,'d.m.Y').($filter_aktive?' (nur aktive Konten)':'(inkl. inaktive Konten)').'</span>';
 	echo '
 	<script type="text/javascript">
 	$(document).ready(function() 
@@ -250,8 +258,9 @@ $datum_obj = new datum();
 		else 
 		{
 			$class='class="inaktiv"';
-			// inaktive nicht anzeigen [WM] 16.2.2016
-			continue;
+			if ($filter_aktive) {
+				continue;
+			}
 		}
 				
 		echo '<tr>';

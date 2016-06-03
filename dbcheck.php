@@ -60,7 +60,7 @@ $tabellen = array();
 
 
 
-
+/*
 $schemaName = "wawi";
 $tableName = "tbl_bestellung_kategorie";
 $tabellen[$schemaName.'.'.$tableName] = array("bkategorie_id","beschreibung","kommentar", "aktiv","insertamum","insertvon","updateamum","updatevon");
@@ -92,7 +92,7 @@ if(!tableExists($schemaName,$tableName))
                 ALTER TABLE $tableName 
                     ALTER COLUMN bkategorie_id SET DEFAULT nextval('$sequenceName');
                 
-                GRANT SELECT ON $tableName TO web;
+        GRANT SELECT ON $tableName TO web;
 		GRANT SELECT, UPDATE, INSERT, DELETE ON $tableName TO vilesci;
 		GRANT SELECT, UPDATE ON $sequenceName TO vilesci;
                 ";
@@ -114,6 +114,9 @@ if(!tableExists($schemaName,$tableName))
                 $qry="insert into $tableName(beschreibung,kommentar,aktiv,insertamum) values('Labormaterial','Klein-/Bauteile, Laborzubehör, Flüssigkeiten; für das Arbeiten im Labor',true,now())";
                 if(!$db->db_query($qry))
                     echo '<strong>$tableName: '.$db->db_last_error().'</strong><br>';
+                $qry="insert into $tableName(beschreibung,kommentar,aktiv,insertamum) values('Fachliteratur','',true,now())";
+                if(!$db->db_query($qry))
+                    echo '<strong>$tableName: '.$db->db_last_error().'</strong><br>';
                 $qry="insert into $tableName(beschreibung,kommentar,aktiv,insertamum) values('Büro-, EDV-, Unterrichtsmaterial','',true,now())";
                 if(!$db->db_query($qry))
                     echo '<strong>$tableName: '.$db->db_last_error().'</strong><br>';
@@ -126,12 +129,21 @@ if(!tableExists($schemaName,$tableName))
                 $qry="insert into $tableName(beschreibung,kommentar,aktiv,insertamum) values('Reise-Aufwand','',true,now())";
                 if(!$db->db_query($qry))
                     echo '<strong>$tableName: '.$db->db_last_error().'</strong><br>';
-                $qry="insert into $tableName(beschreibung,kommentar,aktiv,insertamum) values('Sonstiger Aufwand','',true,now())";
+                $qry="insert into $tableName(beschreibung,kommentar,aktiv,insertamum) values('Sonstiger Aufwand','z.B. Instandhaltung, Beratung, Weiterbildung',true,now())";
+                if(!$db->db_query($qry))
+                    echo '<strong>$tableName: '.$db->db_last_error().'</strong><br>';
+                $qry="insert into $tableName(beschreibung,kommentar,aktiv,insertamum) values('Mehrere Kategorien','gemischte Bestellung',true,now())";
+                if(!$db->db_query($qry))
+                    echo '<strong>$tableName: '.$db->db_last_error().'</strong><br>';
+                $qry="insert into $tableName(beschreibung,kommentar,aktiv,insertamum) values('Auslagenersatz','',true,now())";
+                if(!$db->db_query($qry))
+                    echo '<strong>$tableName: '.$db->db_last_error().'</strong><br>';
+                $qry="insert into $tableName(beschreibung,kommentar,aktiv,insertamum) values('Dummy','',true,now())";
                 if(!$db->db_query($qry))
                     echo '<strong>$tableName: '.$db->db_last_error().'</strong><br>';
         }
 }
-
+*/
 
 $schemaName = "wawi";
 $tableName = "tbl_konto";
@@ -238,7 +250,7 @@ $tabellen[$schemaName.'.'.$tableName] = array("bestellung_id","bestell_nr","tite
     "bemerkung","liefertermin","besteller_uid","lieferadresse",
     "kostenstelle_id","konto_id","rechnungsadresse","firma_id","freigegeben",
     "updateamum","updatevon","insertamum","insertvon","ext_id",
-    "zahlungstyp_kurzbz");
+    "zahlungstyp_kurzbz, auftragsbestaetigung, auslagenersatz, iban, empfehlung_leasing, wird_geleast, nicht_bestellen");
 if(!tableExists($schemaName,$tableName))
 {
         $sequenceName = $tableName.'_seq';
@@ -267,8 +279,9 @@ if(!tableExists($schemaName,$tableName))
                     auftragsbestaetigung date,
                     auslagenersatz boolean default false,
                     iban varchar(50),
-                    leasing boolean default false,
-                    leasing_txt varchar(255)
+                    empfehlung_leasing boolean default false,
+                    wird_geleast boolean default false,
+                    nicht_bestellen default false
                 );
                 
                 CREATE SEQUENCE $sequenceName
@@ -347,6 +360,7 @@ else
         print "<br>Attribut $columnName exitiert bereits";
     }
     
+    /*
     $columnName = 'bkategorie_id';
     if (!columnExists($schemaName, $tableName, $columnName))
     {
@@ -364,7 +378,7 @@ else
     else
     {
         print "<br>Attribut $columnName exitiert bereits";
-    }
+    }*/
     
     $columnName = 'zuordnung';
     if (!columnExists($schemaName, $tableName, $columnName))
@@ -1315,7 +1329,8 @@ if(!tableExists($schemaName,$tableName))
                 
                 CREATE TABLE $tableName (
                     zahlungstyp_kurzbz character varying(32) NOT NULL,
-                    bezeichnung character varying(256) NOT NULL
+                    bezeichnung character varying(256) NOT NULL,
+                    reihenfolge int not null
                 );
                 
                 ALTER TABLE $tableName
@@ -1330,6 +1345,36 @@ if(!tableExists($schemaName,$tableName))
 		echo '<strong>$tableName: '.$db->db_last_error().'</strong><br>';
 	else 
 		echo ' $tableName: Tabelle $tableName hinzugefuegt!<br>';
+}
+else
+{
+    $columnName = 'reihenfolge';
+    print "Erstelle Attribute für Tabelle $tableName:";
+    if (!columnExists($schemaName, $tableName, $columnName))
+    {
+        $qry = "alter table $schemaName.$tableName add column $columnName int not null default 1;";
+        if(!$db->db_query($qry))
+        {
+            echo "<strong>$columnName: ".$db->db_last_error()."</strong><br>";
+        }
+        else 
+        {
+            echo " $columnName: Attribut $columnName hinzugefuegt!<br>";
+            $qry = "
+                update  wawi.tbl_zahlungstyp set reihenfolge = 1 where zahlungstyp_kurzbz='rechnung';
+                update  wawi.tbl_zahlungstyp set reihenfolge = 2 where zahlungstyp_kurzbz='kreditkarte';
+                update  wawi.tbl_zahlungstyp set reihenfolge = 3 where zahlungstyp_kurzbz='vorauszahlung';
+                update  wawi.tbl_zahlungstyp set reihenfolge = 4,bezeichnung='Nachnahme/Barzahlung' where zahlungstyp_kurzbz='nachnahme';
+                update  wawi.tbl_zahlungstyp set reihenfolge = 5 where zahlungstyp_kurzbz='honorarnote';
+                update  wawi.tbl_zahlungstyp set reihenfolge = 6 where zahlungstyp_kurzbz='dienstreise';
+
+            ";
+            if(!$db->db_query($qry))
+            {
+                echo "<strong>$columnName: '.$db->db_last_error().'</strong><br>";
+            }
+        }
+    }
 }
 
 
@@ -1526,11 +1571,11 @@ else
 
 $schemaName = "wawi";
 $tableName = "tbl_bestellung";
-$columnName = 'leasing';
+$columnName = 'wird_geleast';
 print "Erstelle Attribute für Tabelle $tableName:";
 if (!columnExists($schemaName, $tableName, $columnName))
 {
-    $qry = "alter table $schemaName.$tableName add column $columnName boolean;";
+    $qry = "alter table $schemaName.$tableName add column $columnName boolean default false;";
     if(!$db->db_query($qry))
             echo "<strong>$columnName: '.$db->db_last_error().'</strong><br>";
     else 
@@ -1543,11 +1588,28 @@ else
 
 $schemaName = "wawi";
 $tableName = "tbl_bestellung";
-$columnName = 'leasing_txt';
+$columnName = 'nicht_bestellen';
 print "Erstelle Attribute für Tabelle $tableName:";
 if (!columnExists($schemaName, $tableName, $columnName))
 {
-    $qry = "alter table $schemaName.$tableName add column $columnName varchar(255);";
+    $qry = "alter table $schemaName.$tableName add column $columnName boolean default false;";
+    if(!$db->db_query($qry))
+            echo "<strong>$columnName: '.$db->db_last_error().'</strong><br>";
+    else 
+            echo " $columnName: Attribut $columnName hinzugefuegt!<br>";
+}
+else
+{
+    print "<br>Attribut $columnName exitiert bereits";
+}
+
+$schemaName = "wawi";
+$tableName = "tbl_bestellung";
+$columnName = 'empfehlung_leasing';
+print "Erstelle Attribute für Tabelle $tableName:";
+if (!columnExists($schemaName, $tableName, $columnName))
+{
+    $qry = "alter table $schemaName.$tableName add column $columnName boolean default false;";
     if(!$db->db_query($qry))
             echo "<strong>$columnName: '.$db->db_last_error().'</strong><br>";
     else 

@@ -24,7 +24,7 @@
  */
 $basepath = $_SERVER['DOCUMENT_ROOT'];
 require_once($basepath.'/config/wawi.config.inc.php');
-require_once('../auth.php');
+//require_once('../auth.php');
 require_once('../../include/wawi_benutzerberechtigung.class.php');
 require_once($basepath.'/include/functions.inc.php');
 require_once('../../include/wawi_rechnung.class.php');
@@ -58,7 +58,7 @@ $datum_obj = new datum();
 	<link rel="stylesheet" href="../../skin/wawi.css" type="text/css">
 	
 			
-	<script type="text/javascript" src="../../include/js/jquery.js"></script> 
+	<script type="text/javascript" src="../../../../include/js/jquery1.9.min.js"></script>	 
 	<script type="text/javascript">
  	function alleMarkieren(checked)
  	{

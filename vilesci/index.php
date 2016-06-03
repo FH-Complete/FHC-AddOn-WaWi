@@ -32,7 +32,7 @@ $uid = get_uid();
 $rechte = new benutzerberechtigung();
 $rechte->getBerechtigungen($uid);
 
-if(!$rechte->isBerechtigt('basis/addon'))
+if(!$rechte->isBerechtigt('addon/wawi'))
 {
         echo '<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN"
         "http://www.w3.org/TR/html4/strict.dtd">

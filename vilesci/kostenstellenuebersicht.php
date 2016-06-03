@@ -23,7 +23,7 @@
 $basepath = $_SERVER['DOCUMENT_ROOT'];
 require_once $basepath.'/config/wawi.config.inc.php';
 require_once($basepath.'/include/organisationseinheit.class.php');
-require_once('auth.php');
+//require_once('auth.php');
 require_once('../include/wawi_kostenstelle.class.php');
 require_once('../include/wawi_konto.class.php');
 require_once('../include/wawi_rechnung.class.php');
@@ -363,7 +363,7 @@ if(isset($_GET['method']))
 			}
 			$i ++;
 			echo "<tr> <td>\n";
- 			echo '<input type="checkbox" name="checkbox_'.$ko->konto_id.'" value='.$ko->konto_id." $checked>".$db->convert_html_chars($ko->kurzbz).'<br>';
+			echo '<input type="checkbox" name="checkbox_'.$ko->konto_id.'" value='.$ko->konto_id." $checked>".(!$ko->aktiv?'<strike>':'').$db->convert_html_chars($ko->kurzbz).(!$ko->aktiv?'</strike>':'').'<br>';
  			echo '</td> </tr>';		
 		}
 		

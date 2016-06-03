@@ -87,7 +87,7 @@ class wawi_zahlungstyp extends basis_db
 	 */
 	public function getAll()
 	{
-		$qry = "SELECT * FROM wawi.tbl_zahlungstyp ORDER by zahlungstyp_kurzbz;"; 
+		$qry = "SELECT * FROM wawi.tbl_zahlungstyp ORDER by reihenfolge;"; 
 		
 		if($this->db_query($qry))
 		{
@@ -110,7 +110,7 @@ class wawi_zahlungstyp extends basis_db
         
         public function getAllFiltered()
 	{
-		$qry = "SELECT * FROM wawi.tbl_zahlungstyp where zahlungstyp_kurzbz not in ('dienstreise','honorarnote') ORDER by zahlungstyp_kurzbz;"; 
+		$qry = "SELECT * FROM wawi.tbl_zahlungstyp where zahlungstyp_kurzbz not in ('dienstreise','honorarnote') ORDER by reihenfolge;"; 
 		
 		if($this->db_query($qry))
 		{

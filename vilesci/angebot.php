@@ -19,7 +19,7 @@
 
 $basepath = $_SERVER['DOCUMENT_ROOT'];
 require_once $basepath.'/config/wawi.config.inc.php';
-require_once('auth.php');
+//require_once('auth.php');
 
 require_once $basepath.'/include/firma.class.php';
 require_once $basepath.'/include/organisationseinheit.class.php';
@@ -32,7 +32,7 @@ require_once $basepath.'/include/studiengang.class.php';
 require_once $basepath.'/include/mail.class.php';
 require_once $basepath.'/include/geschaeftsjahr.class.php';
 require_once '../include/wawi_konto.class.php';
-require_once '../include/wawi_kategorie.class.php';
+//require_once '../include/wawi_kategorie.class.php';
 require_once '../include/wawi_zuordnung.class.php';
 require_once '../include/wawi_bestellung.class.php';
 require_once '../include/wawi_kostenstelle.class.php';
@@ -53,8 +53,8 @@ $rechte = new benutzerberechtigung();
 $rechte->getBerechtigungen($user);
 $kst=new wawi_kostenstelle(); 
 $kst->loadArray($rechte->getKostenstelle($berechtigung_kurzbz),'bezeichnung'); 
-$bestellung_kategorie=new wawi_bestellung_kategorie(); 
-$bestellung_kategorie->getAll(true); 
+//$bestellung_kategorie=new wawi_bestellung_kategorie(); 
+//$bestellung_kategorie->getAll(true); 
 
 $projekt = new projekt(); 
 $projekt->getProjekteMitarbeiter($user);

@@ -14,9 +14,13 @@ class wawi_zuordnung {
     const LEHRE = "lehre";
     const FUE = "fue";
     const VERWALTUNG = "verwaltung";
+    const LEHRE_FUE = "lehre+fue";
 
-    private static $enum = array(self::LEHRE => "Lehre", self::FUE => "F&E", 
-        self::VERWALTUNG => "Verwaltung");
+    private static $enum = array(
+        self::LEHRE => "Lehre", 
+        self::FUE => "F&E", 
+        self::VERWALTUNG => "Verwaltung", 
+        self::LEHRE_FUE => "Lehre/F&E");
 
 
     public static function getAll() 

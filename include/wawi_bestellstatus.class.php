@@ -94,6 +94,8 @@ class wawi_bestellstatus extends basis_db
 			return false; 
 		}
 	}
+
+	
 	
 	/**
 	 * 

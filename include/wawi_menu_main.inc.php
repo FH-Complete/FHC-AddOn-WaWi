@@ -51,7 +51,7 @@ $menu=array
 			'BestellungNeu'=>array('name'=>'Neu', 'link'=>'bestellung.php?method=new', 'target'=>'content'),
 			'BestellungSuchen'=>array('name'=>'Suchen', 'link'=>'bestellung.php?method=suche', 'target'=>'content'),
 			'MeineBestellungen'=>array('name'=>'Meine', 'link'=>'bestellung.php?method=suche&submit=true&mitarbeiter_uid='.get_uid().'&evon='.date('Y-m-d',mktime(0,0,0,date('m')-2,date('d'),date('Y'))), 'target'=>'content'),
-			'CheckBestellungen'=>array('name'=>'Offene Freigabe', 'link'=>'check_bestellung.php', 'target'=>'content'),
+			'CheckBestellungen'=>array('name'=>'Check Bestellungen', 'link'=>'check_bestellung.php', 'target'=>'content'),
 		),
 		'Rechnung'=>array
 		(
@@ -65,10 +65,10 @@ $menu=array
 		),
 		'Firma'=>array
 		(
-			'name'=>'Lieferanten', 'link'=>'firma.php', 'target'=>'content','permissions'=>array('wawi/firma'),
+			'name'=>'Lieferanten/Firma', 'link'=>'firma.php', 'target'=>'content','permissions'=>array('wawi/firma'),
 			'FirmaNeu'=>array('name'=>'Neu', 'link'=>'firma.php?method=new', 'target'=>'content'),
 			'FirmaSuchen'=>array('name'=>'Suchen', 'link'=>'firma.php', 'target'=>'content'),
-                        'FirmaZusammenlegen'=>array('name'=>'Zusammenlegen', 'link'=>'firmaZusammenlegen.php', 'target'=>'content'),
+            'FirmaZusammenlegen'=>array('name'=>'Zusammenlegen', 'permissions'=>array('basis/firma'),'link'=>'firmaZusammenlegen.php', 'target'=>'content'),
 		),
 		'Berechtigungen'=>array
 		(
@@ -84,7 +84,8 @@ $menu=array
 			'Kostenstelle'=>array ('name'=>'Kostenstelle', 'permissions'=>array('wawi/bestellung'),'link'=>'auswertungen/kostenstelle.php', 'target'=>'content'),
 			'Tags'=>array ('name'=>'Tags', 'permissions'=>array('wawi/bestellung'),'link'=>'auswertungen/wawi_tags.php', 'target'=>'content'),
 			'Konto'=>array ('name'=>'Konto', 'permissions'=>array('wawi/bestellung'),'link'=>'auswertungen/konto.php', 'target'=>'content'),
-			'Aufteilung'=>array ('name'=>'Aufteilung', 'permissions'=>array('wawi/bestellung'),'link'=>'auswertungen/aufteilung.php', 'target'=>'content')
+			'Aufteilung'=>array ('name'=>'Aufteilung', 'permissions'=>array('wawi/bestellung'),'link'=>'auswertungen/aufteilung.php', 'target'=>'content'),
+			'Firmen angelegt'=>array ('name'=>'Firmen angelegt', 'permissions'=>array('basis/firma'),'link'=>'auswertungen/firmen_angelegt.php', 'target'=>'content')
 		)
 	)
 	

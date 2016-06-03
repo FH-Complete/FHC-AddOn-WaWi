@@ -21,7 +21,7 @@
  */
 $basepath = dirname(dirname(dirname(dirname($_SERVER['SCRIPT_FILENAME'])))).DIRECTORY_SEPARATOR;
 require_once($basepath.'config/wawi.config.inc.php');
-require_once('auth.php');
+//require_once('auth.php');
 
 $menu = isset($_GET['menu'])?$_GET['menu']:'menu.php';
 $content = isset($_GET['content'])?$_GET['content']:'home.php';
@@ -47,7 +47,7 @@ echo '<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Frameset//EN" "http://www.w3.
 	<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
 	<title>WaWi - Warenwirtschaft</title>
 </head>
-	<frameset cols="200,*" framespacing="1" border="1">
+	<frameset cols="220,*" framespacing="1" border="1">
 	  <frame src="'.$menu.'" name="menu" frameborder="0"/>
 	  <frame src="'.$content.'" name="content" frameborder="0"/>
 	  <noframes>

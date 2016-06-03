@@ -21,7 +21,7 @@
  */
 $basepath = $_SERVER['DOCUMENT_ROOT'];
 require_once $basepath.'/config/wawi.config.inc.php';
-require_once('auth.php');
+//require_once('auth.php');
 require_once('../include/wawi_konto.class.php');
 require_once($basepath.'/include/benutzerberechtigung.class.php');
 require_once($basepath.'/include/sprache.class.php');
@@ -121,8 +121,8 @@ if(isset($_GET['method']))
 		 	 	echo "</tr>\n";
 		 	 	echo "<tr><td>&nbsp;</td></tr>\n"; 	 	
 		  		echo "<tr>\n";
-		  		echo "<td><a href=kontouebersicht.php> zurueck </a></td>\n";
-		  		echo "<td><input type='submit' value='update'></td>\n";
+		  		echo "<td><a href=\"kontouebersicht.php\"> zur&uuml;ck </a></td>\n";
+		  		echo "<td><input type=\"submit\" value=\"update\"></td>\n";
 		  		echo "</tr>\n";
 		  		echo "</table>\n";
 		  		echo "</form>\n";
@@ -130,7 +130,7 @@ if(isset($_GET['method']))
 			else 
 			{
 				echo 'Konto wurde nicht gefunden!';
-				echo "<a href=\"kontouebersicht.php\"> <br>zurück </a>\n";
+				echo "<a href=\"kontouebersicht.php\"> <br>zur&uuml;ck </a>\n";
 			}
 		}
 		else

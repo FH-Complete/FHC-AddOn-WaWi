@@ -35,6 +35,12 @@ require_once($basepath.'/include/standort.class.php');
 require_once($basepath.'/include/kontakt.class.php');
 require_once($basepath.'/include/studiengang.class.php'); 
 
+/**
+ *  Helper um Land von PLZ zu entfernen ('A-1060' => '1060')
+ */
+function cleanZIP($zip) {
+	return preg_replace('/^[A-Z]-/', '', $zip);
+}
 
 function bestellungReadModel($id=null)
 {
@@ -59,9 +65,21 @@ function bestellungReadModel($id=null)
 		$rechnungsadresse = new adresse();
 		$rechnungsadresse->load($bestellung->rechnungsadresse);   
                 
-                // für Steuernummer
-                $firma_rechnung = new firma();
-                $firma_rechnung->load($rechnungsadresse->firma_id);
+        // für Steuernummer
+        $firma_rechnung = new firma();
+        // Wenn bei Adresse keine firma_id -> dann Firma über Standort
+        if ($rechnungsadresse->firma_id != '') {
+			$firma_rechnung->load($rechnungsadresse->firma_id);
+        } else {
+        	$standortRechnung = new standort();
+        	// Standorte zu Adresse laden, damit man Firma-Id bekommt
+        	$standortRechnung->load_adresse($rechnungsadresse->adresse_id);
+        	if(isset($standortRechnung->result[0])) {
+				$firma_rechnung->load($standortRechnung->result[0]->firma_id);
+        	}        	
+        }
+        
+        
 		
 		$lieferadresse = new adresse();
 		$lieferadresse->load($bestellung->lieferadresse);
@@ -71,21 +89,21 @@ function bestellungReadModel($id=null)
 		
 		$studiengang = new studiengang(); 
                 
-                $kategorie='';
-                if (isset($bestellung->bkategorie_id))
-                {
-                    $wawi_kategorie = new wawi_bestellung_kategorie();
-                    $wawi_kategorie->load($bestellung->bkategorie_id);
-                    $kategorie=$wawi_kategorie->beschreibung;
-                }
-                
-                $zuordnung_person = null;
-                if (isset($bestellung->zuordnung_uid) && $bestellung->zuordnung_uid != '')
-                {
-                    $zuordnung_person = new benutzer();
-                    if(!$zuordnung_person->load($bestellung->zuordnung_uid))
-                        throw new RuntimeException('Zugeordnete Person konnte nicht geladen werden', 1);  
-                }
+        $kategorie='';
+        if (isset($bestellung->bkategorie_id))
+        {
+            $wawi_kategorie = new wawi_bestellung_kategorie();
+            $wawi_kategorie->load($bestellung->bkategorie_id);
+            $kategorie=$wawi_kategorie->beschreibung;
+        }
+        
+        $zuordnung_person = null;
+        if (isset($bestellung->zuordnung_uid) && $bestellung->zuordnung_uid != '')
+        {
+            $zuordnung_person = new benutzer();
+            if(!$zuordnung_person->load($bestellung->zuordnung_uid))
+                throw new RuntimeException('Zugeordnete Person konnte nicht geladen werden', 1);  
+        }
                 
                 
 		$firma = new firma();
@@ -114,97 +132,124 @@ function bestellungReadModel($id=null)
                         $kontakt->loadFirmaKontakttyp($standort->standort_id, 'homepage');
 			$homepage = $kontakt->kontakt;
                         
-                        $nation = new nation();
-                        $nation->load($empfaengeradresse->nation);
-                        $nation_code=$empfaengeradresse->nation;
-                        if ($nation !== false)
-                        {
-                            $isEU=$nation->eu;
-                        }
-                        else
-                        {
-                            $isEU=true;                        
-                        }
+            $nation = new nation();
+            $nation->load($empfaengeradresse->nation);
+            $nation_code=$empfaengeradresse->nation;
+            $nation_kurztext=$nation->engltext;
+
+            if ($nation !== false)
+            {
+                $isEU=$nation->eu;
+            }
+            else
+            {
+                $isEU=true;                        
+            }
 		}
 		else
 		{
 			$telefon='';
 			$fax='';
 			$kundennummer='';
-                        $email='';
-                        $url=''; 
-                        $nation_code='';
-                        $isEU=true;
-                        $kategorie='';
+            $email='';
+            $url=''; 
+            $nation_code='';
+            $nation_kurztext='';
+            $isEU=true;
+            $kategorie='';
 		}
 		$datum_obj = new datum();
 				
-                $model = new stdClass();
+        $model = new stdClass();
 		$model->bestell_nr = $bestellung->bestell_nr;
 		$model->titel = $bestellung->titel;
 		$model->liefertermin = $bestellung->liefertermin;
 		$model->kundennummer = $kundennummer;
-                $model->konto = $konto->kurzbz;
-                $model->kostenstelle = $kostenstelle->bezeichnung;
-                $model->kategorie = $kategorie;
-                if ($bestellung->zuordnung != null && $bestellung->zuordnung != '')
-                {
-                    $model->zuordnung = wawi_zuordnung::getLabel($bestellung->zuordnung);
-                }
-                else 
-                {
-                    $model->zuordnung = null;
-                }
-                $model->zuordnung_raum = $bestellung->zuordnung_raum;
-                
-                // Zuordnung Person
-                if ($zuordnung_person != null)
-                {
-                    $model->zuordnung_person = new stdClass();
-                    $model->zuordnung_person->titelpre = $zuordnung_person->titelpre;
-                    $model->zuordnung_person->vorname = $zuordnung_person->vorname;
-                    $model->zuordnung_person->nachname = $zuordnung_person->nachname;
-                    $model->zuordnung_person->titelpost = $zuordnung_person->titelpost;
-                    $model->zuordnung_person->email = $zuordnung_person->uid.'@'.DOMAIN;
-                }
-                else
-                {
-                    $model->zuordnung_person = null;
-                }
-                // Besteller
+        $model->konto = $konto->kurzbz;
+        $model->kostenstelle = $kostenstelle->bezeichnung;
+        $model->kategorie = $kategorie;
+        if ($bestellung->zuordnung != null && $bestellung->zuordnung != '')
+        {
+            $model->zuordnung = wawi_zuordnung::getLabel($bestellung->zuordnung);
+        }
+        else 
+        {
+            $model->zuordnung = null;
+        }
+        $model->zuordnung_raum = $bestellung->zuordnung_raum;
+        
+        // Zuordnung Person
+        if ($zuordnung_person != null)
+        {
+            $model->zuordnung_person = new stdClass();
+            $model->zuordnung_person->titelpre = $zuordnung_person->titelpre;
+            $model->zuordnung_person->vorname = $zuordnung_person->vorname;
+            $model->zuordnung_person->nachname = $zuordnung_person->nachname;
+            $model->zuordnung_person->titelpost = $zuordnung_person->titelpost;
+            $model->zuordnung_person->email = $zuordnung_person->uid.'@'.DOMAIN;
+        }
+        else
+        {
+            $model->zuordnung_person = null;
+        }
+        // Besteller
 		$model->kontaktperson = new stdClass();
 		$model->kontaktperson->titelpre = $besteller->titelpre;
 		$model->kontaktperson->vorname = $besteller->vorname;
 		$model->kontaktperson->nachname = $besteller->nachname;
 		$model->kontaktperson->titelpost = $besteller->titelpost;
 		$model->kontaktperson->email = $besteller->uid.'@'.DOMAIN;		
-                // Rechnungsadresse
+        // Rechnungsadresse        
 		$model->rechnungsadresse = new stdClass();                
-                //$model->rechnungsadresse->kurzbz = $rechnungsadresse->kurzbz;
-                $model->rechnungsadresse->steuernummer = $firma_rechnung->steuernummer;
+        //$model->rechnungsadresse->kurzbz = $rechnungsadresse->kurzbz;
+        
+    	$model->rechnungsadresse->steuernummer = $firma_rechnung->steuernummer;
+    	       
+        $model->rechnungsadresse->firma_id= $rechnungsadresse->firma_id;
 		$model->rechnungsadresse->name = $rechnungsadresse->name;
 		$model->rechnungsadresse->strasse = $rechnungsadresse->strasse;
-		$model->rechnungsadresse->plz = $rechnungsadresse->plz;
-		$model->rechnungsadresse->ort = $rechnungsadresse->ort;
+		$model->rechnungsadresse->plz = cleanZIP($rechnungsadresse->plz);
+		$model->rechnungsadresse->ort = mb_strtoupper($rechnungsadresse->gemeinde!=''?$rechnungsadresse->gemeinde:$rechnungsadresse->ort, 'UTF-8');
+		$nation = new nation();
+        $nation->load($rechnungsadresse->nation);
+        if ($nation !== false)
+        	$model->rechnungsadresse->nation_kurztext=mb_strtoupper($nation->engltext, 'UTF-8');
+        else
+        	$model->rechnungsadresse->nation_kurztext='';
+
+		if ($rechnungsadresse->adresse_id == 31813) { 
+        	// das es noch kein Feld dafür gibt, Firmenbuchnr einfügen
+        	$model->rechnungsadresse->firmenbuch = 'Handelsgericht Wien, FN 264937p';
+        } else {
+        	$model->rechnungsadresse->firmenbuch = '';
+        }
 		// Lieferadresse
 		$model->lieferadresse = new stdClass();
 		$model->lieferadresse->name = $lieferadresse->name;
 		$model->lieferadresse->strasse = $lieferadresse->strasse;
-		$model->lieferadresse->plz = $lieferadresse->plz;
-		$model->lieferadresse->ort = $lieferadresse->ort;
-                // Lieferant
+		$model->lieferadresse->plz = cleanZIP($lieferadresse->plz);
+		$model->lieferadresse->ort = mb_strtoupper($lieferadresse->gemeinde!=''?$lieferadresse->gemeinde:$lieferadresse->ort, 'UTF-8'); 
+		$nation->load($lieferadresse->nation);
+        if ($nation !== false)
+        	$model->lieferadresse->nation_kurztext=mb_strtoupper($nation->engltext, 'UTF-8');
+        else
+        	$model->lieferadresse->nation_kurztext='';
+
+        // Lieferant
 		$model->lieferant = new stdClass();
 		$model->lieferant->name = $firma->name;
                 $model->lieferant->steuernummer = $firma->steuernummer;
+        
 		$model->lieferant->strasse = $empfaengeradresse->strasse;
-		$model->lieferant->plz = $empfaengeradresse->plz;
-		$model->lieferant->ort = $empfaengeradresse->ort;
+		$model->lieferant->plz = cleanZIP($empfaengeradresse->plz);
+		$model->lieferant->ort = mb_strtoupper($empfaengeradresse->ort, 'UTF-8'); 
 		$model->lieferant->telefon = $telefon;
 		$model->lieferant->fax = $fax;	
-                $model->lieferant->email = $email;
-                $model->lieferant->homepage = $homepage;
-                $model->lieferant->nation = $nation_code;
-                $model->lieferant->eu = $isEU;
+        $model->lieferant->email = $email;
+        $model->lieferant->homepage = $homepage;
+        $model->lieferant->nation_code = $nation_code;
+        $model->lieferant->nation_kurztext = mb_strtoupper($nation_kurztext, 'UTF-8');
+        $model->lieferant->eu = $isEU;
 				
 		$details = new wawi_bestelldetail();
 		$details->getAllDetailsFromBestellung($bestellung->bestellung_id);
@@ -241,7 +286,28 @@ function bestellungReadModel($id=null)
 		$model->summe_netto = number_format($summe_netto,2,',','.');
 		$model->summe_mwst = number_format($summe_mwst,2,',','.');
 		$model->summe_brutto = number_format($summe_brutto,2,',','.');
-                return $model;
+
+		// nicht bestellen
+		if ($bestellung->nicht_bestellen != null && $bestellung->nicht_bestellen === true) {
+			$model->nicht_bestellen = true;
+		} else {
+			$model->nicht_bestellen = false;
+		}
+                
+
+        // Zahlungstyp Kreditkarte?
+        if ($bestellung->zahlungstyp_kurzbz == 'kreditkarte') {
+        	$model->kreditkarte = true;
+        } else {
+        	$model->kreditkarte = false;
+        }
+        // Zahlungstyp Vorauskasse?
+        if ($bestellung->zahlungstyp_kurzbz == 'vorauszahlung') {
+        	$model->vorauszahlung = true;
+        } else {
+        	$model->vorauszahlung = false;
+        }
+        return $model;
 	}
 	else
         {

@@ -15,12 +15,6 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307, USA.
  *
- * Authors: Christian Paminger <christian.paminger@technikum-wien.at>,
- *          Andreas Oesterreicher <andreas.oesterreicher@technikum-wien.at> and
- *          Karl Burkhart <burkhart@technikum-wien.at>.
- */
-/**
- * Klasse WaWi Konto
  */
 $basepath = $_SERVER['DOCUMENT_ROOT'];
 require_once($basepath.'/include/basis_db.class.php');

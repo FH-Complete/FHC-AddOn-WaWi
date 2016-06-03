@@ -23,7 +23,7 @@
 
 $basepath = $_SERVER['DOCUMENT_ROOT'];
 require_once $basepath.'/config/wawi.config.inc.php';
-require_once('auth.php');
+//require_once('auth.php');
 
 require_once $basepath.'/include/firma.class.php';
 require_once $basepath.'/include/organisationseinheit.class.php';
@@ -36,7 +36,7 @@ require_once $basepath.'/include/studiengang.class.php';
 require_once $basepath.'/include/mail.class.php';
 require_once $basepath.'/include/geschaeftsjahr.class.php';
 require_once '../include/wawi_konto.class.php';
-require_once '../include/wawi_kategorie.class.php';
+//require_once '../include/wawi_kategorie.class.php';
 require_once '../include/wawi_zuordnung.class.php';
 require_once '../include/wawi_bestellung.class.php';
 require_once '../include/wawi_kostenstelle.class.php';
@@ -59,8 +59,8 @@ $rechte = new benutzerberechtigung();
 $rechte->getBerechtigungen($user);
 $kst=new wawi_kostenstelle(); 
 $kst->loadArray($rechte->getKostenstelle($berechtigung_kurzbz),'bezeichnung'); 
-$bestellung_kategorie=new wawi_bestellung_kategorie(); 
-$bestellung_kategorie->getAll(true); 
+//$bestellung_kategorie=new wawi_bestellung_kategorie(); 
+//$bestellung_kategorie->getAll(true); 
 
 //var_dump($bestellung_kategorie->result);
 
@@ -825,7 +825,7 @@ elseif($aktion == 'new')
         echo '	<script type="text/javascript">
 		function FensterOeffnen (adresse) 
 		{
-			MeinFenster = window.open(adresse, "Info", "width=400,height=500,left=100,top=200");
+			MeinFenster = window.open(adresse, "Info", "width=600,height=500,left=100,top=200");
 	  		MeinFenster.focus();
 		}
 		</script>'; 
@@ -834,7 +834,7 @@ elseif($aktion == 'new')
 	echo "<form action ='bestellung.php?method=save&new=true' method='post' name='newForm'>\n";
 	echo "<table border = 0>\n";
 	echo "<tr>\n";
-	echo "<td>Beschreibung:</td>\n";
+	echo "<td>Was wird bestellt:</td>\n";
 	echo "<td><input type=\"text\" size =\"80\" maxlength='256' id ='titel' name ='titel' required>";               
 	echo "</td></tr>\n";
         echo "<tr>\n";
@@ -854,7 +854,7 @@ elseif($aktion == 'new')
         echo "</td>\n";
 	echo "</tr>\n";
 	echo "<tr>\n";
-	echo "<td>Kostenstelle:</td><td><SELECT name='filter_kst' required>\n";
+	echo "<td>Kostenstelle:</td><td><SELECT name='filter_kst' onchange=\"loadKonto(this.value)\" required>\n";
 	echo "<option value =\"\">-- Kostenstelle auswählen --</option>\n";
 	foreach ($kst->result as $ks)
 	{
@@ -863,7 +863,7 @@ elseif($aktion == 'new')
 	echo "</SELECT></td>\n";
 	echo "</tr>\n";
 	
-        echo "<tr>";
+        /*echo "<tr>";
         echo "<td>Kategorie:</td><td><SELECT name=\"bestellung_kategorie\" required>\n";
 	echo "<option value=\"\">-- Kategorie auswählen --</option>\n";
 	foreach ($bestellung_kategorie->result as $kat)
@@ -875,16 +875,17 @@ elseif($aktion == 'new')
         echo "<a href = 'kategorie.html' onclick='FensterOeffnen(this.href); return false' title='Hilfe zu den Kategorien'> <img src='../skin/images/question.png'> </a>";
         echo "</td>\n";
         
-        echo "</tr>";
-        /*
+        echo "</tr>";*/
+        
+    echo "<tr>";
 	echo "<td>Konto: </td>\n"; 
 	echo "<td>\n";
 	echo "<select name='konto' id='konto' style='width: 230px;'>\n";
 	echo "<option value='' >Konto auswaehlen</option>\n";
 	echo "</select>\n";
-	echo "</td>\n";
+	echo "</td></tr>\n";
 	echo "<tr>\n";
-	echo "<td>&nbsp;</td>\n";*/
+	echo "<td>&nbsp;</td></tr>\n";
 	echo "<tr><td><input type='submit' id='submit' name='submit' value='Anlegen' onclick='return checkKst();' class='cursor'></td></tr>\n";
 	echo "</table>\n";
 	echo "</form>";
@@ -914,6 +915,7 @@ elseif($aktion == 'save')
 		$newBestellung = new wawi_bestellung(); 
 		$newBestellung->titel = mb_str_replace("'", "´", $_POST['titel']);
                 $newBestellung->zuordnung = (isset($_POST['zuordnung'])?$_POST['zuordnung']:null);
+                /*
                 if ($_POST['bestellung_kategorie']=='opt_kategorie')
                 {
                     $newBestellung->bkategorie_id = null;
@@ -921,16 +923,16 @@ elseif($aktion == 'save')
                 else
                 {
                     $newBestellung->bkategorie_id = $_POST['bestellung_kategorie'];
-                }
+                }*/
 		
 		if($_POST['filter_kst']=='opt_kostenstelle')
-                {
-                    $newBestellung->kostenstelle_id = null; 
-                }
-                else
-                {
-                    $newBestellung->kostenstelle_id = $_POST['filter_kst'];
-                }
+        {
+            $newBestellung->kostenstelle_id = null; 
+        }
+        else
+        {
+            $newBestellung->kostenstelle_id = $_POST['filter_kst'];
+        }
 		
 		$newBestellung->firma_id = $_POST['firma_id'];
 		
@@ -948,8 +950,17 @@ elseif($aktion == 'save')
 		$newBestellung->freigegeben = false; 
 		// vordefinierte Werte
 		$newBestellung->zahlungstyp_kurzbz = 'rechnung';
-		$newBestellung->lieferadresse = '1';
-		$newBestellung->rechnungsadresse = '1';
+		if ($newBestellung->kostenstelle_id != null && isGMBHKostenstelle($newBestellung->kostenstelle_id)) 
+		{
+			// automatisch GMBH-Adresse auswählen
+			$newBestellung->lieferadresse = '31813';
+			$newBestellung->rechnungsadresse = '31813';
+		}
+		else
+	 	{
+	 		$newBestellung->lieferadresse = '1';
+			$newBestellung->rechnungsadresse = '1';
+		}
 		$newBestellung->bestell_nr = $newBestellung->createBestellNr($newBestellung->kostenstelle_id); 
 		if (!$bestell_id = $newBestellung->save())
 		{
@@ -1076,6 +1087,7 @@ if($_GET['method']=='update')
 				$bestellung_new->updatevon = $user; 
 				$bestellung_new->zahlungstyp_kurzbz = $_POST['filter_zahlungstyp'];
 				$bestellung_new->kostenstelle_id = $_POST['filter_kst'];
+				/*
                                 if (isset($_POST['bestellung_kategorie']) && $_POST['bestellung_kategorie']!=null)
                                 {
                                     $bestellung_new->bkategorie_id = $_POST['bestellung_kategorie'];
@@ -1084,7 +1096,7 @@ if($_GET['method']=='update')
                                 {
                                     $bestellung_new->bkategorie_id = null;
                                 }
-                                
+                  */              
                                 if (isset($_POST['auftragsbestaetigung']))
                                 {
                                     $datum_formatiert = $date->formatDatum($_POST['auftragsbestaetigung']);
@@ -1114,16 +1126,31 @@ if($_GET['method']=='update')
                                     $bestellung_new->iban = null;
                                 }
 
-				if (isset($_POST['leasing']))
+				if (isset($_POST['wird_geleast']))
                                 {
-                                     $bestellung_new->leasing = true;
+                                     $bestellung_new->wird_geleast = true;
                                 }
                                 else
                                 {
-                                    $bestellung_new->leasing = false;
+                                    $bestellung_new->wird_geleast = false;
                                 }
-
-				$bestellung_new->leasing_txt = $_POST['leasing_txt'];
+                if (isset($_POST['nicht_bestellen']))
+                                {
+                                     $bestellung_new->nicht_bestellen = true;
+                                }
+                                else
+                                {
+                                    $bestellung_new->nicht_bestellen = false;
+                                }
+				if (isset($_POST['empfehlung_leasing']))
+                                {
+                                     $bestellung_new->empfehlung_leasing = true;
+                                }
+                                else
+                                {
+                                    $bestellung_new->empfehlung_leasing = false;
+                                }
+				
 
 				if(isset($_POST['filter_projekt']))
 				{
@@ -1834,31 +1861,35 @@ EOT;
 </div>
 
 <?php    
-
+	
     
 	//Meldungen Ausgeben
 	echo '<div style="float: right">',$ausgabemsg,'</div>';
 	
 	echo "<h2>Bearbeiten</h2>";
 	
-	echo "<form action =\"bestellung.php?method=update&amp;bestellung=$bestellung->bestellung_id\" method='post' name='editForm' id='editForm' onSubmit='maybeSubmit()'>\n";
+	echo "<form action =\"bestellung.php?method=update&amp;bestellung=$bestellung->bestellung_id\" method='post' name='editForm' id='editForm' onSubmit='return maybeSubmit()'>\n";
 	echo "<h4>Bestellnummer: ".$bestellung->bestell_nr;
 	echo '	<a href= "bestellung.php?method=copy&amp;id='.$bestellung->bestellung_id.'"> <img src="../skin/images/copy.png" title="Bestellung kopieren" class="cursor"></a>';
 	echo '	<a href= "rechnung.php?method=update&amp;bestellung_id='.$bestellung->bestellung_id.'"> <img src="../skin/images/Calculator.png" title="Rechnung anlegen" class="cursor"></a>';
 	
  	if($rechte->isBerechtigt('system/developer'))
 		echo '	<a href= "bestellung.php?method=update&amp;id='.$bestellung->bestellung_id.'"> <img src="../skin/images/refresh.png" title="Refresh" class="cursor"></a>';
+
+	if (isGMBHKostenstelle($bestellung->kostenstelle_id)) {
+		echo " <span style=\"color:white;background-color:red\"> GMBH-Bestellung! </span>";
+	}
 		
 	echo '</h4>'; 
 	
 	//tabelle Bestelldetails
 	echo "<table border = 0 width= '100%' class='dark'>\n";
 	echo "<tr>\n"; 	
-	echo "	<td>Beschreibung: </td>\n";
+	echo "	<td>Was wird bestellt: </td>\n";
 	echo "	<td><input name= 'titel' type='text' size='60' maxlength='256' value ='".$bestellung->titel."'></td>\n";
 	echo "	<td>Erstellt am:</td>\n"; 
 	echo "	<td><span name='erstellt' title ='".$bestellung->insertvon."' >".$date->formatDatum($bestellung->insertamum, 'd.m.Y')."</span></td>\n";
-	echo "	<td>Gewünschter Liefertermin: <input type='text' name ='liefertermin'  size='16' maxlength='16' value='".$bestellung->liefertermin."'></td>\n";
+	echo "	<td>Vorauss. Liefertermin: <input type='text' name ='liefertermin'  size='16' maxlength='16' value='".$bestellung->liefertermin."'></td>\n";
 	echo "</tr>\n";
 	echo "<tr>\n";
 	echo "	<td>Lieferant: </td>\n";
@@ -1933,12 +1964,14 @@ EOT;
 		{
 			$selected ='selected';	
 		}
-		echo "<option value='".$standort_lieferadresse->adresse_id."' ". $selected.">".$standorte->kurzbz.' - '.$standort_lieferadresse->strasse.', '.$standort_lieferadresse->plz.' '.$standort_lieferadresse->ort."</option>\n";
+		echo "<option value='".$standort_lieferadresse->adresse_id."' ". $selected.">".$standorte->kurzbz.' - '.$standort_lieferadresse->strasse.', '.$standort_lieferadresse->plz.' '.$standort_lieferadresse->gemeinde."</option>\n";
 	}
 	echo "</select></td></tr>\n"; 
 	echo "<tr>\n";
         
         // Kategorie
+		// wieder ausgebaut [WM]
+	/*
         echo "	<td>Kategorie: </td>\n";
 	echo "	<td><SELECT name='bestellung_kategorie' id='bestellung_kategorie' style='width: 230px;'>\n"; 
         echo "<option value=\"\">-- Kategorie auswählen --</option>\n";
@@ -1952,28 +1985,12 @@ EOT;
 		echo '<option value='.$ko->bkategorie_id.' '.$selected.'>'.$ko->beschreibung."</option>\n";
 	}
 	
-	echo "</select> </td>";
-/*
-	echo "<SELECT name='filter_konto' id='konto' style='width: 230px;'>\n"; 
-	foreach($konto->result as $ko)
-	{ 
-		$selected ='';
-		if($ko->konto_id == $bestellung->konto_id)
-		{
-			$selected = 'selected';	
-			$konto_vorhanden = true; 
-		}		
-		echo '<option value='.$ko->konto_id.' '.$selected.'>'.$ko->kurzbz."</option>\n";
-	}
-	//wenn die konto_id von der bestellung nicht in den Konten die der Kostenstelle zugeordnet sind befidet --> selbst hinschreiben
-	if(!$konto_vorhanden)
-	{
-		echo '<option value='.$bestellung->konto_id.' selected>'.$konto_bestellung->kurzbz."</option>\n";
-	}
-	echo "</select></td>";
-        */
+	echo "</select> ";
+
+	echo "<a href = 'kategorie.html' onclick='FensterOeffnen(this.href); return false' title='Hilfe zu den Kategorien'> <img src='../skin/images/question.png'> </a>";
+
+	echo "</td>";*/        
         
-        /*
 	echo "	<td>Konto: </td>\n";
 	echo "	<td><SELECT name='filter_konto' id='konto' style='width: 230px;'>\n"; 
 	foreach($konto->result as $ko)
@@ -1992,8 +2009,7 @@ EOT;
 		echo '<option value='.$bestellung->konto_id.' selected>'.$konto_bestellung->kurzbz."</option>\n";
 	}
 	echo "</select></td>";
-         * 
-         */
+         
         
         // Rechnungsadresse
         echo "<td>Rechnungsadresse:</td>\n"; 
@@ -2011,8 +2027,8 @@ EOT;
 	}		
 	echo "</select></td></tr>\n"; 
 	echo "<tr>\n"; 	
-	echo "	<td rowspan=\"2\">Interne Bemerkungen: </td>\n";
-	echo "	<td rowspan=\"2\"><textarea name='bemerkung' cols=\"70\" rows=\"2\" style='width: 482px;'>$bestellung->bemerkung</textarea></td>\n";
+	echo "	<td >Interne Bemerkungen: </td>\n";
+	echo "	<td ><textarea name='bemerkung' cols=\"70\" rows=\"2\" style='width: 482px;'>$bestellung->bemerkung</textarea></td>\n";
 	echo "	<td>Status:</td>\n"; 
 	echo "	<td width ='200px'>\n";
 	echo "<span id='btn_bestellt'>";	
@@ -2080,7 +2096,7 @@ EOT;
 	}
 	
 	echo"</td></tr>\n"; 
-
+/*
 	echo "<tr><td>Konto</td><td>";
 
 	echo "<SELECT name='filter_konto' id='konto' style='width: 230px;'>\n"; 
@@ -2102,7 +2118,7 @@ EOT;
 	echo "</select></td>";
         
 	echo "<td> </td></tr>";
-		
+		*/
 	echo "<tr>\n";
 	echo"<td>Tags:</td>\n"; 
 	$bestell_tag->GetTagsByBestellung($bestellung->bestellung_id);
@@ -2140,6 +2156,7 @@ EOT;
 					extraParams:{"work":"tags", "bestell_id":"'.$bestellung->bestellung_id.'"}
 				});
 			</script>'; */
+	echo "&nbsp; <label for=\"nicht_bestellen\">nicht bestellen</label> <input type=\"checkbox\" id=\"nicht_bestellen\" name=\"nicht_bestellen\" ".($bestellung->nicht_bestellen != null && $bestellung->nicht_bestellen === true ?'checked':'').">";
 	echo "</td>\n"; 
 	echo "<td>Freigabe:</td>\n";
 	echo "<td colspan =2>";
@@ -2207,7 +2224,7 @@ EOT;
 	}
 
 	echo "</td></tr>";
-	echo "<tr><td>Zahlungstyp:</td>"; 
+	echo "<tr><td>Zahlungsweise:</td>"; 
 	echo "<td><SELECT name='filter_zahlungstyp' id='search_zahlungstyp' >\n"; 
 	echo "<option value=''>-- bitte auswählen --</option>"; 
 	$zahlungstyp = new wawi_zahlungstyp(); 
@@ -2266,7 +2283,7 @@ EOT;
         
         echo "<tr>";
         echo "<td>Auftragsbestätigung</td><td><input type=\"text\" id=\"datepicker_auftragsbestaetigung\" size=\"12\" name=\"auftragsbestaetigung\" value=\"".$date->formatDatum($bestellung->auftragsbestaetigung,'d.m.Y')."\"> Angebote: <ul id=\"angeboteListe\"><li>1<li>2</ul> <input type=\"button\" name=\"angebotBtn\" id=\"angebotBtn\" value=\"hinzufügen\" ></td>";
-        echo "<td>Leasing</td><td colspan=\"2\"><input type=\"text\" id=\"leasing_txt\" name=\"leasing_txt\" size=\"30\" maxlength=\"256\" value=\"".$bestellung->leasing_txt."\"> <input type=\"checkbox\" id=\"leasing\" name=\"leasing\"  ".($bestellung->leasing != null && $bestellung->leasing === true ?'checked':'')."><label for=\"leasing\">geleast</label> </td>";
+        echo "<td>Leasing:</td><td colspan=\"2\"><input type=\"checkbox\" id=\"empfehlung_leasing\" name=\"empfehlung_leasing\"  ".($bestellung->empfehlung_leasing != null && $bestellung->empfehlung_leasing === true ?'checked':'')."><label for=\"empfehlung_leasing\">Empfehlung Leasing</label> <input type=\"checkbox\" id=\"wird_geleast\" name=\"wird_geleast\"  ".($bestellung->wird_geleast != null && $bestellung->wird_geleast === true ?'checked':'')."><label for=\"wird_geleast\">wird geleast</label> </td>";
         echo "</tr>";
         
 	echo "</table>\n";
@@ -2733,7 +2750,7 @@ EOT;
 
 			*/
 			
-			warnungSummeIst0();
+			//warnungSummeIst0();
 			FelderSperren(false);			
 		}
 
@@ -2741,13 +2758,18 @@ EOT;
 			var nettoSummeHTML = $("#netto").html();
 			var nettoSumme = parseFloat(nettoSummeHTML);
 			if (nettoSumme == 0.0 ) {
-				alert("Achtung Bestellsumme ist 0!");
+				return confirm("Achtung Bestellsumme ist 0!");
 			}
+			return true;
 		}
 
 		function maybeSubmit() {
-	     	warnungSummeIst0();
+	     	if (!warnungSummeIst0()) {
+	     		console.log("cancel");
+	     		return false;
+	     	}
 	     	document.getElementById("filter_kst").disabled=false;
+	     	return true;
 	     }
 		
 		// beim verlassen der textbox ändere . in ,
@@ -2844,7 +2866,7 @@ EOT;
 	if($status->isStatiVorhanden($bestellung->bestellung_id, 'Abgeschickt') && !$bestellung->freigegeben)
 		echo "<td><input type='submit' value='Erneut Abschicken' id='btn_erneut_abschicken' name='btn_erneut_abschicken' class='cursor'></td>"; 
 	echo"<td style='width:100%' align='right'>";
-	echo "<div ><a href ='pdfExport.php?xml=bestelldetail.rdf.php&xsl_oe_kurzbz=$kostenstelle->oe_kurzbz&xsl=Bestellung&id=$bestellung->bestellung_id'>Bestellschein generieren <img src='../skin/images/pdf.ico'></a></div>"; 
+	echo "<div ><a href =\"pdfExport.php?xml=bestelldetail.rdf.php&xsl_oe_kurzbz=$kostenstelle->oe_kurzbz&xsl=Bestellung&id=$bestellung->bestellung_id\" target=\"_blank\">Bestellschein generieren <img src='../skin/images/pdf.ico'></a></div>"; 
 	echo "</td></tr></table><br>";
 	if($disabled!='')
 	{
@@ -2959,6 +2981,21 @@ EOT;
 
 // ****** FUNKTIONEN ******* //
 
+
+function isGMBHKostenstelle($kostenstelle_id) {
+	$kostenstelle = new wawi_kostenstelle(); 
+	$kostenstelle->load($kostenstelle_id);
+    if ($kostenstelle->oe_kurzbz == 'gmbh') return true;    
+    $oe = new organisationseinheit();
+    $parents = $oe->getParents($oe->oe_kurzbz);
+    foreach ($parents as $oeRow) 
+    {
+    	if ($oeRow->oe_kurzbz == 'gmbh') return true;
+    }
+    return false;
+}
+
+
 /**
  * Gibt eine Bestelldetail Zeile aus
  */
@@ -2997,7 +3034,7 @@ function getDetailRow($i, $bestelldetail_id='', $sort='', $menge='', $ve='', $be
 	echo "<td><a href='#' class='down' onClick='verschieben(this);'><img src=\"../skin/images/arrow-single-down-green.png\" class='cursor' ></a></td>\n";
 	echo "<td> <a href='#' class='up' onClick='verschieben(this);'><img src=\"../skin/images/arrow-single-up-green.png\" class='cursor' ></a></td>\n";
 	echo "<td><input type='text' size='2' name='pos_$i' id='pos_$i' maxlength='2' value='$pos' onfocus='$checkSave'></td>\n";
-	echo "<td><input type=\"number\" min=\"0\" size='5' class='number' name='menge_$i' id='menge_$i' maxlength='7' value='$menge' onChange='calcBruttoNetto($i);' onfocus='$checkSave'></td>\n";
+	echo "<td><input type=\"number\" min=\"0\" size='5' class='number' name='menge_$i' id='menge_$i' maxlength='7' value='$menge' onChange='calcBruttoNetto($i);' onfocus='$checkSave' style=\"width:60px\"></td>\n";
 	echo "<td><input type='text' size='5' name='ve_$i' id='ve_$i' maxlength='7' value='$ve' onfocus='$checkSave'></td>\n";
 	echo "<td><input type='text' size='70' name='beschreibung_$i' id='beschreibung_$i' value='$beschreibung' onblur='$checkRow' onfocus='$checkSave'></td>\n";
 	echo "<td><input type='text' size='15' name='artikelnr_$i' id='artikelnr_$i' maxlength='32' value='$artikelnr' onfocus='$checkSave'></td>\n";

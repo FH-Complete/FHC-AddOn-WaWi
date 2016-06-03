@@ -34,11 +34,11 @@ class wawi_bestellung extends basis_db
 {
 	public $bestellung_id; 		// serial
 	public $besteller_uid;		// char
-        public $zuordnung_uid;          // char [WM] 6.1.2016: auf Wunsch von Zentraleinkauf; 
-                                        // Person wo etwaiges Geräte zu finden ist
-        public $zuordnung_raum;         // char [WM] 6.1.2015: s.o.
+    public $zuordnung_uid;          // char [WM] 6.1.2016: auf Wunsch von Zentraleinkauf; 
+                                    // Person wo etwaiges Gerät zu finden ist
+    public $zuordnung_raum;         // char [WM] 6.1.2015: s.o.
 	public $kostenstelle_id;	// int
-    public $bkategorie_id;          // int
+    //public $bkategorie_id;          // int [WM] wieder ausgebaut
     public $zuordnung;              // string
         /** @deprecated Konto wird durch kategorie und zuordnung ersetzt */
 	public $konto_id;			// int
@@ -59,8 +59,9 @@ class wawi_bestellung extends basis_db
     public $auftragsbestaetigung; // date
     public $auslagenersatz=false;   // boolean
     public $iban;               // varchar
-    public $leasing;  			// boolean
-    public $leasing_txt	;		// varchar
+    public $wird_geleast=false;  			// boolean
+    public $empfehlung_leasing=false	;	// boolean
+    public $nicht_bestellen=false;			// boolean
 	public $result = array();
 	public $user;
 	public $new; 				// bool
@@ -107,7 +108,7 @@ class wawi_bestellung extends basis_db
                         $this->zuordnung_uid = $row->zuordnung_uid;
                         $this->zuordnung_raum = $row->zuordnung_raum;
                         $this->zuordnung = $row->zuordnung;
-                        $this->bkategorie_id = $row->bkategorie_id;
+            //            $this->bkategorie_id = $row->bkategorie_id;
 			$this->kostenstelle_id = $row->kostenstelle_id;
 			$this->konto_id = $row->konto_id;
 			$this->firma_id = $row->firma_id;
@@ -127,8 +128,9 @@ class wawi_bestellung extends basis_db
                         $this->auftragsbestaetigung = $row->auftragsbestaetigung;
                         $this->auslagenersatz = $this->db_parse_bool($row->auslagenersatz); 
                         $this->iban = $row->iban;
-			$this->leasing = $this->db_parse_bool($row->leasing);
-			$this->leasing_txt = $row->leasing_txt;
+			$this->wird_geleast = $this->db_parse_bool($row->wird_geleast);
+			$this->nicht_bestellen = $this->db_parse_bool($row->nicht_bestellen);
+			$this->empfehlung_leasing = $this->db_parse_bool($row->empfehlung_leasing);
 		}
 		else
 		{
@@ -161,7 +163,7 @@ class wawi_bestellung extends basis_db
                         $bestellung->zuordnung_uid = $row->zuordnung_uid;
                         $bestellung->zuordnung_raum = $row->zuordnung_raum;
                         $bestellung->zuordnung = $row->zuordnung;
-                        $bestellung->bkategorie_id = $row->bkategorie;
+            //            $bestellung->bkategorie_id = $row->bkategorie;
 			$bestellung->kostenstelle_id = $row->kostenstelle_id;
 			$bestellung->konto_id = $row->konto_id;
 			$bestellung->firma_id = $row->firma_id;
@@ -178,12 +180,13 @@ class wawi_bestellung extends basis_db
 			$bestellung->insertvon = $row->insertvon;
 			$bestellung->ext_id = $row->ext_id;
 			$bestellung->zahlungstyp_kurzbz = $row->zahlungstyp_kurzbz;
-                        $bestellung->auftragsbestaetigung = $row->auftragsbestaetigung;
-                        $bestellung->auslagenersatz = $this->db_parse_bool($row->auslagenersatz); 
-                        $bestellung->iban = $row->iban;
-			$bestellung->leasing = $this->db_parse_bool($row->leasing);
-			$bestellung->leasing_txt = $row->leasing_txt;                        
-			$this->result[] = $bestellung;
+            $bestellung->auftragsbestaetigung = $row->auftragsbestaetigung;
+            $bestellung->auslagenersatz = $this->db_parse_bool($row->auslagenersatz); 
+            $bestellung->iban = $row->iban;
+			$bestellung->wird_geleast = $this->db_parse_bool($row->wird_geleast);
+			$bestellung->empfehlung_leasing = $this->db_parse_bool($row->empfehlung_leasing);    
+			$bestellung->nicht_bestellen = $this->db_parse_bool($row->nicht_bestellen);             
+			$bestellung->result[] = $bestellung;
 		}
 		return true;
 	}
@@ -298,7 +301,7 @@ class wawi_bestellung extends basis_db
                         $bestellung->zuordnung_uid = $row->zuordnung_uid;
                         $bestellung->zuordnung_raum = $row->zuordnung_raum;
                         $bestellung->zuordnung = $row->zuordnung;
-                        $bestellung->bkategorie_id = $row->bkategorie_id;
+            //            $bestellung->bkategorie_id = $row->bkategorie_id;
 			$bestellung->konto_id = $row->konto_id;
 			$bestellung->firma_id = $row->firma_id;
 			$bestellung->lieferadresse = $row->lieferadresse;
@@ -314,12 +317,12 @@ class wawi_bestellung extends basis_db
 			$bestellung->insertvon = $row->insert_von;
 			$bestellung->ext_id = $row->ext_id;
 			$bestellung->zahlungstyp_kurzbz = $row->zahlungstyp_kurzbz;
-                        $bestellung->auftragsbestaetigung = $row->auftragsbestaetigung;
-                        $bestellung->auslagenersatz = $this->db_parse_bool($row->auslagenersatz); 
-                        $bestellung->iban = $row->iban;
-			$bestellung->leasing = $this->db_parse_bool($row->leasing);
-			$bestellung->leasing_txt = $row->leasing_txt;
-			
+            $bestellung->auftragsbestaetigung = $row->auftragsbestaetigung;
+            $bestellung->auslagenersatz = $this->db_parse_bool($row->auslagenersatz); 
+            $bestellung->iban = $row->iban;
+			$bestellung->wird_geleast = $this->db_parse_bool($row->wird_geleast);
+			$bestellung->empfehlung_leasing = $this->db_parse_bool($row->empfehlung_leasing);
+			$bestellung->nicht_bestellen = $this->db_parse_bool($row->nicht_bestellen); 
 			$this->result[] = $bestellung;
 		}
 		return true;
@@ -351,7 +354,7 @@ class wawi_bestellung extends basis_db
                                 $bestellung->zuordnung_uid = $row->zuordnung_uid;
                                 $bestellung->zuordnung_raum = $row->zuordnung_raum;
                                 $bestellung->zuordnung = $row->zuordnung;
-                                $bestellung->bkategorie_id = $row->bkategorie_id;
+                //                $bestellung->bkategorie_id = $row->bkategorie_id;
 				$bestellung->konto_id = $row->konto_id;
 				$bestellung->firma_id = $row->firma_id;
 				$bestellung->lieferadresse = $row->lieferadresse;
@@ -370,9 +373,9 @@ class wawi_bestellung extends basis_db
                                 $bestellung->auftragsbestaetigung = $row->auftragsbestaetigung;
                                 $bestellung->auslagenersatz = $this->db_parse_bool($row->auslagenersatz); 
                                 $bestellung->iban = $row->iban;
-				$bestellung->leasing = $this->db_parse_bool($row->leasing);
-				$bestellung->leasing_txt = $row->leasing_txt;
-				
+				$bestellung->wird_geleast = $this->db_parse_bool($row->wird_geleast);
+				$bestellung->empfehlung_leasing = $this->db_parse_bool($row->empfehlung_leasing);
+				$bestellung->nicht_bestellen = $this->db_parse_bool($row->nicht_bestellen); 
 				$this->result[] = $bestellung;
 			}
 			return true;
@@ -410,7 +413,7 @@ class wawi_bestellung extends basis_db
                                 $bestellung->zuordnung_uid = $row->zuordnung_uid;
                                 $bestellung->zuordnung_raum = $row->zuordnung_raum;
                                 $bestellung->zuordnung = $row->zuordnung;
-                                $bestellung->bkategorie_id = $row->bkategorie_id;
+                //                $bestellung->bkategorie_id = $row->bkategorie_id;
 				$bestellung->konto_id = $row->konto_id;
 				$bestellung->firma_id = $row->firma_id;
 				$bestellung->lieferadresse = $row->lieferadresse;
@@ -429,8 +432,9 @@ class wawi_bestellung extends basis_db
                                 $bestellung->auftragsbestaetigung = $row->auftragsbestaetigung;
                                 $bestellung->auslagenersatz = $this->db_parse_bool($row->auslagenersatz); 
                                 $bestellung->iban = $row->iban;
-				$bestellung->leasing = $this->db_parse_bool($row->leasing);
-				$bestellung->leasing_txt = $row->leasing_txt;                                                        
+				$bestellung->wird_geleast = $this->db_parse_bool($row->wird_geleast);
+				$bestellung->empfehlung_leasing = $this->db_parse_bool($row->empfehlung_leasing);                                                 
+				$bestellung->nicht_bestellen = $this->db_parse_bool($row->nicht_bestellen); 
 				$this->result[] = $bestellung;
 			}
 			return true;
@@ -540,13 +544,13 @@ class wawi_bestellung extends basis_db
 
 		if($this->new)
 		{
-			$qry = 'BEGIN; INSERT INTO wawi.tbl_bestellung (besteller_uid, zuordnung_uid,zuordnung_raum,zuordnung,bkategorie_id,kostenstelle_id, konto_id, firma_id, lieferadresse, rechnungsadresse,
-			freigegeben, bestell_nr, titel, bemerkung, liefertermin, updateamum, updatevon, insertamum, insertvon, zahlungstyp_kurzbz, auftragsbestaetigung, auslagenersatz, iban, leasing, leasing_txt) VALUES ('.
+			$qry = 'BEGIN; INSERT INTO wawi.tbl_bestellung (besteller_uid, zuordnung_uid,zuordnung_raum,zuordnung,kostenstelle_id, konto_id, firma_id, lieferadresse, rechnungsadresse,
+			freigegeben, bestell_nr, titel, bemerkung, liefertermin, updateamum, updatevon, insertamum, insertvon, zahlungstyp_kurzbz, auftragsbestaetigung, auslagenersatz, iban, wird_geleast, empfehlung_leasing, nicht_bestellen) VALUES ('.
 			$this->db_add_param($this->besteller_uid).', '.
                         $this->db_add_param($this->zuordnung_uid).', '.
                         $this->db_add_param($this->zuordnung_raum).', '.
                         $this->db_add_param($this->zuordnung).', '.
-                        $this->db_add_param($this->bkategorie_id, FHC_INTEGER).', '.
+             //           $this->db_add_param($this->bkategorie_id, FHC_INTEGER).', '.
 			$this->db_add_param($this->kostenstelle_id, FHC_INTEGER).', '.
 			$this->db_add_param($this->konto_id, FHC_INTEGER).', '.
 			$this->db_add_param($this->firma_id, FHC_INTEGER).', '.
@@ -565,8 +569,9 @@ class wawi_bestellung extends basis_db
 			$this->db_add_param($this->auftragsbestaetigung).','.
 			$this->db_add_param($this->auslagenersatz, FHC_BOOLEAN).','.
 			$this->db_add_param($this->iban).','.
-			$this->db_add_param($this->leasing, FHC_BOOLEAN).','.
-			$this->db_add_param($this->leasing_txt).')';
+			$this->db_add_param($this->wird_geleast, FHC_BOOLEAN).','.
+			$this->db_add_param($this->empfehlung_leasing, FHC_BOOLEAN).','.
+			$this->db_add_param($this->nicht_bestellen, FHC_BOOLEAN).')';
 		}
 		else
 		{
@@ -575,8 +580,7 @@ class wawi_bestellung extends basis_db
 			besteller_uid = '.$this->db_add_param($this->besteller_uid).',
                         zuordnung_uid = '.$this->db_add_param($this->zuordnung_uid).',
                         zuordnung_raum = '.$this->db_add_param($this->zuordnung_raum).',
-                        zuordnung = '.$this->db_add_param($this->zuordnung).',
-                        bkategorie_id = '.$this->db_add_param($this->bkategorie_id, FHC_INTEGER).',
+                        zuordnung = '.$this->db_add_param($this->zuordnung).',            
 			kostenstelle_id = '.$this->db_add_param($this->kostenstelle_id, FHC_INTEGER).',
 			konto_id = '.$this->db_add_param($this->konto_id, FHC_INTEGER).',
 			firma_id = '.$this->db_add_param($this->firma_id, FHC_INTEGER).',
@@ -590,11 +594,12 @@ class wawi_bestellung extends basis_db
 			updateamum = '.$this->db_add_param($this->updateamum).',
 			updatevon ='.$this->db_add_param($this->updatevon).',
 			zahlungstyp_kurzbz = '.$this->db_add_param($this->zahlungstyp_kurzbz).',
-                        auftragsbestaetigung = '.$this->db_add_param($this->auftragsbestaetigung).',
-                        auslagenersatz = '.$this->db_add_param($this->auslagenersatz, FHC_BOOLEAN).',
-                        iban = '.$this->db_add_param($this->iban).',
-                        leasing = '.$this->db_add_param($this->leasing, FHC_BOOLEAN).',
-                        leasing_txt = '.$this->db_add_param($this->leasing_txt).'
+            auftragsbestaetigung = '.$this->db_add_param($this->auftragsbestaetigung).',
+            auslagenersatz = '.$this->db_add_param($this->auslagenersatz, FHC_BOOLEAN).',
+            iban = '.$this->db_add_param($this->iban).',
+            wird_geleast = '.$this->db_add_param($this->wird_geleast, FHC_BOOLEAN).',
+            empfehlung_leasing = '.$this->db_add_param($this->empfehlung_leasing, FHC_BOOLEAN).',
+            nicht_bestellen = '.$this->db_add_param($this->nicht_bestellen, FHC_BOOLEAN).'
 			WHERE bestellung_id = '.$this->db_add_param($this->bestellung_id, FHC_INTEGER, false).';';
 		}
 
@@ -743,10 +748,10 @@ class wawi_bestellung extends basis_db
 		$this->db_query('BEGIN;');
 
 		// Bestellung kopieren
-		$qry_bestellung = "INSERT INTO wawi.tbl_bestellung (bestellung_id, besteller_uid, zuordnung_uid,zuordnung_raum,zuordnung,bkategorie_id,kostenstelle_id,
+		$qry_bestellung = "INSERT INTO wawi.tbl_bestellung (bestellung_id, besteller_uid, zuordnung_uid,zuordnung_raum,zuordnung,kostenstelle_id,
 		konto_id, firma_id, lieferadresse, rechnungsadresse, zahlungstyp_kurzbz, freigegeben, auslagenersatz, bestell_nr,
 		titel, bemerkung, liefertermin, updateamum, updatevon, insertamum, insertvon)
-		SELECT nextval('wawi.seq_bestellung_bestellung_id'), ".$this->db_add_param($user).",zuordnung_uid,zuordnung_raum,zuordnung,bkategorie_id,
+		SELECT nextval('wawi.seq_bestellung_bestellung_id'), ".$this->db_add_param($user).",zuordnung_uid,zuordnung_raum,zuordnung,
 		kostenstelle_id, konto_id, firma_id, lieferadresse,	rechnungsadresse, zahlungstyp_kurzbz, 'false', auslagenersatz,
 		".$this->db_add_param($newBestellNummer).", titel, bemerkung, liefertermin, now(),
 		".$this->db_add_param($user).", now(), ".$this->db_add_param($user)."
@@ -1064,7 +1069,7 @@ class wawi_bestellung extends basis_db
                 $bestellung->zuordnung_uid = $row->zuordnung_uid;
                 $bestellung->zuordnung_raum = $row->zuordnung_raum;
                 $bestellung->zuordnung = $row->zuordnung;
-                $bestellung->bkategorie_id = $row->bkategorie_id;
+                //$bestellung->bkategorie_id = $row->bkategorie_id;
 				$bestellung->konto_id = $row->konto_id;
 				$bestellung->rechnungsadresse = $row->rechnungsadresse;
 				$bestellung->firma_id = $row->firma_id;
@@ -1076,11 +1081,11 @@ class wawi_bestellung extends basis_db
 				$bestellung->ext_id = $row->ext_id;
 				$bestellung->zahlungstyp_kurzbz = $row->zahlungstyp_kurzbz;
 				$bestellung->auftragsbestaetigung = $row->auftragsbestaetigung;
-                                $bestellung->auslagenersatz = $this->db_parse_bool($row->auslagenersatz);
-                                $bestellung->iban = $row->iban;
-				$bestellung->leasing = $this->db_parse_bool($row->leasing);
-				$bestellung->leasing_txt = $row->leasing_txt;
-				
+                $bestellung->auslagenersatz = $this->db_parse_bool($row->auslagenersatz);
+                $bestellung->iban = $row->iban;
+				$bestellung->wird_geleast = $this->db_parse_bool($row->wird_geleast);
+				$bestellung->empfehlung_leasing = $this->db_parse_bool($row->empfehlung_leasing);
+				$bestellung->nicht_bestellen = $this->db_parse_bool($row->nicht_bestellen);
 				$this->result[] = $bestellung;
 			}
 		}
@@ -1128,7 +1133,7 @@ class wawi_bestellung extends basis_db
                                 $bestellung->zuordnung_uid = $row->zuordnung_uid;
                                 $bestellung->zuordnung_raum = $row->zuordnung_raum;
                                 $bestellung->zuordnung = $row->zuordnung;
-                                $bestellung->bkategorie_id = $row->bkategorie_id;
+                //                $bestellung->bkategorie_id = $row->bkategorie_id;
 				$bestellung->konto_id = $row->konto_id;
 				$bestellung->rechnungsadresse = $row->rechnungsadresse;
 				$bestellung->firma_id = $row->firma_id;
@@ -1142,9 +1147,9 @@ class wawi_bestellung extends basis_db
                                 $bestellung->auftragsbestaetigung = $row->auftragsbestaetigung;
                                 $bestellung->auslagenersatz = $this->db_parse_bool($row->auslagenersatz);
                                 $bestellung->iban = $row->iban;
-				$bestellung->leasing = $this->db_parse_bool($row->leasing);
-				$bestellung->leasing_txt = $row->leasing_txt;
-				
+				$bestellung->wird_geleast = $this->db_parse_bool($row->wird_geleast);
+				$bestellung->empfehlung_leasing = $this->db_parse_bool($row->empfehlung_leasing);
+				$bestellung->nicht_bestellen = $this->db_parse_bool($row->nicht_bestellen);
 				$this->result[] = $bestellung;
 			}
 		}

@@ -21,7 +21,7 @@
  */
 $basepath = $_SERVER['DOCUMENT_ROOT'];
 require_once $basepath.'/config/wawi.config.inc.php';
-require_once('auth.php');
+//require_once('auth.php');
 
 require_once '../include/wawi_konto.class.php';
 require_once '../include/wawi_bestellung.class.php';
@@ -37,7 +37,7 @@ require_once $basepath.'/include/firma.class.php';
 "http://www.w3.org/TR/html4/loose.dtd">
 <html>
 <head>
-	<title>Offene Freigabe/Lieferung</title>	
+	<title>Offene Freigaben/Lieferungen</title>	
 	<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
 	<link rel="stylesheet" href="../skin/tablesort.css" type="text/css"/>
 	<link rel="stylesheet" href="../skin/jquery.css" type="text/css"/>
@@ -65,9 +65,9 @@ $max = (isset($_POST['max'])?$_REQUEST['max']:'42');
 $type = (isset($_GET['type'])?$_GET['type']:'');
 
 if ($type == 'nichtgeliefert')
-	echo "<h1>Offene Lieferung</h1>";
+	echo "<h1>Offene Lieferungen</h1>";
 else
-	echo "<h1>Offene Freigabe</h1>";
+	echo "<h1>Offene Freigaben</h1>";
 ?>
 <table>
 	<tr>
@@ -135,17 +135,16 @@ echo '
 			<thead>
 			<tr>
 				<th></th>
-				<th>Bestellnr.</th>
-				<th>Bestell_ID</th>
+				<th>Bestellnr.</th>				
 				<th>Firma</th>
-				<th>Erstellung</th>
+
 				'.
-				($type=='nichtgeliefert'?
-					'<th>Freigegeben</th><th>Bestellt</th><th>Lieferdatum</th>':
-					'<th>Geliefert</th><th>Bestellt</th>').
+				($type!='nichtgeliefert'?
+					'<th>Erstellt</th><th>Geliefert</th>':
+					'<th>Bestellt</th><th>Auftragsbestätigung</th><th>Freigegeben</th><th>Liefertermin</th>').
+				
 				'<th>Brutto</th>
-				<th>Titel</th>
-				<th>Letze Änderung</th>
+				<th>Titel</th>				
 			</tr>
 			</thead>
 			<tbody>';		
@@ -153,7 +152,9 @@ echo '
 	{
 		$firmenname = '';
 		$geliefert ='nein';
+		$geliefert_datum = null;
 		$bestellt ='nein';
+		$bestellt_datum = null;
 		$status = new wawi_bestellstatus(); 
 		if(is_numeric($row->firma_id))
 		{
@@ -169,27 +170,34 @@ echo '
 			$freigegeben = 'nein';
 		
 		if($status->isStatiVorhanden($row->bestellung_id, 'Lieferung'))
-					$geliefert = 'ja';
+		{
+			$geliefert = 'ja';
+			$geliefert_datum = $status->datum;
+		}
 		
 		if($status->isStatiVorhanden($row->bestellung_id, 'Bestellung'))
-					$bestellt = 'ja';
+		{
+			$bestellt = 'ja';
+			$bestellt_datum = $status->datum;
+		}
+			
 			
 		$brutto = $bestellung->getBrutto($row->bestellung_id);
 		echo '	<tr>
 					<td nowrap><a href="bestellung.php?method=update&id='.$row->bestellung_id.'" title="Bestellung bearbeiten"> <img src="../skin/images/edit_wawi.gif"></a><a href="bestellung.php?method=delete&id='.$row->bestellung_id.'" onclick="return conf_del()" title="Bestellung löschen"> <img src="../skin/images/delete_x.png"></a></td>
-					<td>'.$row->bestell_nr.'</td>
-					<td>'.$row->bestellung_id.'</td>
-					<td>'.$firmenname.'</td>
-					<td>'.$date->formatDatum($row->insertamum, "d.m.Y").'</td>'.
-					($type!='nichtgeliefert'?
-					'<td>'.$geliefert.'</td>
-					<td>'.$bestellt.'</td>'  :
-					'<td>'.$freigegeben.'</td>
-					<td>'.$bestellt.'</td>
-					<td>'.$row->liefertermin.'</td>').'
+					<td>'.$row->bestell_nr.'</td>					
+					<td>'.$firmenname.'</td>'.
+					($type!='nichtgeliefert'
+					?
+					  '<td>'.$date->formatDatum($row->insertamum, "d.m.Y").'</td>'.					  
+					  '<td>'.$geliefert.'</td>'
+					:
+					  '<td>'.$date->formatDatum($bestellt_datum, "d.m.Y").'</td>'.
+					  '<td>'.($row->auftragsbestaetigung != null ? $date->formatDatum($row->auftragsbestaetigung, "d.m.Y") : 'nein').'</td>
+					  <td>'.$freigegeben.'</td>
+					  <td>'.$row->liefertermin.'</td>').'
 					<td align="right">'.number_format($brutto, 2, ",",".").'</td>
-					<td>'.$row->titel.'</td>
-					<td nowrap>'.$date->formatDatum($row->updateamum, "d.m.Y").' '.$row->updatevon.'</td>
+					<td>'.$row->titel.'</td>					
 				</tr>';
 	}
 	echo '	</tbody>

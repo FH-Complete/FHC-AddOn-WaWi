@@ -18,7 +18,7 @@
  */
 
 session_cache_limiter('none'); //muss gesetzt werden sonst funktioniert der Download mit IE8 nicht
-require_once('auth.php');
+//require_once('auth.php');
 $basepath = $_SERVER['DOCUMENT_ROOT'];
 require_once($basepath.'/config/vilesci.config.inc.php');
 require_once('../include/bestelldetail.inc.php');

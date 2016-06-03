@@ -141,7 +141,7 @@ p.freigegeben
 
 input[type="submit"],input[type="button"]
 {
-	cursor: pointer;
+	/*cursor: pointer;*/
 }
 
 .inaktiv
@@ -205,10 +205,15 @@ form:invalid {
   box-shadow: none;
 }
 
-input[type=submit] {
+input[type=submit]:enabled {
   background: #336699;
   color: #F5F5F5;
   padding:1px 10px 1px 10px;
+}
+
+input[type="button" i]:disabled, input[type="submit" i]:disabled {
+    color:#666;
+    text-decoration: none;
 }
 
 ul#angeboteListe

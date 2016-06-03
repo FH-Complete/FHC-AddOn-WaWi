@@ -28,7 +28,7 @@
 
 	$basepath = $_SERVER['DOCUMENT_ROOT'];
         require_once $basepath.'/config/wawi.config.inc.php';
-	require_once('auth.php');
+//	require_once('auth.php');
   	require_once($basepath.'/include/functions.inc.php');
 	require_once('../include/wawi_benutzerberechtigung.class.php');
 	require_once($basepath.'/include/mitarbeiter.class.php');
