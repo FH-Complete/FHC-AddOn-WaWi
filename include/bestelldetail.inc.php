@@ -140,7 +140,7 @@ function bestellungReadModel($id=null)
             if ($nation !== false)
             {
                 $isEU=$nation->eu;
-                $isGerman = ($nation_code == 'A' || $nation_code == 'D' || $nation_code == 'FL' || $nation_code == 'CH');
+                $isGerman = ($nation_code == '' || $nation_code == 'A' || $nation_code == 'D' || $nation_code == 'FL' || $nation_code == 'CH');
             }
             else
             {
