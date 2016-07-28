@@ -21,11 +21,12 @@
  *
  * Installationsscript zur Erstinitialisierung des Addons
  */
+$basepath = $_SERVER['DOCUMENT_ROOT'];
 require_once('version.php');
-require_once('../../version.php');
-require_once('../../config/system.config.inc.php');
-require_once('../../include/functions.inc.php');
-require_once('../../include/benutzerberechtigung.class.php');
+require_once($basepath.'/version.php');
+require_once($basepath.'/config/system.config.inc.php');
+require_once($basepath.'/include/functions.inc.php');
+require_once($basepath.'/include/benutzerberechtigung.class.php');
 
 echo '<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN"
         "http://www.w3.org/TR/html4/strict.dtd">

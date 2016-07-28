@@ -21,7 +21,7 @@
 $addon_name = 'WaWi';
 
 // Versionsnummer des Addons
-$addon_version = '0.01';
+$addon_version = '1.0';
 
 // FH-Complete Min-Version
 $fhcomplete_target_version = '3.2';
