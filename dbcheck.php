@@ -158,6 +158,7 @@ if(!tableExists($schemaName,$tableName))
                     konto_id bigint bigint NOT NULL,
                     kontonr character varying(32),
                     beschreibung character varying(256)[],
+                    hilfe character varying(256),
                     kurzbz character varying(32),
                     aktiv boolean NOT NULL,
                     insertamum timestamp without time zone,
@@ -1593,6 +1594,23 @@ print "Erstelle Attribute für Tabelle $tableName:";
 if (!columnExists($schemaName, $tableName, $columnName))
 {
     $qry = "alter table $schemaName.$tableName add column $columnName boolean default false;";
+    if(!$db->db_query($qry))
+            echo "<strong>$columnName: '.$db->db_last_error().'</strong><br>";
+    else 
+            echo " $columnName: Attribut $columnName hinzugefuegt!<br>";
+}
+else
+{
+    print "<br>Attribut $columnName exitiert bereits";
+}
+
+$schemaName = "wawi";
+$tableName = "tbl_konto";
+$columnName = 'hilfe';
+print "Erstelle Attribute für Tabelle $tableName:";
+if (!columnExists($schemaName, $tableName, $columnName))
+{
+    $qry = "alter table $schemaName.$tableName add column $columnName varchar(256);";
     if(!$db->db_query($qry))
             echo "<strong>$columnName: '.$db->db_last_error().'</strong><br>";
     else 

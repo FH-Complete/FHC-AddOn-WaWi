@@ -47,6 +47,7 @@ require_once '../include/wawi_zahlungstyp.class.php';
 require_once '../include/wawi_angebot.class.php';
 require_once $basepath.'/include/tags.class.php';
 require_once $basepath.'/include/projekt.class.php';
+require_once('../include/functions.inc.php');
 
 $aktion ='';
 $test = 0;			// Bestelldetail Anzahl
@@ -133,7 +134,7 @@ if(isset($_POST['getSearchKonto']))
 		if($_POST['id'] == 'opt_auswahl')
 		{
 			$konto = new wawi_konto();
-			$konto->getAll();
+			$konto->getAll(true,'kontonr ASC');
 			// anzeige aller Konten
 			echo "<option value=''>-- auswählen --</option>\n";
 			foreach($konto->result as $ko)
@@ -494,7 +495,7 @@ if(isset($_POST['deleteBtnStorno']) && isset($_POST['id']))
 			}
 		});
                 
-                $('#zuordnung_person').autocomplete({
+        $('#zuordnung_person').autocomplete({
 			source: "wawi_autocomplete.php?work=wawi_mitarbeiter_search",
 			minLength:2,
 			response: function(event, ui)
@@ -510,6 +511,25 @@ if(isset($_POST['deleteBtnStorno']) && isset($_POST['id']))
 			{
 				ui.item.value=ui.item.label;
 				$('#zuordnung_uid').val(ui.item.uid);
+			}
+		});
+
+        $('#zuordnung_raum').autocomplete({
+			source: "wawi_autocomplete.php?work=wawi_raum_search",
+			minLength:2,
+			response: function(event, ui)
+			{
+				//Value und Label fuer die Anzeige setzen
+				for(i in ui.content)
+				{
+					ui.content[i].value=ui.content[i].ort_kurzbz;
+					ui.content[i].label=ui.content[i].ort_kurzbz + ' ' + ui.content[i].bezeichnung;;
+				}
+			},
+			select: function(event, ui)
+			{
+				ui.item.value=ui.item.ort_kurzbz;
+				
 			}
 		});
 
@@ -532,7 +552,7 @@ if($aktion == 'suche')
 		
 		// Suchmaske anzeigen
 		$konto = new wawi_konto();
-		$konto->getAll();
+		$konto->getAll(true,'kontonr ASC');
 		$konto_all = $konto->result;
 		$zahlungstyp = new wawi_zahlungstyp(); 
 		$zahlungstyp->getAll(); 
@@ -557,14 +577,15 @@ if($aktion == 'suche')
 		echo "<td><input type = 'text' size ='32' maxlength = '16' name = 'bestellnr'></td>\n";
 		echo "</tr>\n";
 		echo "<tr>\n";
-		echo "<td>Titel</td>\n";
+		echo "<td>Beschreibung</td>\n";
 		echo "<td><input type = 'text' size ='32' maxlength = '256' name = 'titel'></td>\n";
 		echo "</tr>\n";
+		/*
 		echo "<tr>\n"; 
 		echo "<td>Bestellposition:</td>\n"; 
 		echo "<td><input type='text' name='bestellposition' size='32' maxlength='256'></td>"; 
 		echo "</tr>"; 
-		echo "<tr>\n"; 
+		echo "<tr>\n"; */
 		echo "<td>Erstelldatum</td>\n";
 		echo "<td>von <input type ='text' id='datepicker_evon' size ='12' name ='evon' value='$suchdatum'> bis <input type ='text' id='datepicker_ebis' size ='12' name = 'ebis'></td>\n";
 		echo "</tr>\n";
@@ -572,7 +593,7 @@ if($aktion == 'suche')
 		echo "<td>Bestelldatum</td>\n";
 		echo "<td>von <input type ='text' id='datepicker_bvon' size ='12' name ='bvon'> bis <input type ='text' id='datepicker_bbis' size ='12' name = 'bbis'></td>\n";
 		echo "</tr>\n";
-		echo "<tr>\n";
+		/*echo "<tr>\n";
 		echo "<td> Organisationseinheit: </td>\n";
 		$oe_array = $rechte->getOEkurzbz('wawi/bestellung');
 		$oe_berechtigt->loadArray($oe_array,'organisationseinheittyp_kurzbz', false);
@@ -589,13 +610,13 @@ if($aktion == 'suche')
 		
 		echo "</SELECT>\n";
 		echo "</td>\n";
-		echo "</tr>\n";		
+		echo "</tr>\n";		*/
 		echo "<tr>\n";
-		echo "<td> Firma: </td>\n";
+		echo "<td> Lieferant: </td>\n";
 		echo "<td> <input id='firmenname' name='firmenname' size='32' value=''  >\n";
-		echo "<SELECT name='filter_firma' id='firma' style='width: 256px;'>\n"; 
+		/*echo "<SELECT name='filter_firma' id='firma' style='width: 256px;'>\n"; 
 		echo "<option value=''>-- OE auswählen --</option>\n";
-		echo "</SELECT>\n";
+		echo "</SELECT>\n";*/
 		echo "</td>\n";
 		echo "<td> <input type ='hidden' id='firma_id' name='firma_id' size='10' maxlength='30' value=''  >\n";
 		echo "</td>\n";
@@ -624,9 +645,10 @@ if($aktion == 'suche')
 			echo '<option value='.$ko->konto_id.' >'.$ko->kurzbz."</option>\n";
 		}
 		echo "</SELECT>\n";
+
 		echo "</td>\n";
 		echo "</tr>\n";	
-		echo "<tr>\n"; 
+		/*echo "<tr>\n"; 
 		echo "<td> Zahlungstyp: </td>\n"; 
 		echo "<td><SELECT name='filter_zahlungstyp' id='searchZahlungstyp' style='width: 230px;'>\n"; 
 		echo "<option value=''>-- auswählen --</option>\n";	
@@ -637,7 +659,7 @@ if($aktion == 'suche')
 		echo "</SELECT>\n";
                 
 		echo "</td>\n";
-		echo "</tr>\n"; 
+		echo "</tr>\n"; */
 		echo "<tr>\n";
 		echo "<td>Tag:</td>\n";
 		echo "<td> <input id='tag' name='tag' size='32' maxlength='30' value=''  /></td>\n";
@@ -764,12 +786,12 @@ if($aktion == 'suche')
 							<th></th>
 							<th>Bestellnr.</th>
 							<th>Bestell_ID</th>
-							<th>Firma</th>
+							<th>Lieferant/Empfänger</th>
 							<th>Erstellung</th>
 							<th>Freigegeben</th>
 							<th>Geliefert</th>
 							<th>Brutto</th>
-							<th>Titel</th>
+							<th>Beschreibung</th>
 							<th>Letzte Änderung</th>
 						  </tr></thead><tbody>\n";
 				
@@ -838,7 +860,7 @@ elseif($aktion == 'new')
 	echo "<td><input type=\"text\" size =\"80\" maxlength='256' id ='titel' name ='titel' required>";               
 	echo "</td></tr>\n";
         echo "<tr>\n";
-	echo "<td>Lieferant:</td>\n";
+	echo "<td>Lieferant/Empfänger:</td>\n";
 	echo "<td> <input type=\"text\" id='firmenname' name='firmenname' size=\"80\" value='' required ></td>\n";
 	echo "<td> <input type ='hidden' id='firma_id' name='firma_id' size='10' maxlength='30' value=\"\"  ></td>\n";
 	echo "</tr>\n";
@@ -881,8 +903,9 @@ elseif($aktion == 'new')
 	echo "<td>Konto: </td>\n"; 
 	echo "<td>\n";
 	echo "<select name='konto' id='konto' style='width: 230px;'>\n";
-	echo "<option value='' >Konto auswaehlen</option>\n";
+	echo "<option value='' >Konto auswählen</option>\n";
 	echo "</select>\n";
+	echo '<a href="konto_hilfe.php" onclick="FensterOeffnen(this.href); return false" title="Hilfe zur USt"> <img src="../skin/images/question.png"> </a>';
 	echo "</td></tr>\n";
 	echo "<tr>\n";
 	echo "<td>&nbsp;</td></tr>\n";
@@ -1065,7 +1088,7 @@ if($_GET['method']=='update')
 			if(isset($_POST['filter_kst']) || isset($_POST['titel']))
 			{
 				
-				$aufteilung_anzahl = $_POST['anz_aufteilung'];
+				//$aufteilung_anzahl = $_POST['anz_aufteilung'];
 				$bestellung_detail_anz = $_POST['detail_anz'];
 	
 				$bestellung_new->new = false; 
@@ -1285,7 +1308,7 @@ if($_GET['method']=='update')
 						$error = true;  
 					}
 				}
-	
+		/*
 				for($i=0; $i<$aufteilung_anzahl; $i++)
 				{
 					$aufteilung = new wawi_aufteilung(); 
@@ -1309,7 +1332,7 @@ if($_GET['method']=='update')
 						$aufteilung->new = true; 
 					}
 					$aufteilung->saveAufteilung(); 
-				}
+				}*/
 				if($error == false)
 					if($bestellung_new->save())
 					{
@@ -1633,6 +1656,15 @@ if($_GET['method']=='update')
 <script type="text/javascript" >
 	  function maybeShowBankverbindung() {
 	  if ($('#auslagenersatz').is(':checked')) {
+	  	var uid = $('#besteller_uid').val();
+	  	$.ajax({
+		  method: "GET",
+		  url: "wawi_autocomplete.php",
+		  data: { work: "wawi_bankverbindung", term: uid },
+		  dataType:'json',
+		}).done(function( msg ) {
+		    $('#bankverbindung').val(msg.iban);
+		});		 
 	    $('#bankverbindung_span').show();
 	  } else {
 	    $('#bankverbindung_span').hide();
@@ -1743,7 +1775,7 @@ if($_GET['method']=='update')
 		 var name = file.name;
 		 var size = file.size;
 		 var type = file.type;
-		 if (!file.type.match(/.*pdf$/)) {
+		 if (!file.type.match(/.*pdf$/i)) {
 		   $("<div title='Fehler'>Es werden nur PDF-Dateien akzeptiert.</div>").dialog(
 											       {
 											       title: 'Fehler',
@@ -1892,7 +1924,7 @@ EOT;
 	echo "	<td>Vorauss. Liefertermin: <input type='text' name ='liefertermin'  size='16' maxlength='16' value='".$bestellung->liefertermin."'></td>\n";
 	echo "</tr>\n";
 	echo "<tr>\n";
-	echo "	<td>Lieferant: </td>\n";
+	echo "	<td>Lieferant/Empfänger: </td>\n";
 	echo "	<td><input type='text' name='firmenname' id='firmenname' size='60' maxlength='256' value ='".$firma->name."'>\n";
 	echo "	<input type='hidden' name='firma_id' id='firma_id' size='5' maxlength='7' value ='".$bestellung->firma_id."'></td>\n";
 	echo "	<td>Besteller:</td><td> <input type='text' name='besteller' id='besteller' size='30' maxlength='256' value ='".$besteller_vorname.' '.$besteller_nachname."'></td>\n";
@@ -2008,7 +2040,9 @@ EOT;
 	{
 		echo '<option value='.$bestellung->konto_id.' selected>'.$konto_bestellung->kurzbz."</option>\n";
 	}
-	echo "</select></td>";
+	echo "</select>";
+	echo '<a href="konto_hilfe.php" onclick="FensterOeffnen(this.href); return false" title="Hilfe zur USt"> <img src="../skin/images/question.png"> </a>';
+	echo "</td>";
          
         
         // Rechnungsadresse
@@ -2258,7 +2292,7 @@ EOT;
 	echo "</select> ";
         echo " <label for=\"auslagenersatz\">Auslagenersatz/IBAN:</label> <input type=\"checkbox\" id=\"auslagenersatz\" name=\"auslagenersatz\" ".($bestellung->auslagenersatz != null && $bestellung->auslagenersatz === true ?'checked':'').">";
             
-        echo "<span id=\"bankverbindung_span\" style=\"display:none\"> <input type=\"text\" id=\"bankverbindung\" style=\"width: 110px\" name=\"bankverbindung\" maxlength=\"25\" value=\"".$bestellung->iban."\"></span>";
+        echo "<span id=\"bankverbindung_span\" style=\"display:none\"> <input type=\"text\" id=\"bankverbindung\" style=\"width: 110px\" name=\"bankverbindung\" maxlength=\"32\" value=\"".$bestellung->iban."\"></span>";
         echo "</td>\n"; 
 	echo "<td>Rest-Budget:</td>\n";
 	
@@ -2276,9 +2310,9 @@ EOT;
             echo '<input type="radio" id="zuordnung_'.$key.'" name="zuordnung" value="'.$key.'" '.($selected?'checked="1"':'').'\"><label for="zuordnung_'.$key.'"> '.$val.'</label> ';
         }
         echo "</td>";
-        echo "<td>Für wen:</td>";
+        echo "<td>Für wen (Person):</td>";
         echo "<td><input type='text' name='zuordnung_person' id='zuordnung_person' size='30' maxlength='256' value ='".$zuordnung_person_vorname.' '.$zuordnung_person_nachname."'></td>";
-        echo "<td>Wo eingesetzt: <input name= \"zuordnung_raum\" type='text' size='10' maxlength='32' value =\"".$bestellung->zuordnung_raum."\"></td>";
+        echo "<td>Wo eingesetzt (Raum): <input name= \"zuordnung_raum\" id=\"zuordnung_raum\" type='text' size='13' maxlength='32' value =\"".$bestellung->zuordnung_raum."\"></td>";
         echo "</tr>";
         
         echo "<tr>";
@@ -2896,6 +2930,7 @@ EOT;
 		echo "<p class='freigegeben'>Die Bestellung wurde vollständig freigegeben</p>"; 
 
 	// div Aufteilung --> kann ein und ausgeblendet werden
+	/*
 	echo "<br>";
 	echo "<a id='aufteilung_link' class='cursor' ><img src='../skin/images/right.png'>Aufteilung anzeigen / ausblenden</a>\n"; 
 	echo "<br>"; 
@@ -2952,15 +2987,16 @@ EOT;
 	echo "</table>";
 	echo "</div>"; 
 	echo "<br><br></form>";
-	
+	*/
+	/*
 	echo '
 		<script type="text/javascript">
 		var anz='.$help.';
-
+*/
 		/*
 		Berechnet die Prozentuelle Aufteilung
 		*/
-		function summe_aufteilung()
+/*		function summe_aufteilung()
 		{
 			var i=0;
 			var aufteilung=0;
@@ -2976,12 +3012,12 @@ EOT;
 			}
 			 document.getElementById("aufteilung_summe").value = parseFloat(summe).toFixed(2);
 		}
-		</script>';	
+		</script>';	*/
 }
 
 // ****** FUNKTIONEN ******* //
 
-
+/* nach functions.inc.php verschoben
 function isGMBHKostenstelle($kostenstelle_id) {
 	$kostenstelle = new wawi_kostenstelle(); 
 	$kostenstelle->load($kostenstelle_id);
@@ -2994,7 +3030,7 @@ function isGMBHKostenstelle($kostenstelle_id) {
     }
     return false;
 }
-
+*/
 
 /**
  * Gibt eine Bestelldetail Zeile aus
@@ -3124,8 +3160,8 @@ function sendFreigabeMails($uids, $bestellung, $user)
 	$email= "Dies ist eine automatisch generierte E-Mail.<br><br>";
 	$email.="Es wurde eine neue Bestellung auf Kostenstelle '".$kst_mail->bezeichnung."' erstellt bzw. eine bestehende ge&auml;ndert. Bitte geben Sie die Bestellung frei.<br>";
 	$email.="Bestellnummer: ".$bestellung->bestell_nr."<br>";
-	$email.="Titel: ".$bestellung->titel."<br>";
-	$email.="Firma: ".$firma_mail->name."<br>";
+	$email.="Beschreibung: ".$bestellung->titel."<br>";
+	$email.="Lieferant/Empfänger: ".$firma_mail->name."<br>";
 	$email.="Kontaktperson: ".$besteller->titelpre.' '.$besteller->vorname.' '.$besteller->nachname.' '.$besteller->titelpost."<br>";
 	$email.="Erstellt am: ".$date->formatDatum($bestellung->insertamum,'d.m.Y')."<br>";
 	$email.="Kostenstelle: ".$kst_mail->bezeichnung."<br>Konto: ".$konto_mail->kurzbz."<br>";
@@ -3179,8 +3215,8 @@ function sendZentraleinkaufFreigegeben($bestellung)
 	$email.= "Die folgende Bestellung wurde freigegeben und kann bestellt werden:<br>";
 	$email.="Kostenstelle: ".$kst_mail->bezeichnung."<br>";
 	$email.="Bestellnummer: ".$bestellung->bestell_nr."<br>";
-	$email.="Titel: ".$bestellung->titel."<br>";
-	$email.="Firma: ".$firma_mail->name."<br>";
+	$email.="Beschreibung: ".$bestellung->titel."<br>";
+	$email.="Lieferant/Empfänger: ".$firma_mail->name."<br>";
 	$email.="Kontaktperson: ".$besteller->titelpre.' '.$besteller->vorname.' '.$besteller->nachname.' '.$besteller->titelpost."<br>";
 	$email.="Erstellt am: ".$date->formatDatum($bestellung->insertamum,'d.m.Y')."<br>";
 	$email.="Konto: ".$konto_mail->kurzbz."<br>";
@@ -3240,8 +3276,8 @@ function sendBestellerMail($bestellung, $status)
 	$email.="<br>";
 	$email.="Kostenstelle: ".$kst_mail->bezeichnung."<br>";
 	$email.="Bestellnummer: ".$bestellung->bestell_nr."<br>";
-	$email.="Titel: ".$bestellung->titel."<br>";
-	$email.="Firma: ".$firma_mail->name."<br>";
+	$email.="Beschreibung: ".$bestellung->titel."<br>";
+	$email.="Lieferant/Empfänger: ".$firma_mail->name."<br>";
 	$email.="Erstellt am: ".$date->formatDatum($bestellung->insertamum,'d.m.Y')."<br>";
 	$email.="Kostenstelle: ".$kst_mail->bezeichnung."<br>Konto: ".$konto_mail->kurzbz."<br>";
 	$email.="Tags: ".$tagsAusgabe."<br>";

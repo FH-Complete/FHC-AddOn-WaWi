@@ -116,6 +116,10 @@ if(isset($_GET['method']))
 		 	 	echo "<td><input type=\"text\" size=\"32\" name=\"kurzbezeichnung\" value=\"$konto->kurzbz\"></td>\n";
 		 	 	echo "</tr>\n";
 		 	 	echo "<tr>\n";
+		 	 	echo "<td>Hilfetext</td>\n";
+		 	 	echo "<td><textarea rows=\"4\" cols=\"50\" name=\"hilfe\" maxlength=\"256\">".$konto->hilfe."</textarea></td>\n";
+		 	 	echo "</tr>\n";
+		 	 	echo "<tr>\n";
 		 	 	echo "<td>Aktiv?</td>\n";
 		 	 	echo "<td><input type=\"checkbox\" name=\"aktiv\" value=\"aktiv\" $checked>\n";
 		 	 	echo "</tr>\n";
@@ -202,6 +206,7 @@ if(isset($_GET['method']))
 				$konto->beschreibung[$s->sprache] = $_POST['beschreibung'.$s->sprache]; 	
 			
 		$konto->kurzbz = $_POST['kurzbezeichnung'];
+		$konto->hilfe = $_POST['hilfe'];
 		$konto->updateamum = date('Y-m-d H:i:s');
 		$konto->updatevon = $user; 
 			

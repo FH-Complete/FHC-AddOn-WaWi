@@ -32,9 +32,11 @@
   	require_once($basepath.'/include/functions.inc.php');
 	require_once('../include/wawi_benutzerberechtigung.class.php');
 	require_once($basepath.'/include/mitarbeiter.class.php');
-  	require_once ($basepath.'/include/firma.class.php');
+  	require_once($basepath.'/include/firma.class.php');
   	require_once($basepath.'/include/standort.class.php');
-  	require_once ($basepath.'/include/tags.class.php');
+  	require_once($basepath.'/include/tags.class.php');
+  	require_once($basepath.'/include/ort.class.php');
+  	require_once($basepath.'/include/bankverbindung.class.php');
 
   	if (!$uid = get_uid())
 		die('Keine UID gefunden:'.$uid.' !  <a href="javascript:history.back()">Zur&uuml;ck</a>');
@@ -147,6 +149,54 @@
 			}
 			echo json_encode($result);
 			break;
+		case 'wawi_raum_search':
+		 	$ort_kurzbz=trim((isset($_REQUEST['term']) ? $_REQUEST['term']:''));
+			if (is_null($ort_kurzbz) || $ort_kurzbz=='')
+				exit();
+			$sOrt = new ort();
+			if (!$sOrt->filter($ort_kurzbz))
+				exit(' |'.$sOrt->errormsg."\n");			
+
+			$oRresult=$sOrt->result;
+			for ($i=0;$i<count($oRresult);$i++)
+			{
+				$item['ort_kurzbz']=html_entity_decode($oRresult[$i]->ort_kurzbz);
+				$item['bezeichnung']=is_null($oRresult[$i]->bezeichnung) || empty($oRresult[$i]->bezeichnung) || $oRresult[$i]->bezeichnung=='NULL' || $oRresult[$i]->bezeichnung=='null'?'':html_entity_decode($oRresult[$i]->bezeichnung);
+				$item['aktiv']=$oRresult[$i]->aktiv==true || $oRresult[$i]->aktiv=='t'?true:false;
+				$result[]=$item;
+
+			}
+			echo json_encode($result);
+			break;
+		case 'wawi_bankverbindung':
+			$uid=trim((isset($_REQUEST['term']) ? $_REQUEST['term']:''));
+			if (is_null($uid) || $uid=='')
+				exit();
+			$person = new person();
+			if (!$person->getPersonFromBenutzer($uid))
+				exit(' |'.$person->errormsg."\n");	
+			$bv = new bankverbindung();
+			if (!$bv->load_pers($person->person_id))
+				exit(' |'.$bv->errormsg."\n");	
+			$result = null;
+			foreach ($bv->result as $value) {
+				if ($value->verrechnung) 
+					{
+						$result = $value;
+						break;
+					}
+			}			
+			if ($result != null && $result->iban != null) 
+			{
+				echo json_encode(array('iban' => $result->iban));
+			}
+			else 
+			{
+				echo json_encode(array('iban' => ''));
+			}			
+			
+			
+		break;
 	}
 	exit();
 ?>

@@ -460,10 +460,10 @@ if($method=='new' || $method=='update')
     $lieferbedingungen = '';
 	
 	if($method=='new')
-		echo '<h1>Neuen Lieferanten/Firma</h1>';
+		echo '<h1>Neuen Lieferanten/Empfänger</h1>';
 	else
 	{
-		echo '<h1>Lieferant/Firma Bearbeiten</h1>';
+		echo '<h1>Lieferant/Empfänger Bearbeiten</h1>';
 
 		if(!is_numeric($id))
 			die('ID ist ungueltig');
@@ -471,7 +471,7 @@ if($method=='new' || $method=='update')
 		//Firma Laden
 		$firma = new firma();
 		if(!$firma->load($id))
-			die('Lieferant/Firma konnte nicht geladen werden');
+			die('Lieferant/Empfänger konnte nicht geladen werden');
 		
 		$name = $firma->name;                
 		$anmerkung = $firma->anmerkung;
@@ -603,11 +603,11 @@ if($method=='new' || $method=='update')
 		<td><input type="text" name="homepage" maxlength="128" size="40" value="'.$homepage.'"/></td>
 	</tr>       
 	<tr>
-		<td>Kundennummer Erhalter:</td>
+		<td>Kundennummer FHTW:</td>
 		<td><input type="text" name="kundennummer_erhalter" maxlength="128" value="'.$kundennummer_erhalter.'"/></td>
 	</tr>
 	<tr>
-		<td>Kundennummer GmbH:</td>
+		<td>Kundennummer TW GmbH:</td>
 		<td><input type="text" name="kundennummer_gmbh" maxlength="128" value="'.$kundennummer_gmbh.'"/></td>
 	</tr>
         <tr>
@@ -634,7 +634,7 @@ if($method=='new' || $method=='update')
 			
 			if(document.firmaForm.name.value == "")
 		    {
-		    	alert("Name der Firma darf nicht leer sein!");
+		    	alert("Name des Lieferanten/Empfängers darf nicht leer sein!");
 		    	document.firmaForm.name.focus(); 
 		    	return false;
 		    }
@@ -662,7 +662,7 @@ if($method=='search')
 {
 	$filter = (isset($_POST['filter'])?$_POST['filter']:'');
 	
-	echo '<H1>Lieferant/Firma suchen</H1>';
+	echo '<H1>Lieferant/Empfänger suchen</H1>';
 	echo '<form action="'.$_SERVER['PHP_SELF'].'?method=search" method="POST">';
 	echo '<input type="text" size="30" name="filter" value="'.$filter.'">';
 	echo ' <input type="submit" name="send" value="Suchen">';

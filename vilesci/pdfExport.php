@@ -101,8 +101,9 @@ $addonpath = dirname(dirname($_SERVER['SCRIPT_FILENAME'])).DIRECTORY_SEPARATOR;
 $odt = $addonpath.'system/vorlage_zip/Bestellschein.odt';  
 $contentTemplate = $addonpath.'system/vorlage_zip/Bestellschein.content.php';  
 $styleTemplate = $addonpath.'system/vorlage_zip/Bestellschein.styles.php'; 
+$logoGmbH = ($xsl_oe_kurzbz=='gmbh'?$addonpath.'system/vorlage_zip/Logo_GMBH.png':null);
 $converter = new BestellungPDFConverter();
-$tempPdfName = $converter->convert2pdf($model, $odt, $contentTemplate, $styleTemplate);
+$tempPdfName = $converter->convert2pdf($model, $odt, $contentTemplate, !$model->lieferant->deutsch, $styleTemplate, $logoGmbH);
 
 if ($tempPdfName !== false)
 {    

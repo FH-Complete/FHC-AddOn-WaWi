@@ -174,6 +174,7 @@ if($user!=$user_original)
 }
 
 // Formular zum Wechseln des Benutzers anzeigen wenn berechtigt
+/*
 if($berechtigung_orig->isBerechtigt('system/loginasuser'))
 {
 	echo '<tr bgcolor="#c0cce0" >
@@ -185,7 +186,7 @@ if($berechtigung_orig->isBerechtigt('system/loginasuser'))
 				</form>
 			</td>
 		</tr>';
-}
+} */
 echo '
 	</table>
 </p><br>

@@ -58,14 +58,10 @@ $menu=array
 			'name'=>'Rechnung', 'permissions'=>array('wawi/rechnung'),'link'=>'rechnung.php?method=suche', 'target'=>'content',
 			'RechnungNeu'=>array('name'=>'Neu', 'link'=>'rechnung.php?method=new', 'target'=>'content'),
 			'RechnungSuchen'=>array('name'=>'Suchen', 'link'=>'rechnung.php?method=suche', 'target'=>'content'),
-		),
-		'Personensuche'=>array
-		(
-			'name'=>'Personensuche', 'link'=>'https://cis.technikum-wien.at/cis/private/tools/psearch.php', 'target'=>'_blank',
-		),
+		),		
 		'Firma'=>array
 		(
-			'name'=>'Lieferanten/Firma', 'link'=>'firma.php', 'target'=>'content','permissions'=>array('wawi/firma'),
+			'name'=>'Lieferanten/Empfänger', 'link'=>'firma.php', 'target'=>'content','permissions'=>array('wawi/firma'),
 			'FirmaNeu'=>array('name'=>'Neu', 'link'=>'firma.php?method=new', 'target'=>'content'),
 			'FirmaSuchen'=>array('name'=>'Suchen', 'link'=>'firma.php', 'target'=>'content'),
             'FirmaZusammenlegen'=>array('name'=>'Zusammenlegen', 'permissions'=>array('basis/firma'),'link'=>'firmaZusammenlegen.php', 'target'=>'content'),
@@ -84,7 +80,7 @@ $menu=array
 			'Kostenstelle'=>array ('name'=>'Kostenstelle', 'permissions'=>array('wawi/bestellung'),'link'=>'auswertungen/kostenstelle.php', 'target'=>'content'),
 			'Tags'=>array ('name'=>'Tags', 'permissions'=>array('wawi/bestellung'),'link'=>'auswertungen/wawi_tags.php', 'target'=>'content'),
 			'Konto'=>array ('name'=>'Konto', 'permissions'=>array('wawi/bestellung'),'link'=>'auswertungen/konto.php', 'target'=>'content'),
-			'Aufteilung'=>array ('name'=>'Aufteilung', 'permissions'=>array('wawi/bestellung'),'link'=>'auswertungen/aufteilung.php', 'target'=>'content'),
+			//'Aufteilung'=>array ('name'=>'Aufteilung', 'permissions'=>array('wawi/bestellung'),'link'=>'auswertungenaufteilung.php', 'target'=>'content'),
 			'Firmen angelegt'=>array ('name'=>'Firmen angelegt', 'permissions'=>array('basis/firma'),'link'=>'auswertungen/firmen_angelegt.php', 'target'=>'content')
 		)
 	)

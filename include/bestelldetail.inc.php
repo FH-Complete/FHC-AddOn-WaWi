@@ -140,10 +140,12 @@ function bestellungReadModel($id=null)
             if ($nation !== false)
             {
                 $isEU=$nation->eu;
+                $isGerman = ($nation_code == 'A' || $nation_code == 'D' || $nation_code == 'FL' || $nation_code == 'CH');
             }
             else
             {
-                $isEU=true;                        
+                $isEU=true; 
+                $isGerman=true;                       
             }
 		}
 		else
@@ -156,6 +158,7 @@ function bestellungReadModel($id=null)
             $nation_code='';
             $nation_kurztext='';
             $isEU=true;
+            $isGerman=true;
             $kategorie='';
 		}
 		$datum_obj = new datum();
@@ -250,6 +253,7 @@ function bestellungReadModel($id=null)
         $model->lieferant->nation_code = $nation_code;
         $model->lieferant->nation_kurztext = mb_strtoupper($nation_kurztext, 'UTF-8');
         $model->lieferant->eu = $isEU;
+        $model->lieferant->deutsch = $isGerman;
 				
 		$details = new wawi_bestelldetail();
 		$details->getAllDetailsFromBestellung($bestellung->bestellung_id);

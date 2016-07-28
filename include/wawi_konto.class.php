@@ -37,6 +37,7 @@ class wawi_konto extends basis_db
 	public $kontonr;				//  string
 	public $beschreibung = array();	//  string array
 	public $kurzbz;					//  string
+	public $hilfe;                  //  string
 	public $aktiv;					//  boolean
 	public $insertamum;        		//  timestamp
 	public $insertvon;				//  string
@@ -93,6 +94,7 @@ class wawi_konto extends basis_db
 			$this->kontonr = $row->kontonr;
 			$this->beschreibung = $sprache->parseSprachResult('beschreibung', $row);
 			$this->kurzbz = $row->kurzbz;
+			$this->hilfe = $row->hilfe;
 			$this->aktiv = $this->db_parse_bool($row->aktiv);
 			$this->insertamum = $row->insertamum;
 			$this->insertvon = $row->insertvon;
@@ -143,6 +145,7 @@ class wawi_konto extends basis_db
 			$obj->kontonr = $row->kontonr;
 			$obj->beschreibung = $sprache->parseSprachResult('beschreibung', $row);			
 			$obj->kurzbz = $row->kurzbz;
+			$obj->hilfe = $row->hilfe;
 			$obj->aktiv = $this->db_parse_bool($row->aktiv);
 			$obj->insertamum = $row->insertamum;
 			$obj->insertvon = $row->insertvon;
@@ -186,6 +189,12 @@ class wawi_konto extends basis_db
 			return false;
 		}
 
+		if(mb_strlen($this->hilfe)>256)
+		{
+			$this->errormsg = 'Hilfetext darf nicht laenger als 256 Zeichen sein.';
+			return false;
+		}
+
 		if(is_bool($this->aktiv)!= true)
 		{
 			$this->errormsg = 'Aktiv ist nicht gesetzt.';
@@ -225,7 +234,7 @@ class wawi_konto extends basis_db
 				$idx = sprache::$index_arr[$key];
 				$qry.=" beschreibung[$idx],";
 			}
-			$qry.=' kurzbz, aktiv, insertamum, 
+			$qry.=' kurzbz, hilfe, aktiv, insertamum, 
 			insertvon, updateamum, updatevon, person_id) VALUES('.
 			      $this->db_add_param($this->kontonr).', ';
 			      
@@ -234,6 +243,7 @@ class wawi_konto extends basis_db
 				$qry.=$this->db_add_param($value).',';
 			
 			$qry.=$this->db_add_param($this->kurzbz).', '.
+				  $this->db_add_param($this->hilfe).', '.
 			      $this->db_add_param($this->aktiv, FHC_BOOLEAN).', '.
 			      $this->db_add_param($this->insertamum).', '.
 			      $this->db_add_param($this->insertvon).', '.
@@ -261,6 +271,7 @@ class wawi_konto extends basis_db
 			}
 			
 			$qry.=' kurzbz='.$this->db_add_param($this->kurzbz).', '.
+			    ' hilfe='.$this->db_add_param($this->hilfe).', '.
 		      	' aktiv='.$this->db_add_param($this->aktiv, FHC_BOOLEAN).', '.
 				' insertamum='.$this->db_add_param($this->insertamum).', '.
 				' insertvon='.$this->db_add_param($this->insertvon).', '.
@@ -367,6 +378,7 @@ class wawi_konto extends basis_db
 				$obj->kontonr = $row->kontonr;
 				$obj->beschreibung = $sprache->parseSprachResult('beschreibung', $row);
 				$obj->kurzbz = $row->kurzbz;
+				$obj->hilfe = $row->hilfe;
 				$obj->aktiv = $this->db_parse_bool($row->aktiv);
 				$obj->insertamum = $row->insertamum;
 				$obj->insertvon = $row->insertvon;
@@ -446,6 +458,7 @@ class wawi_konto extends basis_db
 				$obj->kontonr = $row->kontonr;
 				$obj->beschreibung = $sprache->parseSprachResult('beschreibung', $row);				
 				$obj->kurzbz = $row->kurzbz; 
+				$obj->hilfe = $row->hilfe;
 				$obj->aktiv = $this->db_parse_bool($row->aktiv);
 				$obj->insertamum = $row->insertamum;
 				$obj->insertvon = $row->insertvon;
@@ -497,6 +510,7 @@ class wawi_konto extends basis_db
 			$obj->kontonr = $row->kontonr;
 			$obj->beschreibung = $sprache->parseSprachResult('beschreibung', $row);
 			$obj->kurzbz = $row->kurzbz; 
+			$obj->hilfe = $row->hilfe;
 			$obj->aktiv = $this->db_parse_bool($row->aktiv);
 			$obj->insertamum = $row->insertamum;
 			$obj->insertvon = $row->insertvon;
@@ -537,6 +551,7 @@ class wawi_konto extends basis_db
 				$obj->kontonr = $row->kontonr;
 				$obj->beschreibung = $sprache->parseSprachResult('beschreibung', $row);
 				$obj->kurzbz = $row->kurzbz;
+				$obj->hilfe = $row->hilfe;
 				$obj->aktiv = $this->db_parse_bool($row->aktiv);
 				$obj->insertamum = $row->insertamum;
 				$obj->insertvon = $row->insertvon;

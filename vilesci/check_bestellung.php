@@ -179,7 +179,7 @@ echo '
 		{
 			$bestellt = 'ja';
 			$bestellt_datum = $status->datum;
-		}
+		} 
 			
 			
 		$brutto = $bestellung->getBrutto($row->bestellung_id);
@@ -192,7 +192,7 @@ echo '
 					  '<td>'.$date->formatDatum($row->insertamum, "d.m.Y").'</td>'.					  
 					  '<td>'.$geliefert.'</td>'
 					:
-					  '<td>'.$date->formatDatum($bestellt_datum, "d.m.Y").'</td>'.
+					  '<td>'.($bestellt_datum != null ? $date->formatDatum($bestellt_datum, "d.m.Y") : 'nein').'</td>'.
 					  '<td>'.($row->auftragsbestaetigung != null ? $date->formatDatum($row->auftragsbestaetigung, "d.m.Y") : 'nein').'</td>
 					  <td>'.$freigegeben.'</td>
 					  <td>'.$row->liefertermin.'</td>').'

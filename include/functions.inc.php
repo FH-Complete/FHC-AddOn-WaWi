@@ -1,5 +1,13 @@
 <?php
 
+require_once($basepath.'/include/functions.inc.php');
+require_once('wawi_kostenstelle.class.php');
+require_once $basepath.'/include/organisationseinheit.class.php';
+require_once($basepath.'/include/phrasen.class.php');
+require_once($basepath.'/include/sprache.class.php');
+
+
+
 function addScheme($url, $scheme = 'http://')
 {
   return parse_url($url, PHP_URL_SCHEME) === null ?
@@ -12,7 +20,18 @@ function personFormat($titelpre,$vorname,$nachname,$titelpost)
     return join(' ',$e);
 }
 
-
+function isGMBHKostenstelle($kostenstelle_id) {
+    $kostenstelle = new wawi_kostenstelle(); 
+    $kostenstelle->load($kostenstelle_id);
+    if ($kostenstelle->oe_kurzbz == 'gmbh') return true;    
+    $oe = new organisationseinheit();
+    $parents = $oe->getParents($oe->oe_kurzbz);
+    foreach ($parents as $oeRow) 
+    {
+        if ($oeRow->oe_kurzbz == 'gmbh') return true;
+    }
+    return false;
+}
 
 class BestellungPDFConverter {
 
@@ -29,8 +48,20 @@ class BestellungPDFConverter {
      * @param String $styleTemplate PHP-File das styles.xml generiert
      * @return Pfad zum generierten PDF oder FALSE
      */
-    public function convert2pdf($input, $odt, $contentTemplate, $styleTemplate=null)
+    public function convert2pdf($input, $odt, $contentTemplate, $english=false, $styleTemplate=null, $logoGmbh=null)
     {
+        // aktuell eingestellte Sprache
+        $sprache = getSprache(); 
+        $lang = new sprache(); 
+        if ($english) 
+        {
+            // override Sprache, damit Bestellschein in Englisch erstellt wird
+            $sprache = 'English';
+            $p = new phrasen($sprache);     
+        }         
+        $lang->load($sprache);
+        $p = new phrasen($sprache);     
+
         $this->tempfolder = '/tmp/'.uniqid();
         $this->tempname_zip = 'out.zip';
         if (!mkdir($this->tempfolder)) 
@@ -56,8 +87,18 @@ class BestellungPDFConverter {
             return false;
         }
 
+
+
         if(copy($odt, $this->tempname_zip))
         {            
+
+            // Gmbh-Logo einbauen (default ist FH)
+            if ($logoGmbh != null) {
+                mkdir('Pictures');                
+                copy($logoGmbh, 'Pictures'.DIRECTORY_SEPARATOR.'100002010000012C000000A0E47DB5C13E40A7E8.png');
+                exec("zip -r ".$this->tempname_zip." Pictures");
+            }
+
             exec("zip -r ".$this->tempname_zip." content.xml");
             if ($styleTemplate != null)
             {

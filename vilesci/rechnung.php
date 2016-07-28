@@ -173,7 +173,7 @@ if($aktion == 'suche')
 		$oe->loadArray($rechte->getOEkurzbz($berechtigung_kurzbz));
 
 		$konto = new wawi_konto();
-		$konto->getAll();
+		$konto->getAll(true,'kontonr ASC');
 		
 		$zahlungstyp = new wawi_zahlungstyp(); 
 		$zahlungstyp->getAll(); 
@@ -215,7 +215,7 @@ if($aktion == 'suche')
 		echo "<td>Bestelldatum</td>\n";
 		echo "<td>von <input type='text' id='bestelldatum_von' size='12' name='bestelldatum_von'> bis <input type='text' id='bestelldatum_bis' size='12' name='bestelldatum_bis'></td>\n";
 		echo "</tr>\n";
-		echo "<tr>\n";
+		/*echo "<tr>\n";
 		echo "<td> Organisationseinheit </td>\n";
 		echo "<td><SELECT name='filter_oe_kurzbz' onchange='loadFirma(this.value)'>\n"; 
 		echo "<option value=''>-- auswählen --</option>\n";
@@ -232,9 +232,9 @@ if($aktion == 'suche')
 		}
 		echo "</SELECT>\n";
 		echo "</td>\n";
-		echo "</tr>\n";		
+		echo "</tr>\n";		*/
 		echo "<tr>\n";
-		echo "<td> Firma </td>\n";
+		echo "<td> Lieferant </td>\n";
 		echo "<td> <input id='firmenname' name='firmenname' size='32' maxlength='30' value=''>\n";
 		echo "</td>\n";
 		echo "<td> <input type ='hidden' id='firma_id' name='firma_id' size='10' maxlength='30' value=''  >\n";
@@ -264,7 +264,7 @@ if($aktion == 'suche')
 		echo "</SELECT>\n";
 		echo "</td>\n";
 		echo "</tr>\n";	
-		echo "<tr>\n"; 
+		/*echo "<tr>\n"; 
 		echo "<td> Zahlungstyp: </td>\n"; 
 		echo "<td><SELECT name='filter_zahlungstyp' id='searchZahlungstyp' style='width: 230px;'>\n"; 
 		echo "<option value=''>-- auswählen --</option>\n";	
@@ -274,7 +274,7 @@ if($aktion == 'suche')
 		}
 		echo "</SELECT>\n";
 		echo "</td>\n";
-		echo "</tr>\n"; 		
+		echo "</tr>\n";   */		
 		echo "<tr>\n";
 		echo "<td> Ohne Transferdatum: </td>\n";
 		echo "<td><input type ='checkbox' name ='ohneTransferdatum'></td>\n";
@@ -591,7 +591,7 @@ if($aktion=='update')
 				<td>'.$konto->kurzbz.'</td>
 			</tr>
 			<tr>
-				<td><b>Firma:</b></td>
+				<td><b>Lieferant:</b></td>
 				<td>'.$firma->name.'</td>
 			</tr>
 			</table>';
@@ -628,12 +628,12 @@ if($aktion=='update')
 		<td>Rechnungsnummer</td>
 		<td>Rechnungsdatum (tt.mm.JJJJ)&nbsp;&nbsp;</td>
 		<td>Bestellung</td>
-		<td>Typ</td>
+		<td><!-- Typ --></td>
 	</tr>
 	<tr>
 		<td><input type="text" name="rechnungsnummer" value="'.$rechnung->rechnungsnr.'"></td>
 		<td>
-			<input type="text" name="rechnungsdatum" size="10" id="rechnungsdatum" value="'.$date->formatDatum($rechnung->rechnungsdatum,'d.m.Y').'">
+			<input type="text" name="rechnungsdatum" size="11" id="rechnungsdatum" value="'.$date->formatDatum($rechnung->rechnungsdatum,'d.m.Y').'">
 			<script type="text/javascript">
 			$(document).ready(function() 
 			{
@@ -684,7 +684,7 @@ if($aktion=='update')
 	echo '</SELECT>
 		</td>
 		<td>
-			<SELECT name="rechnungstyp_kurzbz">';
+			<SELECT  style="display:none" name="rechnungstyp_kurzbz">';
 	$rtyp = new wawi_rechnung();
 	$rtyp->getRechnungstyp();
 	
@@ -749,7 +749,7 @@ if($aktion=='update')
 				<tr>
 					<td>Bezeichnung</td>
 					<td>Betrag Netto</td>
-					<td>MwSt</td>
+					<td>USt</td>
 					<td>Brutto</td>
 				</tr>
 			</thead>
