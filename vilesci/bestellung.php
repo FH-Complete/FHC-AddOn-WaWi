@@ -906,6 +906,7 @@ elseif($aktion == 'new')
 	echo "<option value='' >Konto auswählen</option>\n";
 	echo "</select>\n";
 	echo '<a href="konto_hilfe.php" onclick="FensterOeffnen(this.href); return false" title="Hilfe zur USt"> <img src="../skin/images/question.png"> </a>';
+
 	echo "</td></tr>\n";
 	echo "<tr>\n";
 	echo "<td>&nbsp;</td></tr>\n";
@@ -2042,6 +2043,7 @@ EOT;
 	}
 	echo "</select>";
 	echo '<a href="konto_hilfe.php" onclick="FensterOeffnen(this.href); return false" title="Hilfe zur USt"> <img src="../skin/images/question.png"> </a>';
+	echo "&nbsp; <label for=\"nicht_bestellen\">nicht bestellen</label> <input type=\"checkbox\" id=\"nicht_bestellen\" name=\"nicht_bestellen\" ".($bestellung->nicht_bestellen != null && $bestellung->nicht_bestellen === true ?'checked':'').">";
 	echo "</td>";
          
         
@@ -2190,7 +2192,7 @@ EOT;
 					extraParams:{"work":"tags", "bestell_id":"'.$bestellung->bestellung_id.'"}
 				});
 			</script>'; */
-	echo "&nbsp; <label for=\"nicht_bestellen\">nicht bestellen</label> <input type=\"checkbox\" id=\"nicht_bestellen\" name=\"nicht_bestellen\" ".($bestellung->nicht_bestellen != null && $bestellung->nicht_bestellen === true ?'checked':'').">";
+	
 	echo "</td>\n"; 
 	echo "<td>Freigabe:</td>\n";
 	echo "<td colspan =2>";
