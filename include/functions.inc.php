@@ -107,7 +107,7 @@ class BestellungPDFConverter {
 
             $this->tempPdfName = 'Bestellschein.pdf';                        
             //echo "unoconv -e Watermark=muster --stdout -f pdf ".$this->tempname_zip." > ".$this->tempPdfName;
-            exec("unoconv -e Watermark=demo --server 127.0.0.1 --port 2002 --stdout -f pdf ".$this->tempname_zip." > ".$this->tempPdfName);
+            exec("unoconv --server 127.0.0.1 --port 2002 --stdout -f pdf ".$this->tempname_zip." > ".$this->tempPdfName);
 
             return $this->tempfolder.DIRECTORY_SEPARATOR.$this->tempPdfName;
         } 
