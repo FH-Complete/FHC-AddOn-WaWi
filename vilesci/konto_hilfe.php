@@ -28,6 +28,19 @@ $result = $konto->result;
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
 <title>Info zu den Konten</title>
+<style>
+body {
+	font-family: "Arial", sans-serif;
+    background-color: white;
+}
+
+dt {
+    font-weight:bold;
+} 
+dd {
+	font-weight: normal;
+}
+</style>
 </head>
 <body>
     <dl>
