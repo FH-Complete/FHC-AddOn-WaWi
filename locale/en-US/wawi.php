@@ -18,6 +18,7 @@ $this->phrasen['wawi/bestellung/raum']='Room';
 $this->phrasen['wawi/bestellung/pos']='Pos';
 $this->phrasen['wawi/bestellung/menge']='QTY';
 $this->phrasen['wawi/bestellung/ve']='PU';
+$this->phrasen['wawi/bestellung/iban']='IBAN';
 
 $this->phrasen['wawi/bestellung/bezeichnung']='Description';
 $this->phrasen['wawi/bestellung/art_nr']='Item no.';

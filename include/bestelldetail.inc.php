@@ -201,7 +201,8 @@ function bestellungReadModel($id=null)
 		$model->kontaktperson->vorname = $besteller->vorname;
 		$model->kontaktperson->nachname = $besteller->nachname;
 		$model->kontaktperson->titelpost = $besteller->titelpost;
-		$model->kontaktperson->email = $besteller->uid.'@'.DOMAIN;		
+		$model->kontaktperson->email = $besteller->uid.'@'.DOMAIN;	
+		$model->kontaktperson->iban = $bestellung->iban;	
         // Rechnungsadresse        
 		$model->rechnungsadresse = new stdClass();                
         //$model->rechnungsadresse->kurzbz = $rechnungsadresse->kurzbz;
@@ -290,6 +291,7 @@ function bestellungReadModel($id=null)
 		$model->summe_netto = number_format($summe_netto,2,',','.');
 		$model->summe_mwst = number_format($summe_mwst,2,',','.');
 		$model->summe_brutto = number_format($summe_brutto,2,',','.');
+		$model->summe_brutto_numeric = $summe_brutto;   // Summe als Zahl damit Vergleich möglich ist
 
 		// nicht bestellen
 		if ($bestellung->nicht_bestellen != null && $bestellung->nicht_bestellen === true) {
