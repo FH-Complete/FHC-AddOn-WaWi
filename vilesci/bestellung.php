@@ -475,7 +475,12 @@ if(isset($_POST['deleteBtnStorno']) && isset($_POST['id']))
 			}
 		});
 
-	  	  
+		
+
+<?php	  	  
+	if($rechte->isBerechtigt('wawi/bestellung_advanced')) {
+?>
+
 		$('#besteller').autocomplete({
 			source: "wawi_autocomplete.php?work=wawi_mitarbeiter_search",
 			minLength:2,
@@ -494,6 +499,17 @@ if(isset($_POST['deleteBtnStorno']) && isset($_POST['id']))
 				$('#besteller_uid').val(ui.item.uid);
 			}
 		});
+<?php
+	} else {	
+?>	
+		
+		$("#besteller").keydown(function(e){
+        	e.preventDefault();
+   		});
+
+<?php
+	} 	
+?>	
                 
         $('#zuordnung_person').autocomplete({
 			source: "wawi_autocomplete.php?work=wawi_mitarbeiter_search",
