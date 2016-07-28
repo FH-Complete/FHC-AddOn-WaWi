@@ -460,7 +460,7 @@ if($method=='new' || $method=='update')
     $lieferbedingungen = '';
 	
 	if($method=='new')
-		echo '<h1>Neuen Lieferanten/Empfänger</h1>';
+		echo '<h1>Neuer Lieferant/Empfänger</h1>';
 	else
 	{
 		echo '<h1>Lieferant/Empfänger Bearbeiten</h1>';
