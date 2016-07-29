@@ -21,7 +21,7 @@
  *
  * Installationsscript zur Erstinitialisierung des Addons
  */
-$basepath = $_SERVER['DOCUMENT_ROOT'];
+$basepath = dirname(dirname(dirname($_SERVER['SCRIPT_FILENAME']))).DIRECTORY_SEPARATOR;
 require_once('version.php');
 require_once($basepath.'/version.php');
 require_once($basepath.'/config/system.config.inc.php');

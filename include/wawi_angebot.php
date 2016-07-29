@@ -17,7 +17,7 @@
  *
  */
 
-require_once($basepath.'/include/basis_db.class.php');
+require_once(dirname(__FILE__).'/../../../include/basis_db.class.php');
 
 class wawi_angebot extends basis_db
 {

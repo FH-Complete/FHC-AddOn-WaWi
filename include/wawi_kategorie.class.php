@@ -16,9 +16,9 @@
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307, USA.
  *
  */
-$basepath = $_SERVER['DOCUMENT_ROOT'];
-require_once($basepath.'/include/basis_db.class.php');
-require_once($basepath.'/include/sprache.class.php');
+
+require_once(dirname(__FILE__).'/../../../include/basis_db.class.php');
+require_once(dirname(__FILE__).'/../../../include/sprache.class.php');
 
 class wawi_bestellung_kategorie extends basis_db
 {

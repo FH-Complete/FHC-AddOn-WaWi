@@ -22,13 +22,13 @@
 /**
  * Klasse WaWi Bestellung
  */
-$basepath = $_SERVER['DOCUMENT_ROOT'];
-require_once($basepath.'/include/basis_db.class.php');
-require_once ('wawi_bestelldetail.class.php');
-require_once ('wawi_aufteilung.class.php');
-require_once ($basepath.'/include/organisationseinheit.class.php');
-require_once ('wawi_kostenstelle.class.php');
-require_once ($basepath.'/include/geschaeftsjahr.class.php');
+
+require_once(dirname(__FILE__).'/../../../include/basis_db.class.php');
+require_once(dirname(__FILE__).'/wawi_bestelldetail.class.php');
+require_once(dirname(__FILE__).'/wawi_aufteilung.class.php');
+require_once(dirname(__FILE__).'/../../../include/organisationseinheit.class.php');
+require_once(dirname(__FILE__).'/wawi_kostenstelle.class.php');
+require_once(dirname(__FILE__).'/../../../include/geschaeftsjahr.class.php');
 
 class wawi_bestellung extends basis_db
 {

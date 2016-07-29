@@ -22,9 +22,8 @@
 /**
  * Klasse WaWi Kostenstelle
  */
-$basepath = $_SERVER['DOCUMENT_ROOT'];
-require_once($basepath.'/include/basis_db.class.php');
-require_once($basepath.'/include/geschaeftsjahr.class.php');
+require_once(dirname(__FILE__).'/../../../include/basis_db.class.php');
+require_once(dirname(__FILE__).'/../../../include/geschaeftsjahr.class.php');
 
 
 class wawi_kostenstelle extends basis_db

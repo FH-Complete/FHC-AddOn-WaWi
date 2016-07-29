@@ -22,14 +22,14 @@
 /**
  * Redirect zur Firmenwartung
  */
-$basepath = $_SERVER['DOCUMENT_ROOT'];
-require_once $basepath.'/config/wawi.config.inc.php';
+
+require_once dirname(__FILE__).'/../../../config/wawi.config.inc.php';
 //require_once('auth.php');
 require_once('../include/wawi_benutzerberechtigung.class.php');
 $https = ((!empty($_SERVER['HTTPS'])) && ($_SERVER['HTTPS'] != 'off')) ? true : false;
 
 $url = ($https ? 'https' : 'http') 
-    . '://'.$_SERVER['SERVER_NAME'].'/vilesci/stammdaten/firma_zusammen_uebersicht.php';
+    . '://'.$_SERVER['SERVER_NAME'].dirname($_SERVER['PHP_SELF']).'/../../../vilesci/stammdaten/firma_zusammen_uebersicht.php';
 
 header('Location: '.$url);
 

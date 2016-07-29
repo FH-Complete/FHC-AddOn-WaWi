@@ -1,10 +1,10 @@
 <?php
 
-require_once($basepath.'/include/functions.inc.php');
+require_once dirname(__FILE__).'/../../../include/functions.inc.php';
 require_once('wawi_kostenstelle.class.php');
-require_once $basepath.'/include/organisationseinheit.class.php';
-require_once($basepath.'/include/phrasen.class.php');
-require_once($basepath.'/include/sprache.class.php');
+require_once dirname(__FILE__).'/../../../include/organisationseinheit.class.php';
+require_once dirname(__FILE__).'/../../../include/phrasen.class.php';
+require_once dirname(__FILE__).'/../../../include/sprache.class.php';
 
 
 

@@ -22,18 +22,18 @@
 /**
  * Auswertung der Bestellungen und Rechnungen auf Kostenstellen und Tags
  */
-$basepath = $_SERVER['DOCUMENT_ROOT'];
-require_once($basepath.'/config/wawi.config.inc.php');
+
+require_once(dirname(__FILE__).'/../../../../config/wawi.config.inc.php');
 //require_once('../auth.php');
-require_once('../../include/wawi_benutzerberechtigung.class.php');
-require_once($basepath.'/include/functions.inc.php');
-require_once('../../include/wawi_rechnung.class.php');
-require_once('../../include/wawi_bestellung.class.php');
-require_once('../../include/wawi_kostenstelle.class.php');
-require_once($basepath.'/include/studiensemester.class.php');
-require_once($basepath.'/include/tags.class.php');
-require_once($basepath.'/include/geschaeftsjahr.class.php');
-require_once($basepath.'/include/datum.class.php');
+require_once(dirname(__FILE__).'/../../include/wawi_benutzerberechtigung.class.php');
+require_once(dirname(__FILE__).'/../../../../include/functions.inc.php');
+require_once(dirname(__FILE__).'/../../include/wawi_rechnung.class.php');
+require_once(dirname(__FILE__).'/../../include/wawi_bestellung.class.php');
+require_once(dirname(__FILE__).'/../../include/wawi_kostenstelle.class.php');
+require_once(dirname(__FILE__).'/../../../../include/studiensemester.class.php');
+require_once(dirname(__FILE__).'/../../../../include/tags.class.php');
+require_once(dirname(__FILE__).'/../../../../include/geschaeftsjahr.class.php');
+require_once(dirname(__FILE__).'/../../../../include/datum.class.php');
 
 $user = get_uid();
 $rechte = new benutzerberechtigung();
@@ -58,13 +58,13 @@ if(count($kst_array)==0)
 	<link rel="stylesheet" href="../../skin/wawi.css" type="text/css">
 	<link rel="stylesheet" href="../../skin/tablesort.css" type="text/css">
 		
-	<script type="text/javascript" src="../../include/js/jquery.js"></script> 
-	<script type="text/javascript" src="../../include/js/jquery.metadata.js"></script> 
-	<script type="text/javascript" src="../../include/js/jquery.tablesorter.js"></script>
+	<script type="text/javascript" src="../../../../include/js/jquery1.9.min.js"></script> 
+	<script type="text/javascript" src="../../../../include/js/jquery.metadata.js"></script> 
+	<script type="text/javascript" src="../../../../include/js/jquery.tablesorter.js"></script>
 	<script type="text/javascript">
  	function alleMarkieren(checked)
  	{
- 	 	checkbox = $(':checkbox').attr('checked',checked);
+ 	 	checkbox = $(':checkbox').prop('checked',checked);
  	}
 	</script>
 </head>
@@ -205,8 +205,8 @@ else
 		else
 			$class='class="inaktiv"';
 		echo '<tr>
-				<td><input type="checkbox" name="kst[]" value="'.$kst->kostenstelle_id.'"></td>
-				<td nowrap '.$class.'>'.$kst->bezeichnung.' </td>
+				<td><input type="checkbox" name="kst[]" id="'.$kst->kostenstelle_id.'" value="'.$kst->kostenstelle_id.'"></td>
+				<td nowrap '.$class.'><label for="'.$kst->kostenstelle_id.'">'.$kst->bezeichnung.'</label></td>
 			</tr>';
 		$anzahl++;
 	}
@@ -217,8 +217,8 @@ else
 	<br />
 	<table>
 	<tr>
-		<td><input type="checkbox" name="allemarkieren" onclick="alleMarkieren(this.checked)"></td>
-		<td>Alle markieren</td>
+		<td><input type="checkbox" name="allemarkieren" id="allemarkieren" onclick="alleMarkieren(this.checked)"></td>
+		<td><label for="allemarkieren">Alle markieren</label></td>
 	</tr>
 	</table>
 	<br />

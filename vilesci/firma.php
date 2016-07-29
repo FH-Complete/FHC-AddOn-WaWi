@@ -25,15 +25,15 @@
  * Dies ist eine abgespeckte Version der Firmenverwaltung zum einfachen Anlegen und
  * Bearbeiten von Firmen.
  */
-$basepath = $_SERVER['DOCUMENT_ROOT'];
-require_once $basepath.'/config/wawi.config.inc.php';
+
+require_once dirname(__FILE__).'/../../../config/wawi.config.inc.php';
 //require_once('auth.php');
 require_once('../include/wawi_benutzerberechtigung.class.php');
-require_once($basepath.'/include/firma.class.php');
-require_once($basepath.'/include/standort.class.php');
-require_once($basepath.'/include/kontakt.class.php');
-require_once($basepath.'/include/adresse.class.php');
-require_once($basepath.'/include/nation.class.php');
+require_once dirname(__FILE__).'/../../../include/firma.class.php';
+require_once dirname(__FILE__).'/../../../include/standort.class.php';
+require_once dirname(__FILE__).'/../../../include/kontakt.class.php';
+require_once dirname(__FILE__).'/../../../include/adresse.class.php';
+require_once dirname(__FILE__).'/../../../include/nation.class.php';
 
 ?>
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"

@@ -21,13 +21,13 @@
  *
  * Prueft und aktualisiert die Datenbank
  */
-$basepath = dirname(dirname(dirname($_SERVER['SCRIPT_FILENAME']))).DIRECTORY_SEPARATOR;
-require_once($basepath.'config/system.config.inc.php');
-require_once($basepath.'include/basis_db.class.php');
-require_once($basepath.'include/berechtigung.class.php');
-require_once($basepath.'include/dms.class.php');
-require_once($basepath.'include/functions.inc.php');
-require_once('include/wawi_benutzerberechtigung.class.php');
+
+require_once(dirname(__FILE__).'/../../config/system.config.inc.php');
+require_once(dirname(__FILE__).'/../../include/basis_db.class.php');
+require_once(dirname(__FILE__).'/../../include/berechtigung.class.php');
+require_once(dirname(__FILE__).'/../../include/dms.class.php');
+require_once(dirname(__FILE__).'/../../include/functions.inc.php');
+require_once(dirname(__FILE__).'/include/wawi_benutzerberechtigung.class.php');
 
 // Datenbank Verbindung
 $db = new basis_db();

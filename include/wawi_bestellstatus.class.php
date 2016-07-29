@@ -23,8 +23,8 @@
  * Klasse WaWi Bestelldetail
  */
  
-$basepath = $_SERVER['DOCUMENT_ROOT'];
-require_once($basepath.'/include/basis_db.class.php');
+
+require_once(dirname(__FILE__).'/../../../include/basis_db.class.php');
 
 class wawi_bestellstatus extends basis_db
 {

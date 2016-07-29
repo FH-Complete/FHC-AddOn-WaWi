@@ -21,20 +21,19 @@
  */
 //$basepath = dirname(dirname(dirname(dirname($_SERVER['SCRIPT_FILENAME'])))).DIRECTORY_SEPARATOR;
 
-$basepath = $_SERVER['DOCUMENT_ROOT'];
-require_once $basepath.'/config/wawi.config.inc.php';
+require_once dirname(__FILE__).'/../../../config/wawi.config.inc.php';
 //require_once('auth.php');
 
-require_once $basepath.'/include/firma.class.php';
-require_once $basepath.'/include/organisationseinheit.class.php';
-require_once $basepath.'/include/mitarbeiter.class.php';
-require_once $basepath.'/include/datum.class.php';
+require_once dirname(__FILE__).'/../../../include/firma.class.php';
+require_once dirname(__FILE__).'/../../../include/organisationseinheit.class.php';
+require_once dirname(__FILE__).'/../../../include/mitarbeiter.class.php';
+require_once dirname(__FILE__).'/../../../include/datum.class.php';
 require_once '../include/wawi_benutzerberechtigung.class.php';
-require_once $basepath.'/include/standort.class.php';
-require_once $basepath.'/include/adresse.class.php';
-require_once $basepath.'/include/studiengang.class.php';
-require_once $basepath.'/include/mail.class.php';
-require_once $basepath.'/include/geschaeftsjahr.class.php';
+require_once dirname(__FILE__).'/../../../include/standort.class.php';
+require_once dirname(__FILE__).'/../../../include/adresse.class.php';
+require_once dirname(__FILE__).'/../../../include/studiengang.class.php';
+require_once dirname(__FILE__).'/../../../include/mail.class.php';
+require_once dirname(__FILE__).'/../../../include/geschaeftsjahr.class.php';
 require_once '../include/wawi_konto.class.php';
 //require_once '../include/wawi_kategorie.class.php';
 require_once '../include/wawi_zuordnung.class.php';
@@ -45,8 +44,8 @@ require_once '../include/wawi_aufteilung.class.php';
 require_once '../include/wawi_bestellstatus.class.php';
 require_once '../include/wawi_zahlungstyp.class.php';
 require_once '../include/wawi_angebot.class.php';
-require_once $basepath.'/include/tags.class.php';
-require_once $basepath.'/include/projekt.class.php';
+require_once dirname(__FILE__).'/../../../include/tags.class.php';
+require_once dirname(__FILE__).'/../../../include/projekt.class.php';
 require_once('../include/functions.inc.php');
 
 $aktion ='';

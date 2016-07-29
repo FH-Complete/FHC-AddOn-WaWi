@@ -19,21 +19,21 @@
 
 session_cache_limiter('none'); //muss gesetzt werden sonst funktioniert der Download mit IE8 nicht
 //require_once('auth.php');
-$basepath = $_SERVER['DOCUMENT_ROOT'];
-require_once($basepath.'/config/vilesci.config.inc.php');
+
+require_once(dirname(__FILE__).'/../../../config/vilesci.config.inc.php');
 require_once('../include/bestelldetail.inc.php');
-require_once($basepath.'/include/functions.inc.php');
+require_once(dirname(__FILE__).'/../../../include/functions.inc.php');
 require_once('../include/functions.inc.php');
 require_once('../include/wawi_benutzerberechtigung.class.php');
-require_once($basepath.'/include/akte.class.php');
-require_once($basepath.'/include/vorlage.class.php');
-require_once($basepath.'/include/student.class.php');
-require_once($basepath.'/include/prestudent.class.php');
-require_once($basepath.'/include/variable.class.php');
-require_once($basepath.'/include/addon.class.php');
-require_once($basepath.'/include/studiengang.class.php');
-require_once($basepath.'/include/studiensemester.class.php');
-require_once($basepath.'/include/studienordnung.class.php');
+require_once(dirname(__FILE__).'/../../../include/akte.class.php');
+require_once(dirname(__FILE__).'/../../../include/vorlage.class.php');
+require_once(dirname(__FILE__).'/../../../include/student.class.php');
+require_once(dirname(__FILE__).'/../../../include/prestudent.class.php');
+require_once(dirname(__FILE__).'/../../../include/variable.class.php');
+require_once(dirname(__FILE__).'/../../../include/addon.class.php');
+require_once(dirname(__FILE__).'/../../../include/studiengang.class.php');
+require_once(dirname(__FILE__).'/../../../include/studiensemester.class.php');
+require_once(dirname(__FILE__).'/../../../include/studienordnung.class.php');
 
 $user = get_uid();
 $db = new basis_db();

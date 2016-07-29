@@ -23,9 +23,7 @@
  * Klasse WaWi Zahlungstyp
  */
  
-$basepath = $_SERVER['DOCUMENT_ROOT'];
-require_once($basepath.'/include/basis_db.class.php');
-
+require_once(dirname(__FILE__).'/../../../include/basis_db.class.php');
 
 class wawi_zahlungstyp extends basis_db
 {

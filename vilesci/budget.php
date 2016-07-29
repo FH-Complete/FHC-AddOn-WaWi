@@ -19,14 +19,14 @@
  *          Andreas Oesterreicher <andreas.oesterreicher@technikum-wien.at> and
  *          Karl Burkhart <burkhart@technikum-wien.at>.
  */
-$basepath = $_SERVER['DOCUMENT_ROOT'];
-require_once $basepath.'/config/wawi.config.inc.php';
-require_once($basepath.'/include/organisationseinheit.class.php');
+
+require_once dirname(__FILE__).'/../../../config/wawi.config.inc.php';
+require_once dirname(__FILE__).'/../../../include/organisationseinheit.class.php';
 //require_once('auth.php');
 require_once('../include/wawi_kostenstelle.class.php');
 require_once('../include/wawi_konto.class.php');
 require_once('../include/wawi_benutzerberechtigung.class.php');
-require_once($basepath.'/include/geschaeftsjahr.class.php');
+require_once dirname(__FILE__).'/../../../include/geschaeftsjahr.class.php';
 ?>
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
 "http://www.w3.org/TR/html4/loose.dtd">

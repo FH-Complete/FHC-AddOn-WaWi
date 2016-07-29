@@ -21,12 +21,10 @@
 // Basispfad von FHC herausfinden
 // Warum? -> wenn AddOn via Symlink in das AddOn-Verzeichnis eingebunden wird, 
 // funktioniert das einbinden durch ../../../config/xy.config.inc.php nicht
-$basepath = dirname(dirname(dirname(dirname($_SERVER['SCRIPT_FILENAME'])))).DIRECTORY_SEPARATOR;
-require_once($basepath.'config/vilesci.config.inc.php');
-require_once($basepath.'include/functions.inc.php');
-require_once($basepath.'include/benutzerberechtigung.class.php');
 
-
+require_once dirname(__FILE__).'/../../../config/vilesci.config.inc.php';
+require_once dirname(__FILE__).'/../../../include/functions.inc.php';
+require_once dirname(__FILE__).'/../../../include/benutzerberechtigung.class.php';
 
 $uid = get_uid();
 $rechte = new benutzerberechtigung();

@@ -20,13 +20,13 @@
  *          Rudolf Hangl <rudolf.hangl@technikum-wien.at> and
  *			Gerald Simane-Sequens <gerald.simane-sequens@technikum-wien.at>
  */
-$basepath = $_SERVER['DOCUMENT_ROOT'];
-require_once($basepath.'/include/basis_db.class.php');
-require_once($basepath.'/include/organisationseinheit.class.php');
-require_once($basepath.'/include/studiengang.class.php');
-require_once($basepath.'/include/fachbereich.class.php');
-require_once($basepath.'/include/functions.inc.php');
-require_once('wawi_kostenstelle.class.php');
+
+require_once(dirname(__FILE__).'/../../../include/basis_db.class.php');
+require_once(dirname(__FILE__).'/../../../include/organisationseinheit.class.php');
+require_once(dirname(__FILE__).'/../../../include/studiengang.class.php');
+require_once(dirname(__FILE__).'/../../../include/fachbereich.class.php');
+require_once(dirname(__FILE__).'/../../../include/functions.inc.php');
+require_once(dirname(__FILE__).'/wawi_kostenstelle.class.php');
 
 /**
  * Kopie von benutzerberechtigungen.class.php aus FHC-Core. 

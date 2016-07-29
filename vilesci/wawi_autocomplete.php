@@ -26,7 +26,7 @@
 	header( 'Pragma: no-cache' );
 	header('Content-Type: text/html;charset=UTF-8');
 
-	$basepath = $_SERVER['DOCUMENT_ROOT'];
+	$basepath = dirname(dirname(dirname(dirname($_SERVER['SCRIPT_FILENAME'])))).DIRECTORY_SEPARATOR;
         require_once $basepath.'/config/wawi.config.inc.php';
 //	require_once('auth.php');
   	require_once($basepath.'/include/functions.inc.php');

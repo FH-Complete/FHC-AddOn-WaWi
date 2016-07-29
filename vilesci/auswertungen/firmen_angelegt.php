@@ -22,19 +22,19 @@
 /**
  * Auswertung der Bestellungen und Rechnungen auf Kostenstellen
  */
-$basepath = $_SERVER['DOCUMENT_ROOT'];
-require_once($basepath.'/config/wawi.config.inc.php');
+
+require_once(dirname(__FILE__).'/../../../../config/wawi.config.inc.php');
 //require_once('../auth.php');
-require_once('../../include/wawi_benutzerberechtigung.class.php');
-require_once($basepath.'/include/functions.inc.php');
-require_once('../../include/wawi_rechnung.class.php');
-require_once('../../include/wawi_bestellung.class.php');
-require_once('../../include/wawi_kostenstelle.class.php');
-require_once($basepath.'/include/studiensemester.class.php');
-require_once($basepath.'/include/tags.class.php');
-require_once($basepath.'/include/geschaeftsjahr.class.php');
-require_once($basepath.'/include/datum.class.php');
-require_once($basepath.'/include/firma.class.php');
+require_once(dirname(__FILE__).'/../../include/wawi_benutzerberechtigung.class.php');
+require_once(dirname(__FILE__).'/../../../../include/functions.inc.php');
+require_once(dirname(__FILE__).'/../../include/wawi_rechnung.class.php');
+require_once(dirname(__FILE__).'/../../include/wawi_bestellung.class.php');
+require_once(dirname(__FILE__).'/../../include/wawi_kostenstelle.class.php');
+require_once(dirname(__FILE__).'/../../../../include/studiensemester.class.php');
+require_once(dirname(__FILE__).'/../../../../include/tags.class.php');
+require_once(dirname(__FILE__).'/../../../../include/geschaeftsjahr.class.php');
+require_once(dirname(__FILE__).'/../../../../include/datum.class.php');
+require_once(dirname(__FILE__).'/../../../../include/firma.class.php');
 
 $user = get_uid();
 $rechte = new benutzerberechtigung();

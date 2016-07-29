@@ -17,23 +17,22 @@
  *
  */
 
-$basepath = $_SERVER['DOCUMENT_ROOT'];
-require_once($basepath.'/config/vilesci.config.inc.php');
-require_once($basepath.'/include/datum.class.php');
-require_once($basepath.'/include/basis_db.class.php');
-require_once('../include/wawi_bestellung.class.php');
-require_once('../include/wawi_bestelldetail.class.php');
-require_once($basepath.'/include/benutzer.class.php');
-require_once('../include/wawi_konto.class.php');
-require_once('../include/wawi_kostenstelle.class.php');
-require_once('../include/wawi_kategorie.class.php');
-require_once('../include/wawi_zuordnung.class.php');
-require_once($basepath.'/include/nation.class.php');
-require_once($basepath.'/include/adresse.class.php');
-require_once($basepath.'/include/firma.class.php');
-require_once($basepath.'/include/standort.class.php');
-require_once($basepath.'/include/kontakt.class.php');
-require_once($basepath.'/include/studiengang.class.php'); 
+require_once(dirname(__FILE__).'/../../../config/vilesci.config.inc.php');
+require_once(dirname(__FILE__).'/../../../include/datum.class.php');
+require_once(dirname(__FILE__).'/../../../include/basis_db.class.php');
+require_once(dirname(__FILE__).'/wawi_bestellung.class.php');
+require_once(dirname(__FILE__).'/wawi_bestelldetail.class.php');
+require_once(dirname(__FILE__).'/../../../include/benutzer.class.php');
+require_once(dirname(__FILE__).'/wawi_konto.class.php');
+require_once(dirname(__FILE__).'/wawi_kostenstelle.class.php');
+require_once(dirname(__FILE__).'/wawi_kategorie.class.php');
+require_once(dirname(__FILE__).'/wawi_zuordnung.class.php');
+require_once(dirname(__FILE__).'/../../../include/nation.class.php');
+require_once(dirname(__FILE__).'/../../../include/adresse.class.php');
+require_once(dirname(__FILE__).'/../../../include/firma.class.php');
+require_once(dirname(__FILE__).'/../../../include/standort.class.php');
+require_once(dirname(__FILE__).'/../../../include/kontakt.class.php');
+require_once(dirname(__FILE__).'/../../../include/studiengang.class.php'); 
 
 /**
  *  Helper um Land von PLZ zu entfernen ('A-1060' => '1060')

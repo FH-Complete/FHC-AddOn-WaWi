@@ -19,8 +19,7 @@
  *          Andreas Oesterreicher <andreas.oesterreicher@technikum-wien.at> and
  *          Karl Burkhart <karl.burkhart@technikum-wien.at>.
  */
-$basepath = dirname(dirname(dirname(dirname($_SERVER['SCRIPT_FILENAME'])))).DIRECTORY_SEPARATOR;
-require_once($basepath.'config/wawi.config.inc.php');
+require_once dirname(__FILE__).'/../../../config/wawi.config.inc.php';
 //require_once('auth.php');
 
 $menu = isset($_GET['menu'])?$_GET['menu']:'menu.php';
