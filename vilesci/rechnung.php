@@ -747,7 +747,7 @@ if($aktion=='update')
 			<table>
 			<thead>
 				<tr>
-					<td>Bezeichnung</td>
+					<td>Bemerkung</td>
 					<td>Betrag Netto</td>
 					<td>USt</td>
 					<td>Brutto</td>
