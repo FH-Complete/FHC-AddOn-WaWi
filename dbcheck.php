@@ -431,7 +431,15 @@ if(!tableExists($schemaName,$tableName))
                 GRANT SELECT ON $tableName TO web;
 		GRANT SELECT, UPDATE, INSERT, DELETE ON $tableName TO vilesci;
 		GRANT SELECT, UPDATE ON $sequenceName TO vilesci;
-
+		GRANT SELECT, UPDATE, INSERT, DELETE ON $tableName TO wawi;
+		GRANT SELECT, UPDATE ON $sequenceName TO wawi;
+		GRANT SELECT, UPDATE, INSERT, DELETE ON campus.tbl_dms TO wawi;
+		GRANT SELECT, UPDATE ON campus.tbl_dms TO wawi;
+		GRANT SELECT, UPDATE, INSERT, DELETE ON campus.tbl_dms_version TO wawi;
+		GRANT SELECT, UPDATE ON campus.tbl_dms_version TO wawi;
+		GRANT SELECT, UPDATE ON campus.seq_dms_dms_id TO wawi;
+		GRANT SELECT, UPDATE ON wawi.tbl_bestellung_angebot_seq TO wawi;
+		GRANT SELECT, UPDATE, DELETE ON fue.tbl_projekt_dokument TO wawi;
                 ";
 
 	if(!$db->db_query($qry))
@@ -623,7 +631,7 @@ if(!tableExists($schemaName,$tableName))
                     ADD CONSTRAINT ${tableName}_tag_pkey PRIMARY KEY (tag);
 
                 ALTER TABLE $tableName 
-                    ADD CONSTRAINT ${tableName}_bestelldetail_id_fkey FOREIGN KEY (bestellung_id) REFERENCES tbl_bestelldetail(bestelldetail_id) ON UPDATE CASCADE ON DELETE CASCADE;                
+         <           ADD CONSTRAINT ${tableName}_bestelldetail_id_fkey FOREIGN KEY (bestellung_id) REFERENCES tbl_bestelldetail(bestelldetail_id) ON UPDATE CASCADE ON DELETE CASCADE;                
                 ALTER TABLE $tableName 
                     ADD CONSTRAINT ${tableName}_tag_fkey FOREIGN KEY (tag) REFERENCES public.tbl_tag(tag) ON UPDATE CASCADE ON DELETE CASCADE;
                 
