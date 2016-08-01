@@ -26,8 +26,8 @@ $this->phrasen['wawi/bestellung/preis_ve']='Price/Unit';
 $this->phrasen['wawi/bestellung/summe']='Total';
 $this->phrasen['wawi/bestellung/ust']='VAT';
 $this->phrasen['wawi/bestellung/nicht_bestellen']='Nicht Bestellen!';
-$this->phrasen['wawi/bestellung/erstellt_am']='Erstellt am';
-$this->phrasen['wawi/bestellung/wien_am']='Wien am';
+$this->phrasen['wawi/bestellung/erstellt_am']='Created on';
+$this->phrasen['wawi/bestellung/wien_am']='Vienna, today';
 
 $this->phrasen['wawi/bestellung/zentraleinkauf']='Central Buying Unit';
 $this->phrasen['wawi/bestellung/gesamt_netto']='Net total €';
