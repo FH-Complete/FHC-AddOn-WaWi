@@ -24,7 +24,7 @@
  */
 
 require_once dirname(__FILE__).'/../../../config/wawi.config.inc.php';
-//require_once('auth.php');
+require_once('auth.php');
 require_once('../include/wawi_benutzerberechtigung.class.php');
 $https = ((!empty($_SERVER['HTTPS'])) && ($_SERVER['HTTPS'] != 'off')) ? true : false;
 

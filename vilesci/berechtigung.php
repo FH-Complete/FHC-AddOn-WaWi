@@ -22,7 +22,7 @@
 
 
 require_once(dirname(__FILE__).'/../../../config/wawi.config.inc.php');
-//require_once('auth.php');
+require_once('auth.php');
 require_once('../include/wawi_kostenstelle.class.php');
 require_once('../include/wawi_benutzerberechtigung.class.php');
 require_once(dirname(__FILE__).'/../../../include/benutzer.class.php');

@@ -21,7 +21,7 @@
  */
 
 require_once dirname(__FILE__).'/../../../config/wawi.config.inc.php';
-//require_once('auth.php');
+require_once('auth.php');
 
 require_once '../include/wawi_konto.class.php';
 require_once '../include/wawi_bestellung.class.php';

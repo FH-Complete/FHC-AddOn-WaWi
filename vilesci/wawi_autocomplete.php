@@ -24,19 +24,18 @@
 	header( 'Last-Modified: ' . gmdate( 'D, d M Y H:i:s' ) . ' GMT' );
 	header( 'Cache-Control: no-store, no-cache, must-revalidate' );
 	header( 'Pragma: no-cache' );
-	header('Content-Type: text/html;charset=UTF-8');
+	header( 'Content-Type: text/html;charset=UTF-8');
 
-	$basepath = dirname(dirname(dirname(dirname($_SERVER['SCRIPT_FILENAME'])))).DIRECTORY_SEPARATOR;
-        require_once $basepath.'/config/wawi.config.inc.php';
-//	require_once('auth.php');
-  	require_once($basepath.'/include/functions.inc.php');
+	require_once(dirname(__FILE__).'/../../../config/wawi.config.inc.php');
+	require_once('auth.php');
+	require_once(dirname(__FILE__).'/../../../include/functions.inc.php');
 	require_once('../include/wawi_benutzerberechtigung.class.php');
-	require_once($basepath.'/include/mitarbeiter.class.php');
-  	require_once($basepath.'/include/firma.class.php');
-  	require_once($basepath.'/include/standort.class.php');
-  	require_once($basepath.'/include/tags.class.php');
-  	require_once($basepath.'/include/ort.class.php');
-  	require_once($basepath.'/include/bankverbindung.class.php');
+	require_once(dirname(__FILE__).'/../../../include/mitarbeiter.class.php');
+	require_once(dirname(__FILE__).'/../../../include/firma.class.php');
+	require_once(dirname(__FILE__).'/../../../include/standort.class.php');
+	require_once(dirname(__FILE__).'/../../../include/tags.class.php');
+	require_once(dirname(__FILE__).'/../../../include/ort.class.php');
+	require_once(dirname(__FILE__).'/../../../include/bankverbindung.class.php');
 
   	if (!$uid = get_uid())
 		die('Keine UID gefunden:'.$uid.' !  <a href="javascript:history.back()">Zur&uuml;ck</a>');

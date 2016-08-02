@@ -16,13 +16,9 @@
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307, USA.
  *
  */
-
-
-// Basispfad von FHC herausfinden
-// Warum? -> wenn AddOn via Symlink in das AddOn-Verzeichnis eingebunden wird, 
-// funktioniert das einbinden durch ../../../config/xy.config.inc.php nicht
-
-require_once dirname(__FILE__).'/../../../config/vilesci.config.inc.php';
+echo "hello";
+require_once dirname(__FILE__).'/../../../config/wawi.config.inc.php';
+require_once('auth.php');
 require_once dirname(__FILE__).'/../../../include/functions.inc.php';
 require_once dirname(__FILE__).'/../../../include/benutzerberechtigung.class.php';
 

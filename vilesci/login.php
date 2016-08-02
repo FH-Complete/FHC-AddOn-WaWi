@@ -20,9 +20,9 @@
  *          Karl Burkhart <karl.burkhart@technikum-wien.at>.
  */
 $basepath = dirname(dirname(dirname(dirname($_SERVER['SCRIPT_FILENAME'])))).DIRECTORY_SEPARATOR;
-require_once($basepath.'config/wawi.config.inc.php');
-require_once($basepath.'include/wawi_konto.class.php');
-require_once($basepath.'include/functions.inc.php');
+require_once(dirname(__FILE__).'/../../../config/wawi.config.inc.php');
+require_once(dirname(__FILE__).'/../include/wawi_konto.class.php');
+require_once(dirname(__FILE__).'/../include/functions.inc.php');
 
 $errormsg='';
 
