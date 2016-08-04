@@ -25,7 +25,7 @@ $this->phrasen['wawi/bestellung/art_nr']='Art-Nr';
 $this->phrasen['wawi/bestellung/preis_ve']='Preis/VE';
 $this->phrasen['wawi/bestellung/summe']='Summe';
 $this->phrasen['wawi/bestellung/ust']='USt';
-$this->phrasen['wawi/bestellung/nicht_bestellen']='Bitte nicht Bestellen!';
+$this->phrasen['wawi/bestellung/nicht_bestellen']='Bitte nicht bestellen!';
 $this->phrasen['wawi/bestellung/erstellt_am']='Erstellt am';
 $this->phrasen['wawi/bestellung/wien_am']='Wien am';
 
