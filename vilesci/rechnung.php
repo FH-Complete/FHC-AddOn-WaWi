@@ -234,7 +234,7 @@ if($aktion == 'suche')
 		echo "</td>\n";
 		echo "</tr>\n";		*/
 		echo "<tr>\n";
-		echo "<td> Lieferant </td>\n";
+		echo "<td> Lieferant/Empfänger </td>\n";
 		echo "<td> <input id='firmenname' name='firmenname' size='32' maxlength='30' value=''>\n";
 		echo "</td>\n";
 		echo "<td> <input type ='hidden' id='firma_id' name='firma_id' size='10' maxlength='30' value=''  >\n";

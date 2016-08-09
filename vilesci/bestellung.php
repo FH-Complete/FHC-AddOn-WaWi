@@ -627,7 +627,7 @@ if($aktion == 'suche')
 		echo "</td>\n";
 		echo "</tr>\n";		*/
 		echo "<tr>\n";
-		echo "<td> Lieferant: </td>\n";
+		echo "<td> Lieferant/Empfänger: </td>\n";
 		echo "<td> <input id='firmenname' name='firmenname' size='32' value=''  >\n";
 		/*echo "<SELECT name='filter_firma' id='firma' style='width: 256px;'>\n"; 
 		echo "<option value=''>-- OE auswählen --</option>\n";
