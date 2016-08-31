@@ -3184,7 +3184,7 @@ function sendFreigabeMails($uids, $bestellung, $user)
 	$email.="Kostenstelle: ".$kst_mail->bezeichnung."<br>Konto: ".$konto_mail->kurzbz."<br>";
 	$email.="Tags: ".$tagsAusgabe."<br>";
 	
-	$email.="Link: <a href='".APP_ROOT."index.php?content=bestellung.php&method=update&id=$bestellung->bestellung_id'>zur Bestellung </a>";
+	$email.="Link: <a href='".APP_ROOT."vilesci/indexFrameset.php?content=bestellung.php&method=update&id=$bestellung->bestellung_id'>zur Bestellung </a>";
 	
 	foreach($uids as $uid)
 	{
@@ -3239,7 +3239,7 @@ function sendZentraleinkaufFreigegeben($bestellung)
 	$email.="Konto: ".$konto_mail->kurzbz."<br>";
 	$email.="Tags: ".$tagsAusgabe."<br>";
 	
-	$email.="Link: <a href='".APP_ROOT."index.php?content=bestellung.php&method=update&id=$bestellung->bestellung_id'>zur Bestellung </a>";
+	$email.="Link: <a href='".APP_ROOT."vilesci/indexFrameset.php?content=bestellung.php&method=update&id=$bestellung->bestellung_id'>zur Bestellung </a>";
 	
 	$mail = new mail(MAIL_ZENTRALEINKAUF, 'no-reply', 'Freigabe Bestellung', 'Bitte sehen Sie sich die Nachricht in HTML Sicht an, um den Link vollständig darzustellen.');
 	$mail->setHTMLContent($email); 
@@ -3299,7 +3299,7 @@ function sendBestellerMail($bestellung, $status)
 	$email.="Kostenstelle: ".$kst_mail->bezeichnung."<br>Konto: ".$konto_mail->kurzbz."<br>";
 	$email.="Tags: ".$tagsAusgabe."<br>";
 		
-	$email.="Link: <a href='".APP_ROOT."index.php?content=bestellung.php&method=update&id=$bestellung->bestellung_id'>zur Bestellung </a>";
+	$email.="Link: <a href='".APP_ROOT."vilesci/indexFrameset.php?content=bestellung.php&method=update&id=$bestellung->bestellung_id'>zur Bestellung </a>";
 	
 	$mail = new mail($bestellung->besteller_uid.'@'.DOMAIN, 'no-reply', 'Bestellung '.$bestellung->bestell_nr, 'Bitte sehen Sie sich die Nachricht in HTML Sicht an, um den Link vollständig darzustellen.');
 	$mail->setHTMLContent($email); 
