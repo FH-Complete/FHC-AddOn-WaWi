@@ -57,7 +57,7 @@ echo '<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www
 function checkpermission($permissions)
 {
 	global $berechtigung;
-	
+
 	$permission=false;
 	foreach ($permissions as $perm)
 	{
@@ -78,14 +78,14 @@ foreach($menu AS $m1)
 	{
 		if (isset($m1['permissions']) && !checkpermission($m1['permissions']))
 			continue;
-		
+
 		if (isset($m1['link']))
 			echo '<a href="'.$m1['link'].'" ';
 		if (isset($m1['target']))
 			echo 'target="'.$m1['target'].'" ';
 		if (isset($m1['link']))
 			echo '>';
-		
+
 		if (isset($m1['name']) && !isset($m1['link']) )
 		{
 			if($umbruch)
@@ -94,7 +94,7 @@ foreach($menu AS $m1)
 		}
 		else
 			echo $m1['name'];
-			
+
 		if (isset($m1['link']))
 			echo '</a>';
 		echo '<br />';
@@ -105,7 +105,7 @@ foreach($menu AS $m1)
 			{
 				if (isset($m2['permissions']) && !checkpermission($m2['permissions']))
 					continue;
-				
+
 				if($m2['name']!='')
 				{
 					echo "\n\t\t".'<img title="'.$m2['name'].'" src="../skin/images/bullet_arrow_down.png" alt="page go" border="0">&nbsp;';
@@ -121,7 +121,7 @@ foreach($menu AS $m1)
 						echo '</a><br>';
 					$umbruch=false;
 				}
-			
+
 				foreach($m2 AS $m3)
 				{
 					if (is_array($m3)  && isset($m3['name']))
@@ -145,7 +145,7 @@ foreach($menu AS $m1)
 				echo '<br />';
 			}
 		}
-		
+
 
 			echo '<br>';
 	}
@@ -174,7 +174,7 @@ if($user!=$user_original)
 }
 
 // Formular zum Wechseln des Benutzers anzeigen wenn berechtigt
-/*
+
 if($berechtigung_orig->isBerechtigt('system/loginasuser'))
 {
 	echo '<tr bgcolor="#c0cce0" >
@@ -186,7 +186,7 @@ if($berechtigung_orig->isBerechtigt('system/loginasuser'))
 				</form>
 			</td>
 		</tr>';
-} */
+}
 echo '
 	</table>
 </p><br>
