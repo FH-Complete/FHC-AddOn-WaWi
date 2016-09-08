@@ -21,7 +21,7 @@
  */
 /**
  * Firmenverwaltung fuer WaWi
- * 
+ *
  * Dies ist eine abgespeckte Version der Firmenverwaltung zum einfachen Anlegen und
  * Bearbeiten von Firmen.
  */
@@ -40,17 +40,17 @@ require_once dirname(__FILE__).'/../../../include/nation.class.php';
 "http://www.w3.org/TR/html4/loose.dtd">
 <html>
 <head>
-	<title>WaWi Lieferanten/Firmen</title>	
+	<title>WaWi Lieferanten/Firmen</title>
 	<link rel="stylesheet" href="../skin/wawi.css" type="text/css"/>
 	<link rel="stylesheet" href="../skin/tablesort.css" type="text/css"/>
-	<link rel="stylesheet" href="../skin/jquery.css" type="text/css">	
-	
-	<script type="text/javascript" src="../../../include/js/jquery1.9.min.js"></script> 
+	<link rel="stylesheet" href="../skin/jquery.css" type="text/css">
+
+	<script type="text/javascript" src="../../../include/js/jquery1.9.min.js"></script>
 
 	<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
 </head>
 <body>
-<?php 
+<?php
 $user=get_uid();
 
 $rechte = new benutzerberechtigung();
@@ -77,9 +77,9 @@ if(isset($_POST['save']))
 {
 	if(!isset($_POST['strasse']) || !isset($_POST['name']) || !isset($_POST['plz']) || !isset($_POST['ort']) ||
 	   !isset($_POST['telefon']) || !isset($_POST['fax']) || !isset($_POST['email']) || !isset($_POST['anmerkung']) ||
-           !isset($_POST['homepage']) )
+	   !isset($_POST['homepage']) )
 		die('Ungueltige Parameteruebergabe');
-		
+
 	$error = false;
 	$strasse = $_POST['strasse'];
 	$name = $_POST['name'];
@@ -88,10 +88,10 @@ if(isset($_POST['save']))
 	$telefon = $_POST['telefon'];
 	$fax = $_POST['fax'];
 	$email = $_POST['email'];
-        $homepage = $_POST['homepage'];        
+        $homepage = $_POST['homepage'];
 	$nation = $_POST['nation'];
 	$anmerkung = $_POST['anmerkung'];
-	
+
 	//Bei einem Update werden die IDs der Datensaetze uebergeben
 	$adresse_id = $_POST['adresse_id'];
 	$firma_id = $_POST['firma_id'];
@@ -99,15 +99,15 @@ if(isset($_POST['save']))
 	$fax_id = $_POST['fax_id'];
 	$telefon_id = $_POST['telefon_id'];
 	$email_id = $_POST['email_id'];
-        $homepage_id = $_POST['homepage_id'];
+	$homepage_id = $_POST['homepage_id'];
 	$kundennummer_erhalter_id = $_POST['kundennummer_erhalter_id'];
 	$kundennummer_erhalter = $_POST['kundennummer_erhalter'];
 	$kundennummer_gmbh_id = $_POST['kundennummer_gmbh_id'];
 	$kundennummer_gmbh = $_POST['kundennummer_gmbh'];
 	$lieferbedingungen = $_POST['lieferbedingungen'];
-        
+
 	$errormsg='';
-	
+
 	if($email!='' && !mb_strstr($email,'@'))
 	{
 		$errormsg = 'Email muss ein @ enthalten';
@@ -119,14 +119,14 @@ if(isset($_POST['save']))
 		$error = true;
 	}
 	$db = new basis_db();
-	
+
 	$db->db_query('BEGIN;');
-	
+
 	if(!$error)
 	{
 		//Firmendatensatz anlegen/updaten
 		$firma = new firma();
-		
+
 		if($firma_id!='')
 		{
 			if(!$firma->load($firma_id))
@@ -145,11 +145,11 @@ if(isset($_POST['save']))
 			$firma->new = true;
 			$firma->firmentyp_kurzbz='Firma';
 		}
-		
+
 		$firma->name=$name;
 		$firma->anmerkung=$anmerkung;
-        $firma->lieferbedingungen=$lieferbedingungen;
-		
+		$firma->lieferbedingungen=$lieferbedingungen;
+
 		if($firma->save())
 		{
 			//Kundennummer Erhalter
@@ -165,7 +165,7 @@ if(isset($_POST['save']))
 					}
 					$firma_oe->new = false;
 				}
-				else 
+				else
 				{
 					$firma_oe->firma_id = $firma->firma_id;
 					$firma_oe->new = true;
@@ -173,19 +173,19 @@ if(isset($_POST['save']))
 					$firma_oe->insertamum = date('Y-m-d H:i:s');
 					$firma_oe->insertvon = $user;
 				}
-				
+
 				$firma_oe->updateamum = date('Y-m-d H:i:s');
 				$firma_oe->updatevon = $user;
 				$firma_oe->kundennummer=$kundennummer_erhalter;
-				
-				
+
+
 				if(!$firma_oe->saveorganisationseinheit())
 				{
 					$error = true;
 					$errormsg.='Fehler beim Speichern der Kundennummer:'.$firma_oe->errormsg;
 				}
 			}
-			
+
 			//Kundennummer GmbH
 			if($kundennummer_gmbh_id!='' || $kundennummer_gmbh!='')
 			{
@@ -199,7 +199,7 @@ if(isset($_POST['save']))
 					}
 					$firma_oe->new = false;
 				}
-				else 
+				else
 				{
 					$firma_oe->firma_id = $firma->firma_id;
 					$firma_oe->new = true;
@@ -207,22 +207,22 @@ if(isset($_POST['save']))
 					$firma_oe->insertamum = date('Y-m-d H:i:s');
 					$firma_oe->insertvon = $user;
 				}
-				
+
 				$firma_oe->updateamum = date('Y-m-d H:i:s');
 				$firma_oe->updatevon = $user;
 				$firma_oe->kundennummer=$kundennummer_gmbh;
-				
-				
+
+
 				if(!$firma_oe->saveorganisationseinheit())
 				{
 					$error = true;
 					$errormsg.='Fehler beim Speichern der Kundennummer:'.$firma_oe->errormsg;
 				}
 			}
-			
+
 			//Adressdatensatz anlegen/updaten
 			$adresse = new adresse();
-			
+
 			if($adresse_id!='')
 			{
 				$adresse->load($adresse_id);
@@ -238,17 +238,17 @@ if(isset($_POST['save']))
 				$adresse->insertamum = date('Y-m-d H:i:s');
 				$adresse->insertvon = $user;
 			}
-			
+
 			$adresse->strasse = $strasse;
 			$adresse->plz = $plz;
 			$adresse->ort = $ort;
 			$adresse->nation = $nation;
-			
+
 			if($adresse->save())
-			{		
+			{
 				//Standort anlegen/updaten
 				$standort = new standort();
-				
+
 				if($standort_id!='')
 				{
 					$standort->load($standort_id);
@@ -263,44 +263,44 @@ if(isset($_POST['save']))
 					$standort->insertvon = $user;
 					$standort->new = true;
 				}
-				
+
 				$standort->firma_id = $firma->firma_id;
-				$standort->adresse_id = $adresse->adresse_id;				
+				$standort->adresse_id = $adresse->adresse_id;
 				$standort->kurzbz = mb_substr($firma->name, 0,16);
-				
+
 				if($standort->save())
 				{
 					//Kontaktdaten anlegen/updaten
 					if($fax!='')
 					{
-                                            $kontakt = new kontakt();
-                                            if($fax_id!='')
-                                            {
-                                                    $kontakt->load($fax_id);
-                                                    $kontakt->new = false;
-                                            }
-                                            else
-                                                    $kontakt->new = true;
+						$kontakt = new kontakt();
+						if($fax_id!='')
+						{
+							$kontakt->load($fax_id);
+							$kontakt->new = false;
+						}
+						else
+							$kontakt->new = true;
 
-                                            $kontakt->kontakttyp='fax';
-                                            $kontakt->standort_id = $standort->standort_id;
-                                            $kontakt->kontakt = $fax;
+						$kontakt->kontakttyp='fax';
+						$kontakt->standort_id = $standort->standort_id;
+						$kontakt->kontakt = $fax;
 
-                                            if(!$kontakt->save())
-                                            {
-                                                $errormsg.=$kontakt->errormsg;
-                                                $error = true;  
-                                            }
-					} 
-                                        else if($fax_id!='')
-                                        {
-                                            $kontakt = new kontakt();
-                                            if(!$kontakt->delete($fax_id))
-                                            {
-                                                $errormsg.=$kontakt->errormsg;
-                                                $error = true;
-                                            }
-                                        }
+						if(!$kontakt->save())
+						{
+							$errormsg.=$kontakt->errormsg;
+							$error = true;
+						}
+					}
+					else if($fax_id!='')
+					{
+						$kontakt = new kontakt();
+						if(!$kontakt->delete($fax_id))
+						{
+							$errormsg.=$kontakt->errormsg;
+							$error = true;
+						}
+					}
 					if($telefon!='')
 					{
 						$kontakt = new kontakt();
@@ -316,7 +316,7 @@ if(isset($_POST['save']))
 						$kontakt->kontakttyp='telefon';
 						$kontakt->standort_id = $standort->standort_id;
 						$kontakt->kontakt = $telefon;
-												
+
 						if(!$kontakt->save())
 						{
 							$errormsg.=$kontakt->errormsg;
@@ -324,14 +324,14 @@ if(isset($_POST['save']))
 						}
 					}
 					else if($telefon_id!='')
-                                        {
-                                            $kontakt = new kontakt();
-                                            if(!$kontakt->delete($telefon_id))
-                                            {
-                                                $errormsg.=$kontakt->errormsg;
-                                                $error = true;
-                                            }
-                                        }
+					{
+						$kontakt = new kontakt();
+						if(!$kontakt->delete($telefon_id))
+						{
+							$errormsg.=$kontakt->errormsg;
+							$error = true;
+						}
+					}
 					if($email!='')
 					{
 						$kontakt = new kontakt();
@@ -344,28 +344,28 @@ if(isset($_POST['save']))
 						{
 							$kontakt->new = true;
 						}
-							
+
 						$kontakt->kontakttyp='email';
 						$kontakt->standort_id = $standort->standort_id;
 						$kontakt->kontakt = $email;
-												
+
 						if(!$kontakt->save())
 						{
 							$errormsg.=$kontakt->errormsg;
 							$error = true;
 						}
 					}
-                                        else if($email_id!='')
-                                        {
-                                            $kontakt = new kontakt();
-                                            if(!$kontakt->delete($email_id))
-                                            {
-                                                $errormsg.=$kontakt->errormsg;
-                                                $error = true;
-                                            }
-                                        }
-                                        
-                                        if($homepage!='')
+					else if($email_id!='')
+					{
+						$kontakt = new kontakt();
+						if(!$kontakt->delete($email_id))
+						{
+							$errormsg.=$kontakt->errormsg;
+							$error = true;
+						}
+					}
+
+					if($homepage!='')
 					{
 						$kontakt = new kontakt();
 						if($homepage_id!='')
@@ -377,26 +377,26 @@ if(isset($_POST['save']))
 						{
 							$kontakt->new = true;
 						}
-							
+
 						$kontakt->kontakttyp='homepage';
 						$kontakt->standort_id = $standort->standort_id;
 						$kontakt->kontakt = $homepage;
-												
+
 						if(!$kontakt->save())
 						{
 							$errormsg.=$kontakt->errormsg;
 							$error = true;
 						}
 					}
-                                        else if($homepage_id!='')
-                                        {
-                                            $kontakt = new kontakt();
-                                            if(!$kontakt->delete($homepage_id))
-                                            {
-                                                $errormsg.=$kontakt->errormsg;
-                                                $error = true;
-                                            }
-                                        }
+					else if($homepage_id!='')
+					{
+						$kontakt = new kontakt();
+						if(!$kontakt->delete($homepage_id))
+						{
+							$errormsg.=$kontakt->errormsg;
+							$error = true;
+						}
+					}
 				}
 				else
 				{
@@ -416,7 +416,7 @@ if(isset($_POST['save']))
 			$error=true;
 		}
 	}
-	
+
 	if($error)
 	{
 		echo '<span class="error">Fehler: '.$errormsg.'</span>';
@@ -433,13 +433,13 @@ if(isset($_POST['save']))
 	{
 		$db->db_query('COMMIT;');
 		echo 'Lieferant wurde erfolgreich gespeichert!';
-		
+
 		if(isset($_SESSION['wawi/last_bestellung_id']))
 			echo '<br><a href="bestellung.php?method=update&id=',$_SESSION['wawi/last_bestellung_id'],'">Zur&uuml;ck zur letzten Bestellung</a>';
-		
+
 		$method='update';
 		$id=$firma->firma_id;
-	}	
+	}
 }
 
 // Update / Neuanlage
@@ -451,14 +451,14 @@ if($method=='new' || $method=='update')
 	$fax_id='';
 	$email_id='';
 	$telefon_id='';
-        $homepage_id='';
+	$homepage_id='';
 	$anmerkung='';
 	$kundennummer_erhalter='';
 	$kundennummer_erhalter_id='';
 	$kundennummer_gmbh='';
 	$kundennummer_gmbh_id='';
-    $lieferbedingungen = '';
-	
+	$lieferbedingungen = '';
+
 	if($method=='new')
 		echo '<h1>Neuer Lieferant/Empfänger</h1>';
 	else
@@ -467,17 +467,17 @@ if($method=='new' || $method=='update')
 
 		if(!is_numeric($id))
 			die('ID ist ungueltig');
-			
+
 		//Firma Laden
 		$firma = new firma();
 		if(!$firma->load($id))
 			die('Lieferant/Empfänger konnte nicht geladen werden');
-		
-		$name = $firma->name;                
+
+		$name = $firma->name;
 		$anmerkung = $firma->anmerkung;
 		$lieferbedingungen = $firma->lieferbedingungen;
 		$firma_id = $firma->firma_id;
-		
+
 		$firma_oe = new firma();
 		$firma_oe->get_firmaorganisationseinheit($firma_id,'gst');
 		if(isset($firma_oe->result[0]))
@@ -492,7 +492,7 @@ if($method=='new' || $method=='update')
 			$kundennummer_gmbh = $firma_oe->result[0]->kundennummer;
 			$kundennummer_gmbh_id = $firma_oe->result[0]->firma_organisationseinheit_id;
 		}
-		
+
 		//Standort Laden
 		$standort = new standort();
 		$standort->load_firma($firma_id);
@@ -500,46 +500,46 @@ if($method=='new' || $method=='update')
 		{
 			$standort_id = $standort->result[0]->standort_id;
 			$adresse_id = $standort->result[0]->adresse_id;
-			
+
 			//Adresse Laden
 			$adresse = new adresse();
 			$adresse->load($adresse_id);
-							
-			$strasse = $adresse->strasse; 
+
+			$strasse = $adresse->strasse;
 			$plz = $adresse->plz;
 			$ort = $adresse->ort;
 			$nation = $adresse->nation;
-			if($nation=='')
-				$nation='A';
-			
+			/*if($nation=='')
+				$nation='A';*/
+
 			//Kontaktdaten Laden
 			$kontakt = new kontakt();
 			$kontakt->loadFirmaKontakttyp($standort_id, 'telefon');
-			
+
 			$telefon = $kontakt->kontakt;
 			$telefon_id = $kontakt->kontakt_id;
-			
+
 			$kontakt = new kontakt();
 			$kontakt->loadFirmaKontakttyp($standort_id, 'fax');
-			
+
 			$fax = $kontakt->kontakt;
 			$fax_id = $kontakt->kontakt_id;
-			
+
 			$kontakt = new kontakt();
 			$kontakt->loadFirmaKontakttyp($standort_id, 'email');
-			
+
 			$email = $kontakt->kontakt;
 			$email_id = $kontakt->kontakt_id;
-                        
-                        $kontakt = new kontakt();
+
+			$kontakt = new kontakt();
 			$kontakt->loadFirmaKontakttyp($standort_id, 'homepage');
-			
+
 			$homepage = $kontakt->kontakt;
 			$homepage_id = $kontakt->kontakt_id;
 		}
 	}
-	
-	
+
+
 	echo '<form action="'.$_SERVER['PHP_SELF'].'" method="POST" name="firmaForm">';
 	echo '
 	<input type="hidden" name="firma_id" value="'.$firma_id.'">
@@ -548,7 +548,7 @@ if($method=='new' || $method=='update')
 	<input type="hidden" name="telefon_id" value="'.$telefon_id.'">
 	<input type="hidden" name="fax_id" value="'.$fax_id.'">
 	<input type="hidden" name="email_id" value="'.$email_id.'">
-        <input type="hidden" name="homepage_id" value="'.$homepage_id.'">
+	<input type="hidden" name="homepage_id" value="'.$homepage_id.'">
 	<input type="hidden" name="kundennummer_erhalter_id" value="'.$kundennummer_erhalter_id.'">
 	<input type="hidden" name="kundennummer_gmbh_id" value="'.$kundennummer_gmbh_id.'">
 	<table>
@@ -570,16 +570,16 @@ if($method=='new' || $method=='update')
 		';
 	$nat = new nation();
 	$nat->getAll();
-	
+
 	echo '<SELECT name="nation">';
-	
+	echo '<option value="">-- keine Auswahl --</option>';
 	foreach($nat->nation as $row)
 	{
 		if($row->code==$nation)
 			$selected='selected';
 		else
 			$selected='';
-		
+
 		echo '<OPTION value="'.$row->code.'" '.$selected.'>'.$row->kurztext.'</OPTION>';
 	}
 	echo '</SELECT>';
@@ -598,10 +598,10 @@ if($method=='new' || $method=='update')
 		<td>E-Mail:</td>
 		<td><input type="text" name="email" maxlength="128" size="40" value="'.$email.'"/></td>
 	</tr>
-        <tr>
+	<tr>
 		<td>Homepage:</td>
 		<td><input type="text" name="homepage" maxlength="128" size="40" value="'.$homepage.'"/></td>
-	</tr>       
+	</tr>
 	<tr>
 		<td>Kundennummer FHTW:</td>
 		<td><input type="text" name="kundennummer_erhalter" maxlength="128" value="'.$kundennummer_erhalter.'"/></td>
@@ -624,35 +624,35 @@ if($method=='new' || $method=='update')
 	</tr>
 	</table>
 	';
-	
+
 	echo '</form>';
-	
+
 	echo '<script language="javascript" type="text/javascript">
-		function validate() 
+		function validate()
 		{
 			maxlength=256;
-			
-			if(document.firmaForm.name.value == "")
-		    {
-		    	alert("Name des Lieferanten/Empfängers darf nicht leer sein!");
-		    	document.firmaForm.name.focus(); 
-		    	return false;
-		    }
-	     	if(document.firmaForm.email.value.indexOf("@") == -1 && document.firmaForm.email.value != "") 
-	     	{
-		    	alert("Ungültige E-Mail Adresse eingegeben!");
-		    	document.firmaForm.email.focus();
-		    	return false;
-		    }			
-	     	if(document.firmaForm.anmerkung.value.length>=maxlength) 
-	     	{
-	          alert("Die Anmerkung darf nur 256 Zeichen lang sein. Aktuell sind es : "+document.firmaForm.anmerkung.value.length+" Zeichen.");
-	          document.firmaForm.anmerkung.focus();
-	          return false;
-	     	}
 
-		    return true; 
-  		}
+			if(document.firmaForm.name.value == "")
+			{
+				alert("Name des Lieferanten/Empfängers darf nicht leer sein!");
+				document.firmaForm.name.focus();
+				return false;
+			}
+			if(document.firmaForm.email.value.indexOf("@") == -1 && document.firmaForm.email.value != "")
+			{
+				alert("Ungültige E-Mail Adresse eingegeben!");
+				document.firmaForm.email.focus();
+				return false;
+			}
+			if(document.firmaForm.anmerkung.value.length>=maxlength)
+			{
+				alert("Die Anmerkung darf nur 256 Zeichen lang sein. Aktuell sind es : "+document.firmaForm.anmerkung.value.length+" Zeichen.");
+				document.firmaForm.anmerkung.focus();
+				return false;
+			}
+
+			return true;
+		}
 
 		</script>';
 }
@@ -661,13 +661,13 @@ if($method=='new' || $method=='update')
 if($method=='search')
 {
 	$filter = (isset($_POST['filter'])?$_POST['filter']:'');
-	
+
 	echo '<H1>Lieferant/Empfänger suchen</H1>';
 	echo '<form action="'.$_SERVER['PHP_SELF'].'?method=search" method="POST">';
 	echo '<input type="text" size="30" name="filter" value="'.$filter.'">';
 	echo ' <input type="submit" name="send" value="Suchen">';
 	echo '</form>';
-	
+
 	if($filter!='')
 	{
 		$firma = new firma();
@@ -675,16 +675,16 @@ if($method=='search')
 		{
 			echo '<br /><br />
 				<script type="text/javascript">
-				$(document).ready(function() 
-				{ 
-	    			$("#myTable").tablesorter(
+				$(document).ready(function()
+				{
+					$("#myTable").tablesorter(
 					{
 						sortList: [[2,0]],
 						widgets: ["zebra"]
 					});
-				});				
+				});
 				</script>
-				
+
 				<table id="myTable" class="tablesorter">
 				<thead>
 				<tr>
@@ -695,8 +695,8 @@ if($method=='search')
 				</tr>
 				</thead>
 				<tbody>';
-			
-			
+
+
 			foreach($firma->result as $row)
 			{
 				echo '<tr>';
@@ -706,11 +706,11 @@ if($method=='search')
 				echo '<td>',$row->strasse,' ',$row->plz,' ',$row->ort,'</td>';
 				echo '</tr>';
 			}
-			
+
 			echo '</tbody></table>';
 		}
 	}
-	
+
 }
 
 ?>
