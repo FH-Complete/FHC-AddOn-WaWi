@@ -32,29 +32,29 @@ require_once dirname(__FILE__).'/../../../include/geschaeftsjahr.class.php';
 "http://www.w3.org/TR/html4/loose.dtd">
 <html>
 <head>
-	<title>WaWi Kostenstellen - Budget</title>	
+	<title>WaWi Kostenstellen - Budget</title>
 	<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
 	<link rel="stylesheet" href="../skin/tablesort.css" type="text/css"/>
 	<link rel="stylesheet" href="../skin/wawi.css" type="text/css"/>
 
-	<script type="text/javascript" src="../include/js/jquery.js"></script> 
+	<script type="text/javascript" src="../include/js/jquery.js"></script>
 
 	<script type="text/javascript">
-		$(document).ready(function() 
-			{ 
+		$(document).ready(function()
+			{
 			    $("#myTable").tablesorter(
 				{
 					sortList: [[1,0]],
 					widgets: ['zebra']
-				}); 
-			} 
-		); 			
+				});
+			}
+		);
 	</script>
 </head>
 <body>
-<?php 
+<?php
 
-$kostenstelle = new wawi_kostenstelle(); 
+$kostenstelle = new wawi_kostenstelle();
 $user=get_uid();
 
 $rechte = new benutzerberechtigung();
@@ -76,7 +76,7 @@ if(isset($_POST['save']))
 			$kostenstelle_id = mb_substr($key,mb_strlen('budget_'));
 			$kst = new wawi_kostenstelle();
 			$budget = mb_str_replace(',', '.', $value);
-			
+
 			if(!$kst->setBudget($kostenstelle_id, $geschaeftsjahr_kurzbz, $budget))
 				echo $kst->errormsg.'<br>';
 		}
@@ -135,6 +135,6 @@ echo '</tbody>
 
 echo '<input type="submit" name="save" value="Speichern">';
 echo '</form>';
-echo '<br><br><br><br><br><br>';	
+echo '<br><br><br><br><br><br>';
 
 ?>

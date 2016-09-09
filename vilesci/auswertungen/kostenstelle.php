@@ -16,8 +16,9 @@
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307, USA.
  *
  * Authors: Christian Paminger <christian.paminger@technikum-wien.at>,
- *          Andreas Oesterreicher <andreas.oesterreicher@technikum-wien.at> and
- *          Karl Burkhart <karl.burkhart@technikum-wien.at>.
+ *          Andreas Oesterreicher <andreas.oesterreicher@technikum-wien.at>,
+ *          Karl Burkhart <karl.burkhart@technikum-wien.at> and
+ *          Andreas Moik <moik@technikum-wien.at>.
  */
 /**
  * Auswertung der Bestellungen und Rechnungen auf Kostenstellen
@@ -55,14 +56,14 @@ $datum_obj = new datum();
 <head>
 	<title>WaWi - Kostenstelle - Auswertung</title>
 	<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
-	
+
 	<link rel="stylesheet" href="../../skin/jquery.css" type="text/css">
 	<link rel="stylesheet" href="../../skin/tablesort.css" type="text/css">
 	<link rel="stylesheet" href="../../skin/fhcomplete.css" type="text/css">
 	<link rel="stylesheet" href="../../skin/wawi.css" type="text/css">
-	
-			
-	<script type="text/javascript" src="../../../../include/js/jquery1.9.min.js"></script>	
+
+
+	<script type="text/javascript" src="../../../../include/js/jquery1.9.min.js"></script>
 	<script type="text/javascript">
  	function alleMarkieren(checked)
  	{
@@ -89,54 +90,61 @@ $datum_obj = new datum();
 	}
 	echo '<form action="'.$_SERVER['PHP_SELF'].'" method="GET">';
 	echo '<table><tr><td>';
-	//Geschaeftsjahr	
-	echo '	
+	//Geschaeftsjahr
+	echo '
 	Geschäftsjahr
 	<SELECT name="geschaeftsjahr" >';
 	$gj = new geschaeftsjahr();
-	
-	$geschaeftsjahr = isset($_REQUEST['geschaeftsjahr'])?$_REQUEST['geschaeftsjahr']:$gj->getakt();	
-	
+
+	$geschaeftsjahr = isset($_REQUEST['geschaeftsjahr'])?$_REQUEST['geschaeftsjahr']:$gj->getakt();
+
 	$gj->getAll();
+
+	if(!count($gj->result))
+		die("Es sind noch keine Geschäftsjahre angelegt");
+
+	if(!$geschaeftsjahr || $geschaeftsjahr == "")
+		$geschaeftsjahr = $gj->result[count($gj->result)-1]->geschaeftsjahr_kurzbz;
 
 	foreach ($gj->result as $gjahr)
 	{
 		if($gjahr->geschaeftsjahr_kurzbz==$geschaeftsjahr)
 			$selected='selected';
-		else 
+		else
 			$selected='';
-		echo '<option value="'.$gjahr->geschaeftsjahr_kurzbz.'" '.$selected.'>'.$gjahr->geschaeftsjahr_kurzbz.'</option>';				
+		echo '<option value="'.$gjahr->geschaeftsjahr_kurzbz.'" '.$selected.'>'.$gjahr->geschaeftsjahr_kurzbz.'</option>';
 	}
+
 	echo '
 	</SELECT>
 	<input type="submit" value="Anzeigen" name="show_geschaeftsjahr">';
 
 	echo '</td><td width="60px"> &nbsp; </td><td>';
-	
-	//Kalenderjahr	
+
+	//Kalenderjahr
 	echo '
 	Kalenderjahr
 	<SELECT name="kalenderjahr" >';
-		
-	$kalenderjahr = isset($_REQUEST['kalenderjahr'])?$_REQUEST['kalenderjahr']:date('Y');	
-	
+
+	$kalenderjahr = isset($_REQUEST['kalenderjahr'])?$_REQUEST['kalenderjahr']:date('Y');
+
 	for($i=date('Y')-5; $i<date('Y')+2; $i++)
 	{
 		if($i==$kalenderjahr)
 			$selected='selected';
-		else 
+		else
 			$selected='';
-		echo '<option value="',$i,'" ',$selected,'>1.1.',$i,' - 31.12.',$i,'</option>';				
+		echo '<option value="',$i,'" ',$selected,'>1.1.',$i,' - 31.12.',$i,'</option>';
 	}
 	echo '
 	</SELECT>
 	<input type="submit" value="Anzeigen" name="show_kalenderjahr">';
-	
+
 	echo '</td>';
 	echo '</td><td width="60px"> &nbsp; </td>';
 	echo '<td>';
 	echo '<label><input type="checkbox" name="nuraktive" value="1" '.($filter_aktive?'checked':'').'/> nur aktive Konten</label>';
-	
+
 	echo '</td>';
 	echo '</tr></table>';
 	echo '</form>';
@@ -152,41 +160,41 @@ $datum_obj = new datum();
 		//Geschaeftsjahr
 		$gj= new geschaeftsjahr();
 		$gj->load($geschaeftsjahr);
-		
+
 		$vondatum = $gj->start;
 		$endedatum = $gj->ende;
 		$budgetanzeige=true;
 	}
-	
+
 	$kstIN=$db->implode4SQL($kst_array);
-	
+
 	//Tabelle auf Basis der Bestellungen
-	$qry = "SELECT 
+	$qry = "SELECT
 				sum(menge*preisprove*(100+COALESCE(mwst,0))/100) as brutto_bestellung,
 				0 as brutto_rechnung,
 				tbl_bestellung.kostenstelle_id
-			FROM 
-				wawi.tbl_bestellung 
+			FROM
+				wawi.tbl_bestellung
 				JOIN wawi.tbl_bestelldetail USING(bestellung_id)
 			WHERE
-				tbl_bestellung.insertamum::date>='".addslashes($vondatum)."' AND tbl_bestellung.insertamum::date<='".addslashes($endedatum)."' 
+				tbl_bestellung.insertamum::date>='".addslashes($vondatum)."' AND tbl_bestellung.insertamum::date<='".addslashes($endedatum)."'
 				AND kostenstelle_id IN($kstIN)
 			GROUP BY kostenstelle_id
 			UNION
-			SELECT 
+			SELECT
 				0 as brutto_bestellung,
 				sum(betrag*(100+COALESCE(mwst,0))/100) as brutto_rechnung,
 				tbl_bestellung.kostenstelle_id
-			FROM 
-				wawi.tbl_bestellung 
+			FROM
+				wawi.tbl_bestellung
 				JOIN wawi.tbl_rechnung USING(bestellung_id)
 				JOIN wawi.tbl_rechnungsbetrag USING(rechnung_id)
 			WHERE
-				tbl_bestellung.insertamum::date>='".addslashes($vondatum)."' AND tbl_bestellung.insertamum::date<='".addslashes($endedatum)."' 
+				tbl_bestellung.insertamum::date>='".addslashes($vondatum)."' AND tbl_bestellung.insertamum::date<='".addslashes($endedatum)."'
 				AND kostenstelle_id IN($kstIN)
 			GROUP BY kostenstelle_id
 			";
-	
+
 	if($result = $db->db_query($qry))
 	{
 		while($row = $db->db_fetch_object($result))
@@ -195,7 +203,7 @@ $datum_obj = new datum();
 				$kst[$row->kostenstelle_id]['rechnung']=0;
 			if(!isset($kst[$row->kostenstelle_id]['bestellung']))
 				$kst[$row->kostenstelle_id]['bestellung']=0;
-			
+
 			$kst[$row->kostenstelle_id]['rechnung']+=$row->brutto_rechnung;
 			$kst[$row->kostenstelle_id]['bestellung']+=$row->brutto_bestellung;
 		}
@@ -206,13 +214,13 @@ $datum_obj = new datum();
 	echo '<span style="font-size: small">Zeitraum: ',$datum_obj->formatDatum($vondatum,'d.m.Y'),' - ',$datum_obj->formatDatum($endedatum,'d.m.Y').($filter_aktive?' (nur aktive Konten)':'(inkl. inaktive Konten)').'</span>';
 	echo '
 	<script type="text/javascript">
-	$(document).ready(function() 
+	$(document).ready(function()
 		{
 			$("#myTable").tablesorter(
 			{
 				sortList: [[1,0]],
 				widgets: ["zebra"]
-			});			
+			});
 	 	});
 	 </script>';
 	echo '<table id="myTable" class="tablesorter" style="width: auto;">
@@ -234,11 +242,11 @@ $datum_obj = new datum();
 				</tr>
 			</thead>
 			<tbody>';
-	
+
 	$gesamt_rechnung = 0;
 	$gesamt_bestellung = 0;
 	$gesamt_budget = 0;
-	
+
 	foreach($kst_array as $row)
 	{
 		$id = $row;
@@ -249,20 +257,20 @@ $datum_obj = new datum();
 			$brutto['bestellung']=0;
 			$brutto['rechnung']=0;
 		}
-		
+
 		$kostenstelle = new wawi_kostenstelle();
 		$kostenstelle->load($id);
 
 		if($kostenstelle->aktiv)
 			$class='';
-		else 
+		else
 		{
 			$class='class="inaktiv"';
 			if ($filter_aktive) {
 				continue;
 			}
 		}
-				
+
 		echo '<tr>';
 
 		echo '<td>',$id,'</td>';
@@ -271,7 +279,7 @@ $datum_obj = new datum();
 		echo '<td>',$kostenstelle->kurzbz,'</td>';
 		echo '<td class="number"><a href="../bestellung.php?method=suche&evon=',$vondatum,'&ebis=',$endedatum,'&filter_kostenstelle=',$id,'&submit=true">',number_format($brutto['bestellung'],2,',','.'),'</td>';
 		echo '<td class="number"><a href="../rechnung.php?method=suche&erstelldatum_von=',$vondatum,'&erstelldatum_bis=',$endedatum,'&filter_kostenstelle=',$id,'&submit=true">',number_format($brutto['rechnung'],2,',','.'),'</td>';
-		
+
 		if($budgetanzeige)
 		{
 			$budget = $kostenstelle->getBudget($id, $gj->geschaeftsjahr_kurzbz);
@@ -284,7 +292,7 @@ $datum_obj = new datum();
 			else
 				$class='number';
 			echo '<td class="',$class,'">',number_format($restbudget,2,',','.'),'</td>';
-			
+
 			//Restbudget fuer Rechnungen
 			$restbudget = $budget - $brutto['rechnung'];
 			if($restbudget>0)
@@ -294,15 +302,15 @@ $datum_obj = new datum();
 			else
 				$class='number';
 			echo '<td class="',$class,'">',number_format($restbudget,2,',','.'),'</td>';
-			
+
 			echo '<td class="number">',number_format($budget,2,',','.'),'</td>';
 			$gesamt_budget += $budget;
 		}
 		echo '</tr>';
-		
+
 		$gesamt_rechnung += $brutto['rechnung'];
 		$gesamt_bestellung += $brutto['bestellung'];
-		
+
 	}
 	echo '
 		</tbody>
