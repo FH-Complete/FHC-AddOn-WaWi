@@ -595,12 +595,12 @@ if($aktion == 'suche')
 		echo "<td>Beschreibung</td>\n";
 		echo "<td><input type = 'text' size ='32' maxlength = '256' name = 'titel'></td>\n";
 		echo "</tr>\n";
-		/*
+		
 		echo "<tr>\n";
 		echo "<td>Bestellposition:</td>\n";
 		echo "<td><input type='text' name='bestellposition' size='32' maxlength='256'></td>";
 		echo "</tr>";
-		echo "<tr>\n"; */
+		echo "<tr>\n";
 		echo "<td>Erstelldatum</td>\n";
 		echo "<td>von <input type ='text' id='datepicker_evon' size ='12' name ='evon' value='$suchdatum'> bis <input type ='text' id='datepicker_ebis' size ='12' name = 'ebis'></td>\n";
 		echo "</tr>\n";

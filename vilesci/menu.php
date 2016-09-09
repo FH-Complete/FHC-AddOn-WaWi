@@ -51,8 +51,9 @@ echo '<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www
 
 <body class="menue">
 <h3><a href="home.php" target="content">WaWi Home</a></h3>
-<a href="wawi.pdf" target="_blank"><img src="../skin/images/pdfpic.gif" /> Handbuch</a>
-<!--<a href="http://fhcomplete.technikum-wien.at/dokuwiki/doku.php?id=wawi:allgemeines" target="_blank">Handbuch</a>-->
+<a href="wawi.pdf" target="_blank"><img src="../skin/images/pdfpic.gif" /> PDF Handbuch</a>
+<br>
+<a href="http://fhcomplete.technikum-wien.at/dokuwiki/doku.php?id=wawi:allgemeines" target="_blank"><img src="../skin/images/help.png" height="15px"/> Online Handbuch</a>
 <hr>';
 
 function checkpermission($permissions)
