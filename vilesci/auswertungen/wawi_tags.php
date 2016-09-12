@@ -55,7 +55,7 @@ if(count($kst_array)==0)
 <head>
 	<title>WaWi - Tags - Bericht</title>
 	<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
-	<link rel="stylesheet" href="../../../../skin/wawi.css" type="text/css">
+	<link rel="stylesheet" href="../../skin/wawi.css" type="text/css">
 	<link rel="stylesheet" href="../../../../skin/tablesort.css" type="text/css">
 		
 	<script type="text/javascript" src="../../../../include/js/jquery1.9.min.js"></script> 

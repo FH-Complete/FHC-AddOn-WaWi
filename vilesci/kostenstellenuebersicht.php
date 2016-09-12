@@ -38,7 +38,7 @@ require_once('../include/wawi_benutzerberechtigung.class.php');
 
 	<title>WaWi Kostenstellen</title>
 	<link rel="stylesheet" href="../../../skin/tablesort.css" type="text/css"/>
-	<link rel="stylesheet" href="../../../skin/wawi.css" type="text/css"/>
+	<link rel="stylesheet" href="../skin/wawi.css" type="text/css"/>
 
 	<script type="text/javascript" src="../../../include/js/jquery1.9.min.js"></script>
 	<script type="text/javascript">
@@ -537,7 +537,7 @@ else
 			echo "
 				<td nowrap>
 				<a href=\"kostenstellenuebersicht.php?method=allocate&amp;id=$row->kostenstelle_id\" title=\"Konten zuordnen\"> <img src=\"../../../skin/images/addKonto.png\"></a>
-				<a href= \"kostenstellenuebersicht.php?method=update&amp;id=$row->kostenstelle_id\" title=\"Bearbeiten\"> <img src=\"../../../skin/images/edit_wawi.gif\"> </a>
+				<a href= \"kostenstellenuebersicht.php?method=update&amp;id=$row->kostenstelle_id\" title=\"Bearbeiten\"> <img src=\"../skin/images/edit_wawi.gif\"> </a>
 				<a href=\"kostenstellenuebersicht.php?method=delete&amp;id=$row->kostenstelle_id\" onclick='return conf_del()' title='Löschen'> <img src=\"../../../skin/images/delete_x.png\"></a>\n
 				</td>
 				";

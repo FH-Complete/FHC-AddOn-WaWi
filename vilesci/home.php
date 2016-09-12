@@ -28,7 +28,7 @@ require_once('auth.php');
 <head>
 	<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
 	<title>WaWi Home</title>
-	<link rel="stylesheet" href="../../../skin/wawi.css" type="text/css">
+	<link rel="stylesheet" href="../skin/wawi.css" type="text/css">
 </head>
 <body>
 <br /><br /><br />
@@ -37,6 +37,6 @@ require_once('auth.php');
 <br /><br /><br />
 <br />
 
-<center><img width="700px" src="../../../skin/images/wawi_logo_sz.png" ></center>
+<center><img width="700px" src="../skin/images/wawi_logo_sz.png" ></center>
 </body>
 </html>

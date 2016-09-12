@@ -56,7 +56,7 @@ $datum_obj = new datum();
 	<link rel="stylesheet" href="../../../../skin/jquery.css" type="text/css">
 	<link rel="stylesheet" href="../../../../skin/tablesort.css" type="text/css">
 	<link rel="stylesheet" href="../../../../skin/fhcomplete.css" type="text/css">
-	<link rel="stylesheet" href="../../../../skin/wawi.css" type="text/css">
+	<link rel="stylesheet" href="../../skin/wawi.css" type="text/css">
 	
 			
 	<script type="text/javascript" src="../../../../include/js/jquery1.9.min.js"></script>	 
@@ -99,7 +99,7 @@ $datum_obj = new datum();
 		foreach($firma->result as $row)
 		{
 			echo '<tr>';
-			echo '<td><a href="../firma.php?method=update&amp;id='.$row->firma_id.'" title="Bearbeiten"> <img src="../../../../skin/images/edit_wawi.gif"> </a></td>';
+			echo '<td><a href="../firma.php?method=update&amp;id='.$row->firma_id.'" title="Bearbeiten"> <img src="../../skin/images/edit_wawi.gif"> </a></td>';
 			echo '<td>',$row->firma_id,'</td>';
 			echo '<td>',$row->name,'</td>';
 			echo '<td>',$row->strasse,' ',$row->plz,' ',$row->ort,'</td>';
