@@ -81,7 +81,7 @@ if(isset($_GET['method']))
 	{
 		if(!$rechte->isBerechtigt('wawi/konto',null,'su'))
 			die('Keine Berechtigung für Update');
-					
+
 		if(isset($_GET['id']))
 		{
 			echo '<h1>Konto - Bearbeiten</h1>';
@@ -90,49 +90,49 @@ if(isset($_GET['method']))
 			if($konto->load($id))
 			{
 				$checked ='';
-				if($konto->aktiv)	
+				if($konto->aktiv)
 				{
 					$checked = 'checked';
 				}
-				
+
 				echo "<form action=\"kontouebersicht.php?method=save&id=$konto->konto_id\" method=\"post\">\n";
 				echo '<table border=0>';
 				echo '<tr>';
 				echo '<td>Kontonummer</td>';
-		 	 	echo "<td><input type=\"text\" size=\"32\" name=\"kontonummer\" value=\"$konto->kontonr\"></td>\n";
-		 	 	echo '</tr>';
+				echo "<td><input type=\"text\" size=\"32\" name=\"kontonummer\" value=\"$konto->kontonr\"></td>\n";
+				echo '</tr>';
 
 				foreach($sprache->result as $s)	// Mehrsprachigkeit
-				{  
+				{
 					if($s->content == true)
 					{
-			 	 		echo '<tr>';
-			 	 		echo "<td>$s->sprache</td>\n";
-			 	 		echo "<td><input type=\"text\" size=\"32\" name=\"beschreibung$s->sprache\" value=\"".$konto->beschreibung[$s->sprache]."\"></td>\n";
-			 	 		echo "</tr>\n";
+						echo '<tr>';
+						echo "<td>$s->sprache</td>\n";
+						echo "<td><input type=\"text\" size=\"32\" name=\"beschreibung$s->sprache\" value=\"".$konto->beschreibung[$s->sprache]."\"></td>\n";
+						echo "</tr>\n";
 					}
 				}
-		 	 	echo "<tr>\n";
-		 	 	echo "<td>Kurzbezeichnung</td>\n";
-		 	 	echo "<td><input type=\"text\" size=\"32\" name=\"kurzbezeichnung\" value=\"$konto->kurzbz\"></td>\n";
-		 	 	echo "</tr>\n";
-		 	 	echo "<tr>\n";
-		 	 	echo "<td>Hilfetext</td>\n";
-		 	 	echo "<td><textarea rows=\"4\" cols=\"50\" name=\"hilfe\" maxlength=\"256\">".$konto->hilfe."</textarea></td>\n";
-		 	 	echo "</tr>\n";
-		 	 	echo "<tr>\n";
-		 	 	echo "<td>Aktiv?</td>\n";
-		 	 	echo "<td><input type=\"checkbox\" name=\"aktiv\" value=\"aktiv\" $checked>\n";
-		 	 	echo "</tr>\n";
-		 	 	echo "<tr><td>&nbsp;</td></tr>\n"; 	 	
-		  		echo "<tr>\n";
-		  		echo "<td><a href=\"kontouebersicht.php\"> zur&uuml;ck </a></td>\n";
-		  		echo "<td><input type=\"submit\" value=\"update\"></td>\n";
-		  		echo "</tr>\n";
-		  		echo "</table>\n";
-		  		echo "</form>\n";
+				echo "<tr>\n";
+				echo "<td>Kurzbezeichnung</td>\n";
+				echo "<td><input type=\"text\" size=\"32\" name=\"kurzbezeichnung\" value=\"$konto->kurzbz\"></td>\n";
+				echo "</tr>\n";
+				echo "<tr>\n";
+				echo "<td>Hilfetext</td>\n";
+				echo "<td><textarea rows=\"4\" cols=\"50\" name=\"hilfe\" maxlength=\"256\">".$konto->hilfe."</textarea></td>\n";
+				echo "</tr>\n";
+				echo "<tr>\n";
+				echo "<td>Aktiv?</td>\n";
+				echo "<td><input type=\"checkbox\" name=\"aktiv\" value=\"aktiv\" $checked>\n";
+				echo "</tr>\n";
+				echo "<tr><td>&nbsp;</td></tr>\n";
+					echo "<tr>\n";
+					echo "<td><a href=\"kontouebersicht.php\"> zur&uuml;ck </a></td>\n";
+					echo "<td><input type=\"submit\" value=\"update\"></td>\n";
+					echo "</tr>\n";
+					echo "</table>\n";
+					echo "</form>\n";
 			}
-			else 
+			else
 			{
 				echo 'Konto wurde nicht gefunden!';
 				echo "<a href=\"kontouebersicht.php\"> <br>zur&uuml;ck </a>\n";
@@ -142,46 +142,50 @@ if(isset($_GET['method']))
 		{
 				if(!$rechte->isBerechtigt('wawi/konto',null,'sui'))
 				die('Keine Berechtigung für Insert');
-				
+
 				echo '<h1>Konto - Neu</h1>';
 				// neues Konto anlegen
 				echo "<form action=\"kontouebersicht.php?method=save\" method=\"post\">\n";
 				echo "<table border=0>\n";
 				echo "<tr>\n";
 				echo "<td>Kontonummer</td>\n";
-		 	 	echo "<td><input type=\"text\" size=\"32\" maxlength =\"32\" name=\"kontonummer\" value=\"\"></td>\n";
-		 	 	echo "</tr>\n";
+				echo "<td><input type=\"text\" size=\"32\" maxlength =\"32\" name=\"kontonummer\" value=\"\"></td>\n";
+				echo "</tr>\n";
 				foreach($sprache->result as $s)
-				{  
+				{
 					if($s->content == true)
 					{
-			 	 		echo "<tr>\n";
-			 	 		echo "<td>$s->sprache</td>\n";
-			 	 		echo "<td><input type=\"text\" size=\"32\" name=\"beschreibung$s->sprache\" value=\"\"></td>\n";
-			 	 		echo "</tr>\n";
+						echo "<tr>\n";
+						echo "<td>$s->sprache</td>\n";
+						echo "<td><input type=\"text\" size=\"32\" name=\"beschreibung$s->sprache\" value=\"\"></td>\n";
+						echo "</tr>\n";
 					}
 				}
-		 	 	echo "<tr><td>Kurzbezeichnung</td>\n";
-		 	 	echo "<td><input type=\"text\" size=\"32\" maxlength =\"32\" name=\"kurzbezeichnung\" value=\"\"></td>\n";
-		 	 	echo "</tr>\n";
-		 	 	echo "<tr><td>&nbsp;</td></tr>\n"; 	 	
-		  		echo "<tr>\n";
-		  		echo "<td><a href=kontouebersicht.php> zurueck </a></td>\n";
-		  		echo "<td><input type='submit' value='Anlegen'></td>\n";
-		  		echo "</tr>\n";
-		  		echo "</table>\n";
-		  		echo "</form>\n";
+				echo "<tr><td>Kurzbezeichnung</td>\n";
+				echo "<td><input type=\"text\" size=\"32\" maxlength =\"32\" name=\"kurzbezeichnung\" value=\"\"></td>\n";
+				echo "</tr>\n";
+				echo "<tr>\n";
+				echo "<td>Hilfetext</td>\n";
+				echo "<td><textarea rows=\"4\" cols=\"50\" name=\"hilfe\" maxlength=\"256\"></textarea></td>\n";
+				echo "</tr>\n";
+				echo "<tr><td>&nbsp;</td></tr>\n";
+				echo "<tr>\n";
+				echo "<td><a href=kontouebersicht.php> zurueck </a></td>\n";
+				echo "<td><input type='submit' value='Anlegen'></td>\n";
+				echo "</tr>\n";
+				echo "</table>\n";
+				echo "</form>\n";
 		}
 	}
 	else if($_GET['method']== "save")
 	{
 		if(!$rechte->isBerechtigt('wawi/konto',null,'sui'))
 		die('Keine Berechtigung für Insert');
-		
-		$konto = new wawi_konto();	
+
+		$konto = new wawi_konto();
 		$aktiv = '';
 		$ausgabe ="Konto wurde erfolgreich upgedated!";
-		
+
 		if(isset($_GET['id']))
 		{
 			//Update
@@ -190,33 +194,33 @@ if(isset($_GET['method']))
 			$konto->new = false;
 			$konto->aktiv = isset ($_POST['aktiv']);
 		}
-		else 
+		else
 		{
 			// neues Konto
 			$konto->new = true;
 			$konto->aktiv = true;
 			$konto->insertamum = date('Y-m-d H:i:s');
-			$konto->insertvon=$user; 
+			$konto->insertvon=$user;
 			$ausgabe = "Konto wurde erfolgreich erstellt!";
-		}	
+		}
 
-		$konto->kontonr = $_POST['kontonummer'];	
+		$konto->kontonr = $_POST['kontonummer'];
 
 		foreach($sprache->result as $s)
 			if($s->content == true)
-				$konto->beschreibung[$s->sprache] = $_POST['beschreibung'.$s->sprache]; 	
-			
+				$konto->beschreibung[$s->sprache] = $_POST['beschreibung'.$s->sprache];
+
 		$konto->kurzbz = $_POST['kurzbezeichnung'];
 		$konto->hilfe = $_POST['hilfe'];
 		$konto->updateamum = date('Y-m-d H:i:s');
-		$konto->updatevon = $user; 
-			
+		$konto->updatevon = $user;
+
 		if(!$konto->save())
 		{
 			die('Fehler beim Speichern:'.$konto->errormsg);
 		}
 		echo $ausgabe;
-		echo "<a href=\"kontouebersicht.php\"> <br>zurück </a>";		
+		echo "<a href=\"kontouebersicht.php\"> <br>zurück </a>";
 	}
 	else if ($_GET['method']=="delete")
 	{
@@ -231,24 +235,24 @@ if(isset($_GET['method']))
 		}
 		else
 		{
-			echo $konto->errormsg; 
+			echo $konto->errormsg;
 			echo "<a href=\"kontouebersicht.php\"> <br>zurück </a>";
-		}	
+		}
 	}
 	else if ($_GET['method']=="merge")
-	{			
+	{
 		//Kontos zusammenlegen
 		if(!$rechte->isBerechtigt('wawi/konto',null,'su'))
 			die('Keine Berechtigung für Update');
-			
+
 		echo '<h1>Konto - Zusammenlegen</h1>';
 		$konto = new wawi_konto();
-		
+
 		if(isset($_POST['radio_1']) && isset($_POST['radio_2']))
 		{
 			$radio_1 = $_POST['radio_1'];
 			$radio_2 = $_POST['radio_2'];
-			
+
 			if($radio_1==$radio_2)
 			{
 				echo "Die Datensaetze duerfen nicht die gleiche ID haben";
@@ -259,21 +263,21 @@ if(isset($_GET['method']))
 				{
 					echo "erfolgreich zusammengelegt";
 				}
-				else 
+				else
 				{
-					echo $konto->errormsg; 
+					echo $konto->errormsg;
 				}
 			}
 		}
-		else 
+		else
 		{
 			echo "Es muß je ein Radio-Button pro Tabelle angeklickt werden";
 		}
-		
+
 		$order = '';
 		$filter1 = isset($_POST['filter1'])?$_POST['filter1']:'';
 		$filter2 = isset($_POST['filter2'])?$_POST['filter2']:'';
-		
+
 		echo "<form name=\"suche\" action=\"kontouebersicht.php?method=merge\", method=\"POST\">\n";
 		echo "<table border ='0' width='100%'>\n";
 		echo "<tr\n>";
@@ -283,32 +287,32 @@ if(isset($_GET['method']))
 		echo "</tr>\n";
 		echo "<tr><td>&nbsp;</td></tr>\n";
 		echo "</form>\n";
-		
+
 		echo "<br><a href=kontouebersicht.php>zurueck</a><br>\n";
-		echo "</table>\n";	
+		echo "</table>\n";
 		//Tabellen anzeigen
-	
+
 		echo "<form name='form_table' action='kontouebersicht.php?method=merge' method='POST'>\n";
 		echo "<table width='100%' border='0' cellspacing='0' cellpadding='0' id='myTable' class='tablesorter'>\n";
-		echo "<tr>\n";	
+		echo "<tr>\n";
 		echo "<td valign='top'>Der wird gelöscht:</td>\n";
-	
+
 		 //Tabelle 1
 		echo "<table id='myTable' class='tablesorter'><thead> <tr>\n";
 		echo "<th>Konto ID</th>\n";
 		echo "<th>Kontonummer</th>\n";
 		echo "<th>Kurzbezeichnung</th>\n";
-		$i = 1; 
+		$i = 1;
 		foreach($sprache->result as $s)
 			if($s->content == true)
-				echo "<th>$s->sprache</th>\n";	
-				
+				echo "<th>$s->sprache</th>\n";
+
 		echo "<th>Aktiv</th>\n";
-		echo "<th>&nbsp;</th></tr></thead><tbody>\n";	
-	
+		echo "<th>&nbsp;</th></tr></thead><tbody>\n";
+
 		$konto  = new wawi_konto();
 		$konto->getKonto($filter1);
-		
+
 		foreach($konto->result as $row)
 		{
 			//Zeilen der Tabelle ausgeben
@@ -319,31 +323,31 @@ if(isset($_GET['method']))
 			foreach($sprache->result as $s)
 				if($s->content == true)
 					echo '<td>'.$row->beschreibung[$s->sprache]."</td>\n";
-			
+
 			echo '<td>'.$aktiv=($row->aktiv)?'ja':'nein'."</td>\n";
 			echo "<td><input type='radio' name='radio_1' value='$row->konto_id' </td>\n";
 			echo "</tr>\n";
 		}
 		echo "</tbody>\n";
-		echo "</table>\n"; 
+		echo "</table>\n";
 		echo "</td>\n";
 		echo "<td valign='top'><input type='submit' value='  ->  '></td>\n";
 		echo "<td valign='top'>Der bleibt:</td>\n";
-		
+
 		//Tabelle 2
 		echo "<table id='myTable' class='tablesorter'><thead> <tr>\n";
 		echo "<th>&nbsp;</th>\n";
 		echo "<th>Konto ID</th>\n";
 		echo "<th>Kontonummer</th>\n";
 		echo "<th>Kurzbezeichnung</th>\n";
-		
+
 		foreach($sprache->result as $s)
 			if($s->content == true)
-				echo "<th>$s->sprache</th>\n";	
+				echo "<th>$s->sprache</th>\n";
 
 		echo "<th>Aktiv</th>\n";
-		echo "</tr></thead><tbody>\n";	
-	
+		echo "</tr></thead><tbody>\n";
+
 		$konto  = new wawi_konto();
 		$konto->getKonto($filter2);
 		foreach($konto->result as $row)
@@ -353,11 +357,11 @@ if(isset($_GET['method']))
 			echo "<td>$row->konto_id</td>\n";
 			echo '<td>'.$row->kontonr."</td>\n";
 			echo '<td>'.$row->kurzbz."</td>\n";
- 
+
 			foreach($sprache->result as $s)
 				if($s->content == true)
 					echo '<td>'.$row->beschreibung[$s->sprache]."</td>\n";
-			
+
 			echo '<td>'.($row->aktiv?'ja':'nein')."</td>\n";
 			echo '</tr>';
 		}
@@ -365,7 +369,7 @@ if(isset($_GET['method']))
 		echo "</td>\n";
 		echo "</tr>\n";
 		echo "</table>\n";
-		echo "</form>\n";		
+		echo "</form>\n";
 	}
 }
 else 
