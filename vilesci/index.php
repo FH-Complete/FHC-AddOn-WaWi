@@ -16,7 +16,7 @@
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307, USA.
  *
  */
-require_once dirname(__FILE__).'/../../../config/wawi.config.inc.php';
+require_once(dirname(__FILE__).'/../config.inc.php');
 require_once('auth.php');
 require_once dirname(__FILE__).'/../../../include/functions.inc.php';
 require_once dirname(__FILE__).'/../../../include/benutzerberechtigung.class.php';

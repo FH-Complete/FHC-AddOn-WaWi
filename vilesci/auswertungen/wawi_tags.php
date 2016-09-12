@@ -16,14 +16,15 @@
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307, USA.
  *
  * Authors: Christian Paminger <christian.paminger@technikum-wien.at>,
- *          Andreas Oesterreicher <andreas.oesterreicher@technikum-wien.at> and
- *          Karl Burkhart <karl.burkhart@technikum-wien.at>.
+ *          Andreas Oesterreicher <andreas.oesterreicher@technikum-wien.at>,
+ *          Karl Burkhart <burkhart@technikum-wien.at> and
+ *          Andreas Moik <moik@technikum-wien.at>.
  */
 /**
  * Auswertung der Bestellungen und Rechnungen auf Kostenstellen und Tags
  */
 
-require_once(dirname(__FILE__).'/../../../../config/wawi.config.inc.php');
+require_once(dirname(__FILE__).'/../../config.inc.php');
 require_once('../auth.php');
 require_once(dirname(__FILE__).'/../../include/wawi_benutzerberechtigung.class.php');
 require_once(dirname(__FILE__).'/../../../../include/functions.inc.php');
