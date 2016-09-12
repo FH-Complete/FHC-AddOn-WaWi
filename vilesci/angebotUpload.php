@@ -73,28 +73,30 @@ $filename.=".".$ext;
 $uploadfile = DMS_PATH.$filename;
 if(move_uploaded_file($_FILES['file']['tmp_name'], $uploadfile)) 
 {
-  echo $_FILES['file']['name']. " OK";
+	echo $_FILES['file']['name']. " OK";
 
-  $dms = new dms();
+	$dms = new dms();
 
-  $dms->version='0';
-  $dms->kategorie_kurzbz=$kategorie_kurzbz;
+	$dms->version='0';
+	$dms->kategorie_kurzbz=$kategorie_kurzbz;
 
-  $dms->insertamum=date('Y-m-d H:i:s');
-  $dms->insertvon = $user;
-  $dms->mimetype=$_FILES['file']['type'];
-  $dms->filename = $filename;
-  $dms->name = $_FILES['file']['name'];
+	$dms->insertamum=date('Y-m-d H:i:s');
+	$dms->insertvon = $user;
+	$dms->mimetype=$_FILES['file']['type'];
+	$dms->filename = $filename;
+	$dms->name = $_FILES['file']['name'];
 
-  if($dms->save(true))
-    {
-      $dms_id=$dms->dms_id;
-    }    	
-  else
-    {
-      echo 'Fehler beim Speichern der Daten';
-      $error = true; 
-    }
-} else {
-  echo $_FILES['file']['name']. " konnte nicht gespeichert werden.";
+	if($dms->save(true))
+	{
+		$dms_id=$dms->dms_id;
+	}
+	else
+	{
+		echo 'Fehler beim Speichern der Daten';
+		$error = true;
+	}
+}
+else
+{
+	echo $_FILES['file']['name']. " konnte nicht gespeichert werden.";
 }
