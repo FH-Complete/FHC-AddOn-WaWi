@@ -63,8 +63,8 @@ if (isset($_POST['username']))
 <head>
 	<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
 	<title>Login - Bestellwesen Technikum Wien V 2.0.0</title>
-	<link rel="stylesheet" href="../skin/fhcomplete.css" type="text/css">
-	<link rel="stylesheet" href="../skin/wawi.css" type="text/css">
+	<link rel="stylesheet" href="../../../skin/fhcomplete.css" type="text/css">
+	<link rel="stylesheet" href="../../../skin/wawi.css" type="text/css">
 </head>
 <body onload="document.getElementById('username').focus();">
 	<br />

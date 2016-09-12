@@ -46,14 +46,14 @@ echo '<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www
 <head>
 	<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
 	<title>WaWi Menue</title>
-	<link rel="stylesheet" href="../skin/wawi.css" type="text/css">
+	<link rel="stylesheet" href="../../../skin/wawi.css" type="text/css">
 </head>
 
 <body class="menue">
 <h3><a href="home.php" target="content">WaWi Home</a></h3>
-<a href="wawi.pdf" target="_blank"><img src="../skin/images/pdfpic.gif" /> PDF Handbuch</a>
+<a href="wawi.pdf" target="_blank"><img src="../../../skin/images/pdfpic.gif" /> PDF Handbuch</a>
 <br>
-<a href="http://fhcomplete.technikum-wien.at/dokuwiki/doku.php?id=wawi:allgemeines" target="_blank"><img src="../skin/images/help.png" height="15px"/> Online Handbuch</a>
+<a href="http://fhcomplete.technikum-wien.at/dokuwiki/doku.php?id=wawi:allgemeines" target="_blank"><img src="../../../skin/images/help.png" height="15px"/> Online Handbuch</a>
 <hr>';
 
 function checkpermission($permissions)
@@ -110,7 +110,7 @@ foreach($menu AS $m1)
 
 				if($m2['name']!='')
 				{
-					echo "\n\t\t".'<img title="'.$m2['name'].'" src="../skin/images/bullet_arrow_down.png" alt="page go" border="0">&nbsp;';
+					echo "\n\t\t".'<img title="'.$m2['name'].'" src="../../../skin/images/bullet_arrow_down.png" alt="page go" border="0">&nbsp;';
 					if (isset($m2['link']))
 						echo '<a href="'.$m2['link'].'" ';
 					if (isset($m2['target']))
@@ -130,7 +130,7 @@ foreach($menu AS $m1)
 					{
 						if (isset($m3['permissions']) && !checkpermission($m3['permissions']))
 							continue;
-						echo "\n\t\t&nbsp;&nbsp;&nbsp;".'<img title="'.$m3['name'].'" src="../skin/images/bullet_go.png" alt="page go" border="0">&nbsp;';
+						echo "\n\t\t&nbsp;&nbsp;&nbsp;".'<img title="'.$m3['name'].'" src="../../../skin/images/bullet_go.png" alt="page go" border="0">&nbsp;';
 						if (isset($m3['link']))
 							echo '<a href="'.$m3['link'].'" ';
 						if (isset($m3['target']))

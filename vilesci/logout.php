@@ -25,7 +25,7 @@
 <head>
 	<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
 	<title>Logout</title>
-	<link rel="stylesheet" href="../skin/wawi.css" type="text/css">
+	<link rel="stylesheet" href="../../../skin/wawi.css" type="text/css">
 	<script type="text/javascript">
 		function login() 
 		{

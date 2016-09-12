@@ -33,11 +33,11 @@ require_once(dirname(__FILE__).'/../../../include/benutzer.class.php');
 <head>
 	<title>WaWi Kostenstellen - Berechtigungen</title>	
 	<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
-	<link rel="stylesheet" href="../skin/tablesort.css" type="text/css"/>
-	<link rel="stylesheet" href="../skin/wawi.css" type="text/css"/>
+	<link rel="stylesheet" href="../../../skin/tablesort.css" type="text/css"/>
+	<link rel="stylesheet" href="../../../skin/wawi.css" type="text/css"/>
 
 	<script type="text/javascript" src="../../../include/js/jquery1.9.min.js"></script>	
-	<link rel="stylesheet" type="text/css" href="../skin/jquery-ui-1.9.2.custom.min.css"/> 
+	<link rel="stylesheet" type="text/css" href="../../../skin/jquery-ui-1.9.2.custom.min.css"/>
 
 </head>
 <body>

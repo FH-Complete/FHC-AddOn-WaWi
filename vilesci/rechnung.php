@@ -59,13 +59,13 @@ if(isset($_POST['getBetragRow']) && isset($_POST['id']))
 <head>
 	<title>WaWi Rechnung</title>	
 	<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
-	<link rel="stylesheet" href="../skin/tablesort.css" type="text/css">
-	<link rel="stylesheet" href="../skin/jquery.css" type="text/css">
-	<link rel="stylesheet" href="../skin/fhcomplete.css" type="text/css">	
-	<link rel="stylesheet" href="../skin/wawi.css" type="text/css">
+	<link rel="stylesheet" href="../../../skin/tablesort.css" type="text/css">
+	<link rel="stylesheet" href="../../../skin/jquery.css" type="text/css">
+	<link rel="stylesheet" href="../../../skin/fhcomplete.css" type="text/css">
+	<link rel="stylesheet" href="../../../skin/wawi.css" type="text/css">
 
 	<script type="text/javascript" src="../../../include/js/jquery1.9.min.js"></script>	
-	<link rel="stylesheet" type="text/css" href="../skin/jquery-ui-1.9.2.custom.min.css"/>	
+	<link rel="stylesheet" type="text/css" href="../../../skin/jquery-ui-1.9.2.custom.min.css"/>
 <!--	<script type="text/javascript" src="../include/js/jquery.js"></script>  -->
 			
 	<script type="text/javascript">
@@ -357,8 +357,8 @@ if($aktion == 'suche')
 					//Zeilen der Tabelle ausgeben
 					echo "<tr>\n";
 					echo "<td nowrap> 
-							<a href= \"rechnung.php?method=update&id=$row->rechnung_id\" title=\"Bearbeiten\"> <img src=\"../skin/images/edit_wawi.gif\"> </a>
-							<a href=\"rechnung.php?method=delete&id=$row->rechnung_id\" onclick='return conf_del()' title='Löschen'> <img src=\"../skin/images/delete_x.png\"></a>";
+							<a href= \"rechnung.php?method=update&id=$row->rechnung_id\" title=\"Bearbeiten\"> <img src=\"../../../skin/images/edit_wawi.gif\"> </a>
+							<a href=\"rechnung.php?method=delete&id=$row->rechnung_id\" onclick='return conf_del()' title='Löschen'> <img src=\"../../../skin/images/delete_x.png\"></a>";
 					echo '<td>'.$row->rechnungsnr."</td>\n";
 					echo '<td>'.$row->bestell_nr."</td>\n";
 					echo '<td>'.$date->formatDatum($row->rechnungsdatum, 'd.m.Y')."</td>\n";

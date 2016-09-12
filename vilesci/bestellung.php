@@ -357,16 +357,16 @@ if(isset($_POST['deleteBtnStorno']) && isset($_POST['id']))
 <head>
 	<title>WaWi Bestellung</title>
 	<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
-	<link rel="stylesheet" href="../skin/tablesort.css" type="text/css"/>
-<!--	<link rel="stylesheet" href="../skin/jquery.css" type="text/css"/> -->
-    <link rel="stylesheet" href="../skin/jquery-ui.min.css" type="text/css"/>
-	<link rel="stylesheet" href="../skin/fhcomplete.css" type="text/css"/>
-	<link rel="stylesheet" href="../skin/wawi.css" type="text/css"/>
+	<link rel="stylesheet" href="../../../skin/tablesort.css" type="text/css"/>
+<!--	<link rel="stylesheet" href="../../../skin/jquery.css" type="text/css"/> -->
+    <link rel="stylesheet" href="../../../skin/jquery-ui.min.css" type="text/css"/>
+	<link rel="stylesheet" href="../../../skin/fhcomplete.css" type="text/css"/>
+	<link rel="stylesheet" href="../../../skin/wawi.css" type="text/css"/>
 <!--	<script type="text/javascript" src="../include/js/jquery.js"></script> -->
 	<script type="text/javascript" src="../../../include/js/jquery1.9.min.js"></script>
-<!--	<link rel="stylesheet" type="text/css" href="../skin/jquery-ui-1.9.2.custom.min.css"/>	-->
-    <link rel="stylesheet" type="text/css" href="../skin/jquery-ui.structure.min.css"/>
-	<link rel="stylesheet" type="text/css" href="../skin/jquery-ui.theme.min.css"/>
+<!--	<link rel="stylesheet" type="text/css" href="../../../skin/jquery-ui-1.9.2.custom.min.css"/>	-->
+    <link rel="stylesheet" type="text/css" href="../../../skin/jquery-ui.structure.min.css"/>
+	<link rel="stylesheet" type="text/css" href="../../../skin/jquery-ui.theme.min.css"/>
     <link rel="stylesheet" href="../skin/font-awesome-4.5.0/css/font-awesome.min.css">
 
 	<script type="text/javascript">
@@ -829,7 +829,7 @@ if($aktion == 'suche')
 
 						//Zeilen der Tabelle ausgeben
 						echo "<tr>\n";
-						echo "<td nowrap> <a href= \"bestellung.php?method=update&id=$row->bestellung_id\" title=\"Bestellung bearbeiten\"> <img src=\"../skin/images/edit_wawi.gif\"> </a><a href=\"bestellung.php?method=delete&id=$row->bestellung_id\" onclick='return conf_del()' title='Bestellung löschen' > <img src=\"../skin/images/delete_x.png\" ></a><a href= \"rechnung.php?method=update&bestellung_id=$row->bestellung_id\" title=\"Neue Rechnung anlegen\"> <img src=\"../skin/images/Calculator.png\"> </a><a href= \"bestellung.php?method=copy&id=$row->bestellung_id\" title=\"Bestellung kopieren\"> <img src=\"../skin/images/copy.png\"> </a></td>";
+						echo "<td nowrap> <a href= \"bestellung.php?method=update&id=$row->bestellung_id\" title=\"Bestellung bearbeiten\"> <img src=\"../../../skin/images/edit_wawi.gif\"> </a><a href=\"bestellung.php?method=delete&id=$row->bestellung_id\" onclick='return conf_del()' title='Bestellung löschen' > <img src=\"../../../skin/images/delete_x.png\" ></a><a href= \"rechnung.php?method=update&bestellung_id=$row->bestellung_id\" title=\"Neue Rechnung anlegen\"> <img src=\"../../../skin/images/Calculator.png\"> </a><a href= \"bestellung.php?method=copy&id=$row->bestellung_id\" title=\"Bestellung kopieren\"> <img src=\"../../../skin/images/copy.png\"> </a></td>";
 						echo '<td>'.$row->bestell_nr."</td>\n";
 						echo '<td>'.$row->bestellung_id."</td>\n";
 						echo '<td>'.$firmenname."</td>\n";
@@ -909,7 +909,7 @@ elseif($aktion == 'new')
 	}
 	echo "</SELECT>\n";
 
-        echo "<a href = 'kategorie.html' onclick='FensterOeffnen(this.href); return false' title='Hilfe zu den Kategorien'> <img src='../skin/images/question.png'> </a>";
+        echo "<a href = 'kategorie.html' onclick='FensterOeffnen(this.href); return false' title='Hilfe zu den Kategorien'> <img src='../../../skin/images/question.png'> </a>";
         echo "</td>\n";
 
         echo "</tr>";*/
@@ -920,7 +920,7 @@ elseif($aktion == 'new')
 	echo "<select name='konto' id='konto' style='width: 230px;'>\n";
 	echo "<option value='' >Konto auswählen</option>\n";
 	echo "</select>\n";
-	echo '<a href="konto_hilfe.php" onclick="FensterOeffnen(this.href); return false" title="Informationen zu den Konten"> <img src="../skin/images/question.png"> </a>';
+	echo '<a href="konto_hilfe.php" onclick="FensterOeffnen(this.href); return false" title="Informationen zu den Konten"> <img src="../../../skin/images/question.png"> </a>';
 
 	echo "</td></tr>\n";
 	echo "<tr>\n";
@@ -1726,7 +1726,7 @@ if($_GET['method']=='update')
 		    	  		   		//.text(al.name)
 		    	         ).append(
 		    	           $('<a style="background: transparent;padding-left:1px;padding-right:1px">',{ href: '#' }).append(
-		    	              $('<img>',{ src :'../skin/images/delete_round.png', class : 'cursor' })
+		    	              $('<img>',{ src :'../../../skin/images/delete_round.png', class : 'cursor' })
 		    	           ).click(function() {
 		    	           	    $('#currentAngebotId').val(al.angebot_id);
 		    	           	    $('#angebotFilename').empty();
@@ -1918,11 +1918,11 @@ EOT;
 
 	echo "<form action =\"bestellung.php?method=update&amp;bestellung=$bestellung->bestellung_id\" method='post' name='editForm' id='editForm' onSubmit='return maybeSubmit()'>\n";
 	echo "<h4>Bestellnummer: ".$bestellung->bestell_nr;
-	echo '	<a href= "bestellung.php?method=copy&amp;id='.$bestellung->bestellung_id.'"> <img src="../skin/images/copy.png" title="Bestellung kopieren" class="cursor"></a>';
-	echo '	<a href= "rechnung.php?method=update&amp;bestellung_id='.$bestellung->bestellung_id.'"> <img src="../skin/images/Calculator.png" title="Rechnung anlegen" class="cursor"></a>';
+	echo '	<a href= "bestellung.php?method=copy&amp;id='.$bestellung->bestellung_id.'"> <img src="../../../skin/images/copy.png" title="Bestellung kopieren" class="cursor"></a>';
+	echo '	<a href= "rechnung.php?method=update&amp;bestellung_id='.$bestellung->bestellung_id.'"> <img src="../../../skin/images/Calculator.png" title="Rechnung anlegen" class="cursor"></a>';
 
  	if($rechte->isBerechtigt('system/developer'))
-		echo '	<a href= "bestellung.php?method=update&amp;id='.$bestellung->bestellung_id.'"> <img src="../skin/images/refresh.png" title="Refresh" class="cursor"></a>';
+		echo '	<a href= "bestellung.php?method=update&amp;id='.$bestellung->bestellung_id.'"> <img src="../../../skin/images/refresh.png" title="Refresh" class="cursor"></a>';
 
 	if (isGMBHKostenstelle($bestellung->kostenstelle_id)) {
 		echo " <span style=\"color:white;background-color:red\"> GMBH-Bestellung! </span>";
@@ -2035,7 +2035,7 @@ EOT;
 
 	echo "</select> ";
 
-	echo "<a href = 'kategorie.html' onclick='FensterOeffnen(this.href); return false' title='Hilfe zu den Kategorien'> <img src='../skin/images/question.png'> </a>";
+	echo "<a href = 'kategorie.html' onclick='FensterOeffnen(this.href); return false' title='Hilfe zu den Kategorien'> <img src='../../../skin/images/question.png'> </a>";
 
 	echo "</td>";*/
 
@@ -2057,7 +2057,7 @@ EOT;
 		echo '<option value='.$bestellung->konto_id.' selected>'.$konto_bestellung->kurzbz."</option>\n";
 	}
 	echo "</select>";
-	echo '<a href="konto_hilfe.php" onclick="FensterOeffnen(this.href); return false" title="Informationen zu den Konten"> <img src="../skin/images/question.png"> </a>';
+	echo '<a href="konto_hilfe.php" onclick="FensterOeffnen(this.href); return false" title="Informationen zu den Konten"> <img src="../../../skin/images/question.png"> </a>';
 	echo "&nbsp; <label for=\"nicht_bestellen\">nicht bestellen</label> <input type=\"checkbox\" id=\"nicht_bestellen\" name=\"nicht_bestellen\" ".($bestellung->nicht_bestellen != null && $bestellung->nicht_bestellen === true ?'checked':'').">";
 	echo "</td>";
 
@@ -2354,7 +2354,7 @@ EOT;
 	echo "<th>Preis/VE</th>\n";
 	echo "<th>USt</th>\n";
 	echo "<th>Brutto</th>\n";
-	echo "<th nowrap>Tags <a id='tags_link' onClick='hideTags();'><img src='../skin/images/plus.png' title='Detailtags anzeigen' class ='cursor'> </a></th>";
+	echo "<th nowrap>Tags <a id='tags_link' onClick='hideTags();'><img src='../../../skin/images/plus.png' title='Detailtags anzeigen' class ='cursor'> </a></th>";
 	echo "</tr>\n";
 	echo "<tbody id='detailTable'>";
 	$i= 1;
@@ -2917,7 +2917,7 @@ EOT;
 	if($status->isStatiVorhanden($bestellung->bestellung_id, 'Abgeschickt') && !$bestellung->freigegeben)
 		echo "<td><input type='submit' value='Erneut Abschicken' id='btn_erneut_abschicken' name='btn_erneut_abschicken' class='cursor'></td>";
 	echo"<td style='width:100%' align='right'>";
-	echo "<div ><a href =\"pdfExport.php?xml=bestelldetail.rdf.php&xsl_oe_kurzbz=$kostenstelle->oe_kurzbz&xsl=Bestellung&id=$bestellung->bestellung_id\" target=\"_blank\">Bestellschein generieren <img src='../skin/images/pdf.ico'></a></div>";
+	echo "<div ><a href =\"pdfExport.php?xml=bestelldetail.rdf.php&xsl_oe_kurzbz=$kostenstelle->oe_kurzbz&xsl=Bestellung&id=$bestellung->bestellung_id\" target=\"_blank\">Bestellschein generieren <img src='../../../skin/images/pdf.ico'></a></div>";
 	echo "</td></tr></table><br>";
 	if($disabled!='')
 	{
@@ -2949,7 +2949,7 @@ EOT;
 	// div Aufteilung --> kann ein und ausgeblendet werden
 	/*
 	echo "<br>";
-	echo "<a id='aufteilung_link' class='cursor' ><img src='../skin/images/right.png'>Aufteilung anzeigen / ausblenden</a>\n";
+	echo "<a id='aufteilung_link' class='cursor' ><img src='../../../skin/images/right.png'>Aufteilung anzeigen / ausblenden</a>\n";
 	echo "<br>";
 	echo "<div id='aufteilung'>\n";
 	echo "<table border=0 width='75%' class='aufteilung'>";
@@ -3083,9 +3083,9 @@ function getDetailRow($i, $bestelldetail_id='', $sort='', $menge='', $ve='', $be
 	$mwst = str_replace('.', ',', $mwst);
 
 	echo "<tr id ='row_$i'>\n";
-	echo "<td><a onClick='$removeDetail' title='Bestelldetail löschen'> <img src=\"../skin/images/delete_round.png\" class='cursor'> </a></td>\n";
-	echo "<td><a href='#' class='down' onClick='verschieben(this);'><img src=\"../skin/images/arrow-single-down-green.png\" class='cursor' ></a></td>\n";
-	echo "<td> <a href='#' class='up' onClick='verschieben(this);'><img src=\"../skin/images/arrow-single-up-green.png\" class='cursor' ></a></td>\n";
+	echo "<td><a onClick='$removeDetail' title='Bestelldetail löschen'> <img src=\"../../../skin/images/delete_round.png\" class='cursor'> </a></td>\n";
+	echo "<td><a href='#' class='down' onClick='verschieben(this);'><img src=\"../../../skin/images/arrow-single-down-green.png\" class='cursor' ></a></td>\n";
+	echo "<td> <a href='#' class='up' onClick='verschieben(this);'><img src=\"../../../skin/images/arrow-single-up-green.png\" class='cursor' ></a></td>\n";
 	echo "<td><input type='text' size='2' name='pos_$i' id='pos_$i' maxlength='2' value='$pos' onfocus='$checkSave'></td>\n";
 	echo "<td><input type=\"number\" min=\"0\" size='5' class='number' name='menge_$i' id='menge_$i' maxlength='7' value='$menge' onChange='calcBruttoNetto($i);' onfocus='$checkSave' style=\"width:60px\"></td>\n";
 	echo "<td><input type='text' size='5' name='ve_$i' id='ve_$i' maxlength='7' value='$ve' onfocus='$checkSave'></td>\n";

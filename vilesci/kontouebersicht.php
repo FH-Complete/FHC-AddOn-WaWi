@@ -34,8 +34,8 @@ require_once dirname(__FILE__).'/../../../include/sprache.class.php';
 	<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
 	<title>WaWi Konten</title>	
 	
-	<link rel="stylesheet" href="../skin/tablesort.css" type="text/css"/>
-	<link rel="stylesheet" href="../skin/wawi.css" type="text/css"/>
+	<link rel="stylesheet" href="../../../skin/tablesort.css" type="text/css"/>
+	<link rel="stylesheet" href="../../../skin/wawi.css" type="text/css"/>
 	<script type="text/javascript" src="../../../include/js/jquery1.9.min.js"></script> 
 
 	<script type="text/javascript">
@@ -383,7 +383,7 @@ else
 				<th></th>
 				<th>Kontonummer</th>
 				<th>Kurzbzeichnung</th>\n";
-		$i = 1; 
+		$i = 1;
 		foreach($sprache->result as $s)
 		{
 			if($s->content == true)
@@ -401,7 +401,7 @@ else
 		{
 			//Zeilen der Tabelle ausgeben
 			echo "<tr>\n";
-			echo "<td nowrap> <a href= \"kontouebersicht.php?method=update&amp;id=$row->konto_id\" title='Bearbeiten'> <img src=\"../skin/images/edit_wawi.gif\"> </a><a href=\"kontouebersicht.php?method=delete&amp;id=$row->konto_id\" onclick='return conf_del()' title='Löschen'> <img src=\"../skin/images/delete_x.png\"></a></td>\n";
+			echo "<td nowrap> <a href= \"kontouebersicht.php?method=update&amp;id=$row->konto_id\" title='Bearbeiten'> <img src=\"../../../skin/images/edit_wawi.gif\"> </a><a href=\"kontouebersicht.php?method=delete&amp;id=$row->konto_id\" onclick='return conf_del()' title='Löschen'> <img src=\"../../../skin/images/delete_x.png\"></a></td>\n";
 			echo '<td>'.$row->kontonr."</td>\n";
 			echo '<td>'.$row->kurzbz."</td>\n";
 			
@@ -426,4 +426,4 @@ else
 	}
 }
 
-?>
+?>+

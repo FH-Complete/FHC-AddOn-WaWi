@@ -39,10 +39,10 @@ require_once dirname(__FILE__).'/../../../include/firma.class.php';
 <head>
 	<title>Offene Freigaben/Lieferungen</title>	
 	<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
-	<link rel="stylesheet" href="../skin/tablesort.css" type="text/css"/>
-	<link rel="stylesheet" href="../skin/jquery.css" type="text/css"/>
-	<link rel="stylesheet" href="../skin/fhcomplete.css" type="text/css"/>
-	<link rel="stylesheet" href="../skin/wawi.css" type="text/css"/>
+	<link rel="stylesheet" href="../../../skin/tablesort.css" type="text/css"/>
+	<link rel="stylesheet" href="../../../skin/jquery.css" type="text/css"/>
+	<link rel="stylesheet" href="../../../skin/fhcomplete.css" type="text/css"/>
+	<link rel="stylesheet" href="../../../skin/wawi.css" type="text/css"/>
 	<script type="text/javascript" src="../../../include/js/jquery1.9.min.js"></script>	
 	<script type="text/javascript">
 	function checkKst()
@@ -184,7 +184,7 @@ echo '
 			
 		$brutto = $bestellung->getBrutto($row->bestellung_id);
 		echo '	<tr>
-					<td nowrap><a href="bestellung.php?method=update&id='.$row->bestellung_id.'" title="Bestellung bearbeiten"> <img src="../skin/images/edit_wawi.gif"></a><a href="bestellung.php?method=delete&id='.$row->bestellung_id.'" onclick="return conf_del()" title="Bestellung löschen"> <img src="../skin/images/delete_x.png"></a></td>
+					<td nowrap><a href="bestellung.php?method=update&id='.$row->bestellung_id.'" title="Bestellung bearbeiten"> <img src="../../../skin/images/edit_wawi.gif"></a><a href="bestellung.php?method=delete&id='.$row->bestellung_id.'" onclick="return conf_del()" title="Bestellung löschen"> <img src="../../../skin/images/delete_x.png"></a></td>
 					<td>'.$row->bestell_nr.'</td>					
 					<td>'.$firmenname.'</td>'.
 					($type!='nichtgeliefert'
