@@ -1721,8 +1721,8 @@ if($_GET['method']=='update')
 			  angeboteElement.append(
            	  $.map(data.list,function(al) {
 		    	  return $('<li>',{}).append(
-		    	  		   $('<a>',{ target: '_blank', href: 'angebot.php?method=download&angebotId=' + al.angebot_id + "&bestellung_id=" + bestellung_id })
-		    	  		   		.append($('<i>',{class:'fa fa-file-pdf-o', title: al.name}))
+		    	  		   $('<a>',{ target: '_blank', href: 'angebot.php?method=download&angebotId=' + al.angebot_id + "&bestellung_id=" + bestellung_id }).append(
+		    	              $('<img>',{ src :'../../../skin/images/pdf_icon.png', class : 'cursor' }))
 		    	  		   		//.text(al.name)
 		    	         ).append(
 		    	           $('<a style="background: transparent;padding-left:1px;padding-right:1px">',{ href: '#' }).append(
