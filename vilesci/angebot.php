@@ -97,7 +97,7 @@ if(!$rechte->isberechtigt('wawi/bestellung',null, 's', $bestellung->kostenstelle
 if (isset($_POST['method']) && $_POST['method'] == 'upload')
 {
 	if(!$rechte->isberechtigt('wawi/bestellung',null, 'sui', $bestellung->kostenstelle_id))
-			die('Sie haben keine Berechtigung für diese Bestellung.');
+		die('Sie haben keine Berechtigung für diese Bestellung.');
 
 	//var_dump($_FILES);
 	$ext = pathinfo($_FILES['file']['name'], PATHINFO_EXTENSION);
@@ -142,11 +142,9 @@ if (isset($_POST['method']) && $_POST['method'] == 'upload')
 	{
 		echo $_FILES['file']['name']. " konnte nicht gespeichert werden.";
 	}
-
 }
 else if (isset($_POST['method']) && $_POST['method'] == 'list')
 {
-
 	$angeboteDAO = new wawi_angebot();
 	if ($angeboteDAO->getAll($id) === false)
 	{
@@ -165,7 +163,6 @@ else if (isset($_POST['method']) && $_POST['method'] == 'list')
 	}
 	header('Content-type: application/json');
 	echo json_encode( array( "result"=> 1, "list"=> $data));
-
 }
 else if (isset($_POST['method']) &&  $_POST['method'] == 'delete')
 {
