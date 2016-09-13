@@ -383,21 +383,15 @@ if(isset($_POST['deleteBtnStorno']) && isset($_POST['id']))
 		function(data){
 			$('#firma').html(data);
 		});
-
-                /*
-		$.post("bestellung.php", {id: id, getSearchKonto: 'true'},
-				function(data){
-					$('#searchKonto').html(data);
-		});*/
 	}
 
 	function formatItem(row)
 	{
-	    return row[0] + " <br>" + row[1] + "<br> ";
+		return row[0] + " <br>" + row[1] + "<br> ";
 	}
 	function formatItemTag(row)
 	{
-	    return row[0];
+		return row[0];
 	}
 
 	function conf_del()
@@ -407,24 +401,25 @@ if(isset($_POST['deleteBtnStorno']) && isset($_POST['id']))
 
 	$(document).ready(function()
 	{
-	    $("#myTable").tablesorter(
+		$("#myTable").tablesorter(
 		{
 			sortList: [[4,1]],
 			widgets: ['zebra']
 		});
 
-	    $( "#datepicker_evon" ).datepicker($.datepicker.regional['de']);
+		$( "#datepicker_evon" ).datepicker($.datepicker.regional['de']);
 		$( "#datepicker_ebis" ).datepicker($.datepicker.regional['de']);
 		$( "#datepicker_bvon" ).datepicker($.datepicker.regional['de']);
 		$( "#datepicker_bbis" ).datepicker($.datepicker.regional['de']);
-                $( "#datepicker_auftragsbestaetigung" ).datepicker($.datepicker.regional['de']);
+		$( "#datepicker_auftragsbestaetigung" ).datepicker($.datepicker.regional['de']);
 
-	    $('#aufteilung').hide();
+		$('#aufteilung').hide();
 
-	    $('#aufteilung_link').click(function() {
-	          $('#aufteilung').toggle();
-	          return false;
-	        });
+		$('#aufteilung_link').click(function()
+		{
+			$('#aufteilung').toggle();
+			return false;
+		});
 
 		$('#mitarbeiter_name').autocomplete({
 			source: "wawi_autocomplete.php?work=wawi_mitarbeiter_search",
@@ -446,7 +441,8 @@ if(isset($_POST['deleteBtnStorno']) && isset($_POST['id']))
 		});
 
 
-		$('#firmenname').autocomplete({
+		$('#firmenname').autocomplete(
+		{
 			source: "wawi_autocomplete.php?work=wawi_firma_search",
 			minLength:2,
 			response: function(event, ui)
@@ -471,7 +467,8 @@ if(isset($_POST['deleteBtnStorno']) && isset($_POST['id']))
 
 
 <?php
-	if($rechte->isBerechtigt('wawi/bestellung_advanced')) {
+	if($rechte->isBerechtigt('wawi/bestellung_advanced'))
+	{
 ?>
 
 		$('#besteller').autocomplete({
@@ -493,18 +490,22 @@ if(isset($_POST['deleteBtnStorno']) && isset($_POST['id']))
 			}
 		});
 <?php
-	} else {
+	}
+	else
+	{
 ?>
 
-		$("#besteller").keydown(function(e){
-        	e.preventDefault();
-   		});
+		$("#besteller").keydown(function(e)
+		{
+			e.preventDefault();
+		});
 
 <?php
 	}
 ?>
 
-        $('#zuordnung_person').autocomplete({
+		$('#zuordnung_person').autocomplete(
+		{
 			source: "wawi_autocomplete.php?work=wawi_mitarbeiter_search",
 			minLength:2,
 			response: function(event, ui)
@@ -523,7 +524,8 @@ if(isset($_POST['deleteBtnStorno']) && isset($_POST['id']))
 			}
 		});
 
-        $('#zuordnung_raum').autocomplete({
+		$('#zuordnung_raum').autocomplete(
+		{
 			source: "wawi_autocomplete.php?work=wawi_raum_search",
 			minLength:2,
 			response: function(event, ui)
@@ -538,7 +540,6 @@ if(isset($_POST['deleteBtnStorno']) && isset($_POST['id']))
 			select: function(event, ui)
 			{
 				ui.item.value=ui.item.ort_kurzbz;
-
 			}
 		});
 
@@ -759,7 +760,7 @@ if($aktion == 'suche')
 							<th>Brutto</th>
 							<th>Beschreibung</th>
 							<th>Letzte Änderung</th>
-						  </tr></thead><tbody>\n";
+							</tr></thead><tbody>\n";
 
 					foreach($bestellung->result as $row)
 					{
@@ -1844,7 +1845,8 @@ echo $js;
 	if($rechte->isBerechtigt('system/developer'))
 		echo '	<a href= "bestellung.php?method=update&amp;id='.$bestellung->bestellung_id.'"> <img src="../../../skin/images/refresh.png" title="Refresh" class="cursor"></a>';
 
-	if (isGMBHKostenstelle($bestellung->kostenstelle_id)) {
+	if (isGMBHKostenstelle($bestellung->kostenstelle_id))
+	{
 		echo " <span style=\"color:white;background-color:red\"> GMBH-Bestellung! </span>";
 	}
 
@@ -2275,7 +2277,8 @@ echo $js;
 		{
 			var inputs = $("#editForm :input");
 
-			inputs.each(function() {
+			inputs.each(function()
+			{
 				if(this.id!="tags"
 				&& !this.id.match(/^detail_tag_/)
 				&& this.id!="filter_projekt"
@@ -2368,7 +2371,7 @@ echo $js;
 			});
 		}
 
-		 // Status geliefert wird gesetzt
+		// Status geliefert wird gesetzt
 		function deleteBtnGeliefert(bestellung_id)
 		{
 			$("#btn_geliefert").html();
