@@ -20,7 +20,6 @@
  *          Karl Burkhart <burkhart@technikum-wien.at> and
  *          Andreas Moik <moik@technikum-wien.at>.
  */
-//$basepath = dirname(dirname(dirname(dirname($_SERVER['SCRIPT_FILENAME'])))).DIRECTORY_SEPARATOR;
 
 require_once(dirname(__FILE__).'/../config.inc.php');
 require_once('auth.php');
@@ -36,7 +35,6 @@ require_once dirname(__FILE__).'/../../../include/studiengang.class.php';
 require_once dirname(__FILE__).'/../../../include/mail.class.php';
 require_once dirname(__FILE__).'/../../../include/geschaeftsjahr.class.php';
 require_once '../include/wawi_konto.class.php';
-//require_once '../include/wawi_kategorie.class.php';
 require_once '../include/wawi_zuordnung.class.php';
 require_once '../include/wawi_bestellung.class.php';
 require_once '../include/wawi_kostenstelle.class.php';
@@ -60,10 +58,6 @@ $rechte = new benutzerberechtigung();
 $rechte->getBerechtigungen($user);
 $kst=new wawi_kostenstelle();
 $kst->loadArray($rechte->getKostenstelle($berechtigung_kurzbz),'bezeichnung');
-//$bestellung_kategorie=new wawi_bestellung_kategorie();
-//$bestellung_kategorie->getAll(true);
-
-//var_dump($bestellung_kategorie->result);
 
 $projekt = new projekt();
 $projekt->getProjekteMitarbeiter($user);
@@ -78,17 +72,17 @@ if(isset($_POST['getKonto']))
 	$id = $_POST['id'];
 	if(is_numeric($id))
 	{
-			$konto = new wawi_konto();
-			$konto->getKontoFromKostenstelle($id);
-			if(count($konto->result)>0)
+		$konto = new wawi_konto();
+		$konto->getKontoFromKostenstelle($id);
+		if(count($konto->result)>0)
+		{
+			foreach($konto->result as $ko)
 			{
-				foreach($konto->result as $ko)
-				{
-					echo '<option value='.$ko->konto_id.' >'.$ko->kurzbz."</option>\n";
-				}
+				echo '<option value='.$ko->konto_id.' >'.$ko->kurzbz."</option>\n";
 			}
-			else
-				echo "<option value =''>Keine Konten zu dieser Kst</option>";
+		}
+		else
+			echo "<option value =''>Keine Konten zu dieser Kst</option>";
 	}
 	else
 		echo "<option value =''>Keine Konten zu dieser Kst</option>";
@@ -127,10 +121,10 @@ if(isset($_POST['getFirma']))
 }
 
 if(isset($_POST['getSearchKonto']))
- {
+{
 	$id = $_POST['id'];
 	if(isset($_POST['id']))
- 	{
+	{
 		if($_POST['id'] == 'opt_auswahl')
 		{
 			$konto = new wawi_konto();
@@ -211,26 +205,26 @@ if(isset($_POST['saveDetail']))
 	if(!$rechte->isberechtigt('wawi/bestellung',null, 'sui', $bestellung->kostenstelle_id))
 		die('Sie haben keine Berechtigung zum Aendern der Daten');
 
-    $detail = new wawi_bestelldetail();
-    $detail->bestellung_id = $_POST['bestellung'];
-    $detail->position = $_POST['pos'];
-    $detail->menge = $_POST['menge'];
-    $detail->verpackungseinheit = $_POST['ve'];
-    $detail->beschreibung = $_POST['beschreibung'];
-    $detail->artikelnummer = $_POST['artikelnr'];
-    $detail->preisprove = $_POST['preis'];
-        $detail->mwst = $_POST['mwst'];
-        if($_POST['sort'] != '')
-                $detail->sort = $_POST['sort'];
-        else
-                $detail->sort = $_POST['pos'];
-        $detail->insertamum = date('Y-m-d H:i:s');
-        $detail->updateamum = date('Y-m-d H:i:s');
-        $detail->new = true;
-        if(!$detail->save())
-                echo $detail->errormsg;
-        echo $detail->bestelldetail_id;
-        exit;
+	$detail = new wawi_bestelldetail();
+	$detail->bestellung_id = $_POST['bestellung'];
+	$detail->position = $_POST['pos'];
+	$detail->menge = $_POST['menge'];
+	$detail->verpackungseinheit = $_POST['ve'];
+	$detail->beschreibung = $_POST['beschreibung'];
+	$detail->artikelnummer = $_POST['artikelnr'];
+	$detail->preisprove = $_POST['preis'];
+	$detail->mwst = $_POST['mwst'];
+	if($_POST['sort'] != '')
+		$detail->sort = $_POST['sort'];
+	else
+		$detail->sort = $_POST['pos'];
+	$detail->insertamum = date('Y-m-d H:i:s');
+	$detail->updateamum = date('Y-m-d H:i:s');
+	$detail->new = true;
+	if(!$detail->save())
+		echo $detail->errormsg;
+	echo $detail->bestelldetail_id;
+	exit;
 }
 
 if(isset($_POST['updateDetail']))
@@ -595,7 +589,7 @@ if($aktion == 'suche')
 		echo "<td>Beschreibung</td>\n";
 		echo "<td><input type = 'text' size ='32' maxlength = '256' name = 'titel'></td>\n";
 		echo "</tr>\n";
-		
+
 		echo "<tr>\n";
 		echo "<td>Bestellposition:</td>\n";
 		echo "<td><input type='text' name='bestellposition' size='32' maxlength='256'></td>";
@@ -608,30 +602,9 @@ if($aktion == 'suche')
 		echo "<td>Bestelldatum</td>\n";
 		echo "<td>von <input type ='text' id='datepicker_bvon' size ='12' name ='bvon'> bis <input type ='text' id='datepicker_bbis' size ='12' name = 'bbis'></td>\n";
 		echo "</tr>\n";
-		/*echo "<tr>\n";
-		echo "<td> Organisationseinheit: </td>\n";
-		$oe_array = $rechte->getOEkurzbz('wawi/bestellung');
-		$oe_berechtigt->loadArray($oe_array,'organisationseinheittyp_kurzbz', false);
-
-		echo "<td><SELECT name='filter_oe_kurzbz' onchange='loadFirma(this.value)'>\n";
-		echo "<option value='opt_auswahl'>-- auswählen --</option>\n";
-		foreach ($oe_berechtigt->result as $oei)
-		{
-			if($oei->aktiv)
-				echo '<option value="'.$oei->oe_kurzbz.'" >'.$oei->organisationseinheittyp_kurzbz.' '.$oei->bezeichnung."</option>\n";
-			else
-				echo '<option style="text-decoration:line-through;" value="'.$oei->oe_kurzbz.'">'.$oei->bezeichnung."</option>\n";
-		}
-
-		echo "</SELECT>\n";
-		echo "</td>\n";
-		echo "</tr>\n";		*/
 		echo "<tr>\n";
 		echo "<td> Lieferant/Empfänger: </td>\n";
 		echo "<td> <input id='firmenname' name='firmenname' size='32' value=''  >\n";
-		/*echo "<SELECT name='filter_firma' id='firma' style='width: 256px;'>\n";
-		echo "<option value=''>-- OE auswählen --</option>\n";
-		echo "</SELECT>\n";*/
 		echo "</td>\n";
 		echo "<td> <input type ='hidden' id='firma_id' name='firma_id' size='10' maxlength='30' value=''  >\n";
 		echo "</td>\n";
@@ -663,27 +636,16 @@ if($aktion == 'suche')
 
 		echo "</td>\n";
 		echo "</tr>\n";
-		/*echo "<tr>\n";
-		echo "<td> Zahlungstyp: </td>\n";
-		echo "<td><SELECT name='filter_zahlungstyp' id='searchZahlungstyp' style='width: 230px;'>\n";
-		echo "<option value=''>-- auswählen --</option>\n";
-		foreach($zahlungstyp->result as $zt)
-		{
-			echo '<option value='.$zt->zahlungstyp_kurzbz.' >'.$zt->bezeichnung."</option>\n";
-		}
-		echo "</SELECT>\n";
-
-		echo "</td>\n";
-		echo "</tr>\n"; */
 		echo "<tr>\n";
 		echo "<td>Tag:</td>\n";
 		echo "<td> <input id='tag' name='tag' size='32' maxlength='30' value=''  /></td>\n";
 		echo "</tr>\n";
 
 		echo "<script type='text/javascript'>
-			    $('#tag').autocomplete({
+			$('#tag').autocomplete(
+			{
 				source: 'wawi_autocomplete.php?work=tags',
-	  			minChars:2,
+				minChars:2,
 				response:function(event,ui)
 				{
 					for(i in ui.content)
@@ -691,25 +653,14 @@ if($aktion == 'suche')
 						ui.content[i].value=ui.content[i].tag;
 						ui.content[i].label=ui.content[i].tag;
 					}
-		  		},
+				},
 				select: function(event, ui)
 				{
 					ui.item.value=ui.item.tag;
 				}
-	  	  	});
+			});
 			</script>";
 
-/*		echo "<script type='text/javascript'>
-			$('#tag').autocomplete('wawi_autocomplete.php',
-			{
-			minChars:2,
-			matchSubset:1,matchContains:1,
-			width:500,
-			formatItem:formatItemTag,
-			extraParams:{'work':'tags'
-			}
-		})
-		</script>"; */
 
 
 		echo "<tr>\n";
@@ -824,8 +775,8 @@ if($aktion == 'suche')
 							$firmenname = $firma->name;
 						}
 
-	                    // freigegebene oder bestellte Bestellungen können nur vom Zentraleinkauf gelöscht werden
-	                    $bestellung_status_help = new wawi_bestellstatus();
+						// freigegebene oder bestellte Bestellungen können nur vom Zentraleinkauf gelöscht werden
+						$bestellung_status_help = new wawi_bestellstatus();
 
 						//Zeilen der Tabelle ausgeben
 						echo "<tr>\n";
@@ -859,11 +810,11 @@ elseif($aktion == 'new')
 	if(!$rechte->isberechtigt('wawi/bestellung',null, 'sui'))
 		die('Sie haben keine Berechtigung zum Anlegen von Bestellungen');
 
-        echo '	<script type="text/javascript">
+		echo '	<script type="text/javascript">
 		function FensterOeffnen (adresse)
 		{
 			MeinFenster = window.open(adresse, "Info", "width=600,height=500,left=100,top=200");
-	  		MeinFenster.focus();
+			MeinFenster.focus();
 		}
 		</script>';
 
@@ -874,21 +825,21 @@ elseif($aktion == 'new')
 	echo "<td>Was wird bestellt:</td>\n";
 	echo "<td><input type=\"text\" size =\"80\" maxlength='256' id ='titel' name ='titel' required>";
 	echo "</td></tr>\n";
-        echo "<tr>\n";
+	echo "<tr>\n";
 	echo "<td>Lieferant/Empfänger:</td>\n";
 	echo "<td> <input type=\"text\" id='firmenname' name='firmenname' size=\"80\" value='' required ></td>\n";
-	echo "<td> <input type ='hidden' id='firma_id' name='firma_id' size='10' maxlength='30' value=\"\"  ></td>\n";
+	echo "<td> <input type ='hidden' id='firma_id' name='firma_id' size='10' maxlength='30' value=\"\" ></td>\n";
 	echo "</tr>\n";
-        echo "<tr>\n";
+	echo "<tr>\n";
 	echo "<td>Zuordnung:</td><td>";
-        $index = 0;
-        $zuordnungListe = wawi_zuordnung::getAll();
-        while (list($key, $val) = each($zuordnungListe))
-        {
-             echo '<input type="radio" id="zuordnung_'.$key.'" name="zuordnung" value="'.$key.'" '.($index==0?'checked="1"':'').'\"><label for="zuordnung_'.$key.'"> '.$val.'</label> ';
-             $index++;
-        }
-        echo "</td>\n";
+	$index = 0;
+	$zuordnungListe = wawi_zuordnung::getAll();
+	while (list($key, $val) = each($zuordnungListe))
+	{
+		echo '<input type="radio" id="zuordnung_'.$key.'" name="zuordnung" value="'.$key.'" '.($index==0?'checked="1"':'').'\"><label for="zuordnung_'.$key.'"> '.$val.'</label> ';
+		$index++;
+	}
+	echo "</td>\n";
 	echo "</tr>\n";
 	echo "<tr>\n";
 	echo "<td>Kostenstelle:</td><td><SELECT name='filter_kst' onchange=\"loadKonto(this.value)\" required>\n";
@@ -900,21 +851,7 @@ elseif($aktion == 'new')
 	echo "</SELECT></td>\n";
 	echo "</tr>\n";
 
-        /*echo "<tr>";
-        echo "<td>Kategorie:</td><td><SELECT name=\"bestellung_kategorie\" required>\n";
-	echo "<option value=\"\">-- Kategorie auswählen --</option>\n";
-	foreach ($bestellung_kategorie->result as $kat)
-	{
-		echo "<option value=".$kat->bkategorie_id.">".$kat->beschreibung."</option>\n";
-	}
-	echo "</SELECT>\n";
-
-        echo "<a href = 'kategorie.html' onclick='FensterOeffnen(this.href); return false' title='Hilfe zu den Kategorien'> <img src='../../../skin/images/question.png'> </a>";
-        echo "</td>\n";
-
-        echo "</tr>";*/
-
-    echo "<tr>";
+	echo "<tr>";
 	echo "<td>Konto: </td>\n";
 	echo "<td>\n";
 	echo "<select name='konto' id='konto' style='width: 230px;'>\n";
@@ -953,25 +890,16 @@ elseif($aktion == 'save')
 
 		$newBestellung = new wawi_bestellung();
 		$newBestellung->titel = mb_str_replace("'", "´", $_POST['titel']);
-                $newBestellung->zuordnung = (isset($_POST['zuordnung'])?$_POST['zuordnung']:null);
-                /*
-                if ($_POST['bestellung_kategorie']=='opt_kategorie')
-                {
-                    $newBestellung->bkategorie_id = null;
-                }
-                else
-                {
-                    $newBestellung->bkategorie_id = $_POST['bestellung_kategorie'];
-                }*/
+		$newBestellung->zuordnung = (isset($_POST['zuordnung'])?$_POST['zuordnung']:null);
 
 		if($_POST['filter_kst']=='opt_kostenstelle')
-        {
-            $newBestellung->kostenstelle_id = null;
-        }
-        else
-        {
-            $newBestellung->kostenstelle_id = $_POST['filter_kst'];
-        }
+		{
+			$newBestellung->kostenstelle_id = null;
+		}
+		else
+		{
+			$newBestellung->kostenstelle_id = $_POST['filter_kst'];
+		}
 
 		$newBestellung->firma_id = $_POST['firma_id'];
 
@@ -996,8 +924,8 @@ elseif($aktion == 'save')
 			$newBestellung->rechnungsadresse = '31813';
 		}
 		else
-	 	{
-	 		$newBestellung->lieferadresse = '1';
+		{
+			$newBestellung->lieferadresse = '1';
 			$newBestellung->rechnungsadresse = '1';
 		}
 		$newBestellung->bestell_nr = $newBestellung->createBestellNr($newBestellung->kostenstelle_id);
@@ -1018,7 +946,7 @@ elseif($_GET['method']=='delete')
 	// Bestellung löschen
 	$id = (isset($_GET['id'])?$_GET['id']:null);
 	$bestellung = new wawi_bestellung();
-    $bestellung_status_help = new wawi_bestellstatus();
+	$bestellung_status_help = new wawi_bestellstatus();
 	$bestellung->load($id);
 
 	if(!$rechte->isberechtigt('wawi/bestellung',null, 'suid', $bestellung->kostenstelle_id))
@@ -1028,10 +956,10 @@ elseif($_GET['method']=='delete')
 	{
 		echo 'Kann nicht gelöscht werden. Der Bestellung ist eine Rechnung zugeordnet.';
 	}
-    else if(($bestellung_status_help->isStatiVorhanden($id, 'Bestellung') || $bestellung_status_help->isStatiVorhanden($id, 'Freigabe'))&& !$rechte->isBerechtigt('wawi/delete_advanced'))
-    {
-        echo 'Bestellte oder Freigegebene Bestellungen können nicht gelöscht werden, wenden Sie sich bitte an den Zentraleinkauf';
-    }
+	else if(($bestellung_status_help->isStatiVorhanden($id, 'Bestellung') || $bestellung_status_help->isStatiVorhanden($id, 'Freigabe'))&& !$rechte->isBerechtigt('wawi/delete_advanced'))
+	{
+		echo 'Bestellte oder Freigegebene Bestellungen können nicht gelöscht werden, wenden Sie sich bitte an den Zentraleinkauf';
+	}
 	else
 	{
 		if($bestellung->delete($id))
@@ -1073,7 +1001,7 @@ if($_GET['method']=='update')
 		function FensterOeffnen (adresse)
 		{
 			MeinFenster = window.open(adresse, "Info", "scrollbars=1,width=400,height=500,left=100,top=200");
-	  		MeinFenster.focus();
+			MeinFenster.focus();
 		}
 		</script>';
 
@@ -1109,9 +1037,9 @@ if($_GET['method']=='update')
 
 				$bestellung_new->new = false;
 				$bestellung_new->besteller_uid=$_POST['besteller_uid'];
-                                $bestellung_new->zuordnung_uid=$_POST['zuordnung_uid'];
-                                $bestellung_new->zuordnung_raum=$_POST['zuordnung_raum'];
-                                $bestellung_new->zuordnung=(isset($_POST['zuordnung'])?$_POST['zuordnung']:null);
+				$bestellung_new->zuordnung_uid=$_POST['zuordnung_uid'];
+				$bestellung_new->zuordnung_raum=$_POST['zuordnung_raum'];
+				$bestellung_new->zuordnung=(isset($_POST['zuordnung'])?$_POST['zuordnung']:null);
 				if(isset($_POST['filter_konto']) && is_numeric($_POST['filter_konto']))
 					$bestellung_new->konto_id = $_POST['filter_konto'];
 				else
@@ -1126,69 +1054,60 @@ if($_GET['method']=='update')
 				$bestellung_new->updatevon = $user;
 				$bestellung_new->zahlungstyp_kurzbz = $_POST['filter_zahlungstyp'];
 				$bestellung_new->kostenstelle_id = $_POST['filter_kst'];
-				/*
-                                if (isset($_POST['bestellung_kategorie']) && $_POST['bestellung_kategorie']!=null)
-                                {
-                                    $bestellung_new->bkategorie_id = $_POST['bestellung_kategorie'];
-                                }
-                                else
-                                {
-                                    $bestellung_new->bkategorie_id = null;
-                                }
-                  */
-                                if (isset($_POST['auftragsbestaetigung']))
-                                {
-                                    $datum_formatiert = $date->formatDatum($_POST['auftragsbestaetigung']);
-                                    $bestellung_new->auftragsbestaetigung =
-                                            $datum_formatiert !== false ? $datum_formatiert :  null;
-                                }
-                                else
-                                {
-                                    $bestellung_new->auftragsbestaetigung = null;
-                                }
 
-                                if (isset($_POST['auslagenersatz']))
-                                {
-                                     $bestellung_new->auslagenersatz = true;
-                                }
-                                else
-                                {
-                                    $bestellung_new->auslagenersatz = false;
-                                }
+				if (isset($_POST['auftragsbestaetigung']))
+				{
+					$datum_formatiert = $date->formatDatum($_POST['auftragsbestaetigung']);
+					$bestellung_new->auftragsbestaetigung =
+					$datum_formatiert !== false ? $datum_formatiert :  null;
+				}
+				else
+				{
+					$bestellung_new->auftragsbestaetigung = null;
+				}
 
-                                if (isset($_POST['bankverbindung']))
-                                {
-                                     $bestellung_new->iban = $_POST['bankverbindung'];
-                                }
-                                else
-                                {
-                                    $bestellung_new->iban = null;
-                                }
+				if (isset($_POST['auslagenersatz']))
+				{
+					$bestellung_new->auslagenersatz = true;
+				}
+				else
+				{
+					$bestellung_new->auslagenersatz = false;
+				}
+
+				if (isset($_POST['bankverbindung']))
+				{
+					$bestellung_new->iban = $_POST['bankverbindung'];
+				}
+				else
+				{
+					$bestellung_new->iban = null;
+				}
 
 				if (isset($_POST['wird_geleast']))
-                                {
-                                     $bestellung_new->wird_geleast = true;
-                                }
-                                else
-                                {
-                                    $bestellung_new->wird_geleast = false;
-                                }
-                if (isset($_POST['nicht_bestellen']))
-                                {
-                                     $bestellung_new->nicht_bestellen = true;
-                                }
-                                else
-                                {
-                                    $bestellung_new->nicht_bestellen = false;
-                                }
+				{
+					$bestellung_new->wird_geleast = true;
+				}
+				else
+				{
+					$bestellung_new->wird_geleast = false;
+				}
+				if (isset($_POST['nicht_bestellen']))
+				{
+					$bestellung_new->nicht_bestellen = true;
+				}
+				else
+				{
+					$bestellung_new->nicht_bestellen = false;
+				}
 				if (isset($_POST['empfehlung_leasing']))
-                                {
-                                     $bestellung_new->empfehlung_leasing = true;
-                                }
-                                else
-                                {
-                                    $bestellung_new->empfehlung_leasing = false;
-                                }
+				{
+					$bestellung_new->empfehlung_leasing = true;
+				}
+				else
+				{
+					$bestellung_new->empfehlung_leasing = false;
+				}
 
 
 				if(isset($_POST['filter_projekt']))
@@ -1234,12 +1153,12 @@ if($_GET['method']=='update')
 						continue;
 					// wenn letzte zeile leer ist, nicht speichern
 					if(($i) == $bestellung_detail_anz
-                                                && $_POST["ve_$i"] == ''
-                                                && $_POST["beschreibung_$i"]==''
-                                                && $_POST["artikelnr_$i"] =='')
-                                        {
-                                            continue;
-                                        }
+						&& $_POST["ve_$i"] == ''
+						&& $_POST["beschreibung_$i"]==''
+						&& $_POST["artikelnr_$i"] =='')
+					{
+						continue;
+					}
 					$detail_id = $_POST["bestelldetailid_$i"];
 					$bestell_detail = new wawi_bestelldetail();
 
@@ -1297,7 +1216,7 @@ if($_GET['method']=='update')
 						if($menge == '')
 							$menge = '0';
 
-                        $bestell_detail->mwst = ($_POST["mwst_$i"]=='')?0:mb_str_replace(',', '.', $_POST["mwst_$i"]);
+						$bestell_detail->mwst = ($_POST["mwst_$i"]=='')?0:mb_str_replace(',', '.', $_POST["mwst_$i"]);
 						$bestell_detail->bestellung_id = $_GET['bestellung'];
 						$bestell_detail->position = $_POST["pos_$i"];
 						$bestell_detail->menge = $menge;
@@ -1305,8 +1224,8 @@ if($_GET['method']=='update')
 						$bestell_detail->beschreibung = $_POST["beschreibung_$i"];
 						$bestell_detail->artikelnummer = $_POST["artikelnr_$i"];
 						$bestell_detail->preisprove =mb_str_replace(',', '.', $_POST["preis_$i"]);
-                        if($bestell_detail->preisprove == '')
-                            $bestell_detail->preisprove=0;
+						if($bestell_detail->preisprove == '')
+							$bestell_detail->preisprove=0;
 						if($_POST["sort_$i"] != '')
 							$bestell_detail->sort = $_POST["sort_$i"];
 						else
@@ -1324,31 +1243,7 @@ if($_GET['method']=='update')
 						$error = true;
 					}
 				}
-		/*
-				for($i=0; $i<$aufteilung_anzahl; $i++)
-				{
-					$aufteilung = new wawi_aufteilung();
-					$aufteilung->bestellung_id = $bestellung_id;
-					$aufteilung->oe_kurzbz = $_POST['oe_kurzbz_'.$i];
-					$aufteilung->anteil = $_POST['aufteilung_'.$i];
-					if($aufteilung->AufteilungExists())
-					{
-						// Update
-						$aufteilung->updateamum = date('Y-m-d H:i:s');
-						$aufteilung->updatevon = $user;
-						$aufteilung->new = false;
-					}
-					else
-					{
-						// Insert
-						$aufteilung->updateamum = date('Y-m-d H:i:s');
-						$aufteilung->updatevon = $user;
-						$aufteilung->insertamum = date('Y-m-d H:i:s');
-						$aufteilung->insertvon = $user;
-						$aufteilung->new = true;
-					}
-					$aufteilung->saveAufteilung();
-				}*/
+
 				if($error == false)
 					if($bestellung_new->save())
 					{
@@ -1617,7 +1512,7 @@ if($_GET['method']=='update')
 
 	$detail = new wawi_bestelldetail();
 	$detail->getAllDetailsFromBestellung($id);
-	$anz_detail =  count($detail->result);
+	$anz_detail = count($detail->result);
 	$konto = new wawi_konto();
 	$konto->getKontoFromKostenstelle($bestellung->kostenstelle_id);
 	$konto_bestellung = new wawi_konto();
@@ -1655,257 +1550,282 @@ if($_GET['method']=='update')
 	$besteller->load($bestellung->besteller_uid);
 	$besteller_vorname=$besteller->vorname;
 	$besteller_nachname=$besteller->nachname;
-        $zuordnung_person_vorname='';
-        $zuordnung_person_nachname='';
+	$zuordnung_person_vorname='';
+	$zuordnung_person_nachname='';
 	$zuordnung_person = new benutzer();
 	if ($zuordnung_person->load($bestellung->zuordnung_uid) != false)
-        {
-            $zuordnung_person_vorname=$zuordnung_person->vorname;
-            $zuordnung_person_nachname=$zuordnung_person->nachname;
-        }
+	{
+		$zuordnung_person_vorname=$zuordnung_person->vorname;
+		$zuordnung_person_nachname=$zuordnung_person->nachname;
+	}
 
 
 	if($restBudget < 0 && $budget != 0)
 		$ausgabemsg.='<span class="error">Ihr aktuelles Budget ist bereits überzogen.</span>';
 
-            $js = <<<EOT
+$js = <<<EOT
 <script type="text/javascript" >
-	  function maybeShowBankverbindung() {
-	  if ($('#auslagenersatz').is(':checked')) {
-	  	var uid = $('#besteller_uid').val();
-	  	$.ajax({
-		  method: "GET",
-		  url: "wawi_autocomplete.php",
-		  data: { work: "wawi_bankverbindung", term: uid },
-		  dataType:'json',
-		}).done(function( msg ) {
-		    $('#bankverbindung').val(msg.iban);
-		});
-	    $('#bankverbindung_span').show();
-	  } else {
-	    $('#bankverbindung_span').hide();
-	  }
+	function maybeShowBankverbindung()
+	{
+		if ($('#auslagenersatz').is(':checked'))
+		{
+			var uid = $('#besteller_uid').val();
+			$.ajax(
+			{
+				method: "GET",
+				url: "wawi_autocomplete.php",
+				data: { work: "wawi_bankverbindung", term: uid },
+				dataType:'json',
+			}).done(function( msg )
+			{
+				$('#bankverbindung').val(msg.iban);
+			});
+			$('#bankverbindung_span').show();
+		}
+		else
+		{
+			$('#bankverbindung_span').hide();
+		}
 	}
 
 
 
-	$(document).ready(function() {
-	    maybeShowBankverbindung();
-	    $('#auslagenersatz').on('change', function() {
-		//alert( this.value ); // or $(this).val()
+	$(document).ready(function()
+	{
 		maybeShowBankverbindung();
-	      });
-	  });
+		$('#auslagenersatz').on('change', function()
+		{
+			maybeShowBankverbindung();
+		});
+	});
 
-        $(function() {
-	    var dialog;
-	    var angebotDeleteDialog;
+	$(function()
+	{
+		var dialog;
+		var angebotDeleteDialog;
 
-	    function addUser() {
+		function renderAngebote()
+		{
+			var angeboteDummy = [ {'name' : 'Angebot 1 ','angebot_id' : 1, 'bestellung_id' : 2 },
+			{'name' : 'Angebot 2 ','angebot_id' : 2, 'bestellung_id' : 2 } ];
+			var angeboteElement = $("#angeboteListe");
+			angeboteElement.empty();
 
-	    }
+			$.post( "angebot.php", { method: 'list', bestellung_id: bestellung_id }, function(data)
+			{
+				console.log(data);
+				if (data.result ==undefined || data.result != 1)
+				{
+					alert("Fehler: Check console");
+					return;
+				}
+				angeboteElement.append(
+					$.map(data.list,function(al)
+					{
+						return $('<li>',{}).append(
+							$('<a>',{ target: '_blank', href: 'angebot.php?method=download&angebotId=' + al.angebot_id + "&bestellung_id=" + bestellung_id }).append(
+							$('<img>',{ src :'../../../skin/images/pdf_icon.png', class : 'cursor' }))
+							//.text(al.name)
+						).append(
+							$('<a style="background: transparent;padding-left:1px;padding-right:1px">',{ href: '#' }).append(
+							$('<img>',{ src :'../../../skin/images/delete_round.png', class : 'cursor' })
+							).click(function()
+							{
+								$('#currentAngebotId').val(al.angebot_id);
+								$('#angebotFilename').empty();
+								$('#angebotFilename').append(al.name);
+								angebotDeleteDialog.dialog("open");
+							})
+						);
+					})
+				); // angeboteElement
+			}) // post
+			.fail(function(d)
+			{
+				alert( d.responseText );
+			}, "json");
+		}
 
-        function renderAngebote() {
-           var angeboteDummy = [ {'name' : 'Angebot 1 ','angebot_id' : 1, 'bestellung_id' : 2 },
-           						 {'name' : 'Angebot 2 ','angebot_id' : 2, 'bestellung_id' : 2 } ];
-           var angeboteElement = $("#angeboteListe");
-           angeboteElement.empty();
+		renderAngebote();
 
-           $.post( "angebot.php", { method: 'list', bestellung_id: bestellung_id }, function(data) {
+		angebotDeleteDialog = $( "#angebot-delete" ).dialog(
+		{
+			autoOpen: false,
+			height: 300,
+			width: 550,
+			modal: true,
+			buttons:
+			{
+				"OK": doDelete,
+				Cancel: function()
+				{
+					angebotDeleteDialog.dialog( "close" );
+				}
+			},
+			close: function()
+			{
+				//form[ 0 ].reset();
+			}
+		}); // Dialog
 
-           	   console.log(data);
-           	  if (data.result ==undefined ||  data.result != 1) {
-           	  	alert("Fehler: Check console");
-           	  	return;
-           	  }
-			  angeboteElement.append(
-           	  $.map(data.list,function(al) {
-		    	  return $('<li>',{}).append(
-		    	  		   $('<a>',{ target: '_blank', href: 'angebot.php?method=download&angebotId=' + al.angebot_id + "&bestellung_id=" + bestellung_id }).append(
-		    	              $('<img>',{ src :'../../../skin/images/pdf_icon.png', class : 'cursor' }))
-		    	  		   		//.text(al.name)
-		    	         ).append(
-		    	           $('<a style="background: transparent;padding-left:1px;padding-right:1px">',{ href: '#' }).append(
-		    	              $('<img>',{ src :'../../../skin/images/delete_round.png', class : 'cursor' })
-		    	           ).click(function() {
-		    	           	    $('#currentAngebotId').val(al.angebot_id);
-		    	           	    $('#angebotFilename').empty();
-		    	           	    $('#angebotFilename').append(al.name);
-		    	           		angebotDeleteDialog.dialog("open");
-		    	       		})
-		    	         );
-		      })
-		     );  // angeboteElement
-		   })  // post
-		   .fail(function(d) {
-			    alert( d.responseText );
-		   }, "json");
+		dialog = $( "#angebot-upload" ).dialog(
+		{
+			autoOpen: false,
+			height: 300,
+			width: 550,
+			modal: true,
+			buttons:
+			{
+				"OK": doUpload,
+				Cancel: function()
+				{
+					dialog.dialog( "close" );
+				}
+			},
+			close: function()
+			{
+				//form[ 0 ].reset();
+			}
+		}); // Dialog
+		$( "#angebotBtn" ).on( "click", function()
+		{
+			$('div#response').empty();
+			var controlInput = $(':file');
+			controlInput.replaceWith(controlInput = controlInput.val('').clone(true));
+			dialog.dialog( "open" );
+			callProgressBar(0);
+		});
 
+		$(':file').change(function()
+		{
+			var file = this.files[0];
+			var name = file.name;
+			var size = file.size;
+			var type = file.type;
+			if (!file.type.match(/.*pdf$/i))
+			{
+				$("<div title='Fehler'>Es werden nur PDF-Dateien akzeptiert.</div>").dialog(
+				{
+					title: 'Fehler',
+					resizable: false,
+					modal: true,
+					buttons:
+					{
+						"OK": function ()
+						{
+							$(this).dialog("close");
+						}
+					}
+				});
+				$(':file').value='';
+			}
+		});
 
+		function doUpload()
+		{
+			var formData = new FormData($('#uploadFrm')[0]);
+			//formData.append('upload',$('#uploadFrm')[0].files[0]);
+			formData.append('method','upload');
+			formData.append('bestellung_id',bestellung_id);
+			$.ajax(
+			{
+				url: 'angebot.php',  //Server script to process data
+				type: 'POST',
+				xhr: function()
+				{  // Custom XMLHttpRequest
+					var myXhr = $.ajaxSettings.xhr();
+					if(myXhr.upload)
+					{ // Check if upload property exists
+						myXhr.upload.addEventListener('progress',progressHandlingFunction, false); // For handling the progress of the upload
+					}
+					return myXhr;
+				},
+				//Ajax events
+				//beforeSend: beforeSendHandler,
+				success: function (res)
+				{
+					$('div#response').html("<br>Datei erfolgreich geladen.");
+					renderAngebote();
+					dialog.dialog('close');
+				},
+				error: errorHandler,
+				// Form data
+				data: formData,
+				//Options to tell jQuery not to process data or worry about content-type.
+				cache: false,
+				contentType: false,
+				processData: false
+			});
+		};
 
-        }
+		function doDelete()
+		{
+			var formData = new FormData($('#deleteFrm')[0]);
+			formData.append('method','delete');
+			formData.append('bestellung_id',bestellung_id);
 
-        renderAngebote();
+			$.ajax(
+			{
+				url: 'angebot.php',
+				type: 'POST',
+				success: function (res)
+				{
+					renderAngebote();
+					angebotDeleteDialog.dialog("close");
+				},
+				error: errorHandler,
+				processData: false,
+				contentType: false,
+				data: formData
+			});
+		}
 
-        angebotDeleteDialog = $( "#angebot-delete" ).dialog({
-                  autoOpen: false,
-		  height: 300,
-		  width: 550,
-		  modal: true,
-		  buttons: {
-		     "OK": doDelete,
-		     Cancel: function() {
-		        angebotDeleteDialog.dialog( "close" );
-		      }
-		  },
-	          close: function() {
-		    //form[ 0 ].reset();
-		  }
-	      }); // Dialog
+		function errorHandler(e)
+		{
+			alert(e);
+		}
 
-	    dialog = $( "#angebot-upload" ).dialog({
-                  autoOpen: false,
-		  height: 300,
-		  width: 550,
-		  modal: true,
-		  buttons: {
-		     "OK": doUpload,
-		     Cancel: function() {
-		        dialog.dialog( "close" );
-		      }
-		  },
-	          close: function() {
-		    //form[ 0 ].reset();
-		  }
-	      }); // Dialog
-	     $( "#angebotBtn" ).on( "click", function() {
-		 $('div#response').empty();
-		 var controlInput = $(':file');
-		 controlInput.replaceWith(controlInput = controlInput.val('').clone(true));
-		 dialog.dialog( "open" );
-		 callProgressBar(0);
-	       });
+		function progressHandlingFunction(e)
+		{
+			console.log(e);
+			if(e.lengthComputable)
+			{
+				callProgressBar( (e.loaded/e.total)*100);
+			}
+		}
 
-	     $(':file').change(function(){
-		 var file = this.files[0];
-		 var name = file.name;
-		 var size = file.size;
-		 var type = file.type;
-		 if (!file.type.match(/.*pdf$/i)) {
-		   $("<div title='Fehler'>Es werden nur PDF-Dateien akzeptiert.</div>").dialog(
-											       {
-											       title: 'Fehler',
-												   resizable: false,
-												   modal: true,
-												   buttons: {
-												   "OK": function () {
-												     $(this).dialog("close");
-												     }
-												 }});
-		   $(':file').value='';
-
-		 }
-	       });
-
-	     function doUpload(){
-	       var formData = new FormData($('#uploadFrm')[0]);
-	       //formData.append('upload',$('#uploadFrm')[0].files[0]);
-	       formData.append('method','upload');
-	       formData.append('bestellung_id',bestellung_id);
-		 $.ajax({
-		   url: 'angebot.php',  //Server script to process data
-		       type: 'POST',
-		       xhr: function() {  // Custom XMLHttpRequest
-		         var myXhr = $.ajaxSettings.xhr();
-		         if(myXhr.upload){ // Check if upload property exists
-			   myXhr.upload.addEventListener('progress',progressHandlingFunction, false); // For handling the progress of the upload
-		         }
-		         return myXhr;
-		       },
-		       //Ajax events
-		       //beforeSend: beforeSendHandler,
-		       success: function (res) {
-                         $('div#response').html("<br>Datei erfolgreich geladen.");
-                         renderAngebote();
-			 			 dialog.dialog('close');
-
-                        },
-		       error: errorHandler,
-		       // Form data
-		       data: formData,
-		       //Options to tell jQuery not to process data or worry about content-type.
-		       cache: false,
-		       contentType: false,
-		       processData: false
-		     });
-	       };
-
-	     function doDelete() {
-	     	var formData = new FormData($('#deleteFrm')[0]);
-	        formData.append('method','delete');
-	        formData.append('bestellung_id',bestellung_id);
-
-	        $.ajax({
-			   	url: 'angebot.php',
-		        type: 'POST',
-		        success: function (res) {
-                           renderAngebote();
-                           angebotDeleteDialog.dialog("close");
-                         },
-		        error: errorHandler,
-		        processData: false,
-    			contentType: false,
-		        data: formData
-		     });
-	     }
-
-	     function errorHandler(e) {
-	       alert(e);
-	     }
-
-	     function progressHandlingFunction(e){
-	       console.log(e);
-	       if(e.lengthComputable){
-		 callProgressBar( (e.loaded/e.total)*100);
-	       }
-	     }
-
-	     function  callProgressBar(step){
-
-	     $( "#progressbar" ).progressbar({
-		      value: step
-		     });
-	     };
-
-
-
-	  });
+		function callProgressBar(step)
+		{
+			$( "#progressbar" ).progressbar(
+			{
+				value: step
+			});
+		};
+	});
 </script>\n
 EOT;
-    echo $js;
+echo $js;
 ?>
 
 <div id="angebot-upload" title="Angebot hochladen">
-   <form enctype="multipart/form-data" id="uploadFrm">
-    <input name="file" type="file" accept="application/pdf"/>
-    <br><br>
-     <div id="progressbar">
-     </div>
-     <div id="response">
-     </div>
-   </form>
+	<form enctype="multipart/form-data" id="uploadFrm">
+		<input name="file" type="file" accept="application/pdf"/>
+		<br><br>
+		<div id="progressbar">
+		</div>
+		<div id="response">
+		</div>
+	</form>
 
 
 </div>
 
 <div id="angebot-delete" title="Angebot löschen">
-   <form method="post" id="deleteFrm">
-    <input type="hidden" name="currentAngebotId" id="currentAngebotId" value="" />
-    <br><br>
-    Angebot '<span id="angebotFilename"></span>' wirklich löschen?
-   </form>
-
-
+	<form method="post" id="deleteFrm">
+		<input type="hidden" name="currentAngebotId" id="currentAngebotId" value="" />
+		<br><br>
+		Angebot '<span id="angebotFilename"></span>' wirklich löschen?
+	</form>
 </div>
 
 <?php
@@ -1921,7 +1841,7 @@ EOT;
 	echo '	<a href= "bestellung.php?method=copy&amp;id='.$bestellung->bestellung_id.'"> <img src="../../../skin/images/copy.png" title="Bestellung kopieren" class="cursor"></a>';
 	echo '	<a href= "rechnung.php?method=update&amp;bestellung_id='.$bestellung->bestellung_id.'"> <img src="../../../skin/images/Calculator.png" title="Rechnung anlegen" class="cursor"></a>';
 
- 	if($rechte->isBerechtigt('system/developer'))
+	if($rechte->isBerechtigt('system/developer'))
 		echo '	<a href= "bestellung.php?method=update&amp;id='.$bestellung->bestellung_id.'"> <img src="../../../skin/images/refresh.png" title="Refresh" class="cursor"></a>';
 
 	if (isGMBHKostenstelle($bestellung->kostenstelle_id)) {
@@ -1937,14 +1857,14 @@ EOT;
 	echo "	<td><input name= 'titel' type='text' size='60' maxlength='256' value ='".$bestellung->titel."'></td>\n";
 	echo "	<td>Erstellt am:</td>\n";
 	echo "	<td><span name='erstellt' title ='".$bestellung->insertvon."' >".$date->formatDatum($bestellung->insertamum, 'd.m.Y')."</span></td>\n";
-	echo "	<td>Vorauss. Liefertermin: <input type='text' name ='liefertermin'  size='16' maxlength='16' value='".$bestellung->liefertermin."'></td>\n";
+	echo "	<td>Vorauss. Liefertermin: <input type='text' name ='liefertermin' size='16' maxlength='16' value='".$bestellung->liefertermin."'></td>\n";
 	echo "</tr>\n";
 	echo "<tr>\n";
 	echo "	<td>Lieferant/Empfänger: </td>\n";
 	echo "	<td><input type='text' name='firmenname' id='firmenname' size='60' maxlength='256' value ='".$firma->name."'>\n";
 	echo "	<input type='hidden' name='firma_id' id='firma_id' size='5' maxlength='7' value ='".$bestellung->firma_id."'></td>\n";
 	echo "	<td>Besteller:</td><td> <input type='text' name='besteller' id='besteller' size='30' maxlength='256' value ='".$besteller_vorname.' '.$besteller_nachname."'></td>\n";
-	echo "  <td>";
+	echo "	<td>";
 	// wenn user projekt zugeordnet ist -> Projekt Drop Down anzeigen
 	$ProjektUser = new projekt();
 	$ProjektUser->getProjektFromBestellung($bestellung->bestellung_id);
@@ -1952,8 +1872,8 @@ EOT;
 	if($projektZugeordnet == true)
 	{
 		echo " Projekt:";
-		echo "  <SELECT name='filter_projekt' id='filter_projekt' style='width: 230px;'>\n";
-		echo "   <option value=''>-- Kein Projekt ausgewählt --</option>";
+		echo "<SELECT name='filter_projekt' id='filter_projekt' style='width: 230px;'>\n";
+		echo "<option value=''>-- Kein Projekt ausgewählt --</option>";
 		// Projekte vom User
 		foreach ($projekt->result as $userProjekts)
 		{
@@ -1963,16 +1883,16 @@ EOT;
 				$selected = 'selected';
 				$Bestellung_Projekt = true;
 			}
-				echo "    <option value='".$userProjekts->projekt_kurzbz."' $selected>".$userProjekts->titel."</option>";
+				echo "<option value='".$userProjekts->projekt_kurzbz."' $selected>".$userProjekts->titel."</option>";
 		}
 		// Projekt von der Bestellung
 		if($Bestellung_Projekt == false && $ProjektUser->projekt_kurzbz != '')
-			echo "    <option value='".$ProjektUser->projekt_kurzbz."' selected>".$ProjektUser->titel."</option>";
+			echo "<option value='".$ProjektUser->projekt_kurzbz."' selected>".$ProjektUser->titel."</option>";
 		echo "</select>";
 	}
 
 	echo "	<input type='hidden' name='besteller_uid' id='besteller_uid' size='5' maxlength='7' value ='".$bestellung->besteller_uid."'>\n";
-        echo "	<input type='hidden' name='zuordnung_uid' id='zuordnung_uid' size='5' maxlength='7' value ='".$bestellung->zuordnung_uid."'>\n";
+	echo "	<input type='hidden' name='zuordnung_uid' id='zuordnung_uid' size='5' maxlength='7' value ='".$bestellung->zuordnung_uid."'>\n";
 	echo "</td>";
 	echo "</tr>\n";
 	echo "<tr>\n";
@@ -2017,28 +1937,6 @@ EOT;
 	echo "</select></td></tr>\n";
 	echo "<tr>\n";
 
-        // Kategorie
-		// wieder ausgebaut [WM]
-	/*
-        echo "	<td>Kategorie: </td>\n";
-	echo "	<td><SELECT name='bestellung_kategorie' id='bestellung_kategorie' style='width: 230px;'>\n";
-        echo "<option value=\"\">-- Kategorie auswählen --</option>\n";
-	foreach($bestellung_kategorie->result as $ko)
-	{
-		$selected ='';
-		if($ko->bkategorie_id == $bestellung->bkategorie_id)
-		{
-			$selected = 'selected';
-		}
-		echo '<option value='.$ko->bkategorie_id.' '.$selected.'>'.$ko->beschreibung."</option>\n";
-	}
-
-	echo "</select> ";
-
-	echo "<a href = 'kategorie.html' onclick='FensterOeffnen(this.href); return false' title='Hilfe zu den Kategorien'> <img src='../../../skin/images/question.png'> </a>";
-
-	echo "</td>";*/
-
 	echo "	<td>Konto: </td>\n";
 	echo "	<td><SELECT name='filter_konto' id='konto' style='width: 230px;'>\n";
 	foreach($konto->result as $ko)
@@ -2062,8 +1960,8 @@ EOT;
 	echo "</td>";
 
 
-        // Rechnungsadresse
-        echo "<td>Rechnungsadresse:</td>\n";
+	// Rechnungsadresse
+	echo "<td>Rechnungsadresse:</td>\n";
 	echo "<td colspan ='2'><Select name='filter_rechnungsadresse' id='filter_rechnungsadresse' style='width: 400px;'>\n";
 	foreach($allStandorte->result as $standorte)
 	{
@@ -2092,8 +1990,8 @@ EOT;
 		echo ' <span style=\"white-space: nowrap;\" title ="Bestellt von '.$status_help->insertvon.'">Bestellt am: '.$date->formatDatum($status->datum,'d.m.Y').'</span>';
 		$new++;
 	}
-        echo "</span>";
-        echo "<span id='btn_geliefert'>";
+	echo "</span>";
+	echo "<span id='btn_geliefert'>";
 	if($status->isStatiVorhanden($bestellung->bestellung_id, 'Lieferung') )
 	{
 		$status_help = new wawi_bestellstatus();
@@ -2101,8 +1999,8 @@ EOT;
 		echo " <span style=\"white-space: nowrap;\" title=$status_help->insertvon>Geliefert am: ".$date->formatDatum($status->datum, 'd.m.Y')."</span>";
 		$new++;
 	}
-        echo "</span>";
-        echo "<span id='btn_storniert'>";
+	echo "</span>";
+	echo "<span id='btn_storniert'>";
 	if($status->isStatiVorhanden($bestellung->bestellung_id, 'Storno') )
 	{
 		echo " <span>Storniert am: ".$date->formatDatum($status->datum, 'd.m.Y')."</span>";
@@ -2110,7 +2008,7 @@ EOT;
 	}
 
 	echo "</span>";
-        if($new == 0)
+	if($new == 0)
 	{
 		echo "<span id=\"btn_erstellt\" name='erstellt' title ='".$bestellung->insertvon."' >Erstellt am: ".$date->formatDatum($bestellung->insertamum, 'd.m.Y')."</span>";
 	}
@@ -2147,29 +2045,6 @@ EOT;
 	}
 
 	echo"</td></tr>\n";
-/*
-	echo "<tr><td>Konto</td><td>";
-
-	echo "<SELECT name='filter_konto' id='konto' style='width: 230px;'>\n";
-	foreach($konto->result as $ko)
-	{
-		$selected ='';
-		if($ko->konto_id == $bestellung->konto_id)
-		{
-			$selected = 'selected';
-			$konto_vorhanden = true;
-		}
-		echo '<option value='.$ko->konto_id.' '.$selected.'>'.$ko->kurzbz."</option>\n";
-	}
-	//wenn die konto_id von der bestellung nicht in den Konten die der Kostenstelle zugeordnet sind befidet --> selbst hinschreiben
-	if(!$konto_vorhanden)
-	{
-		echo '<option value='.$bestellung->konto_id.' selected>'.$konto_bestellung->kurzbz."</option>\n";
-	}
-	echo "</select></td>";
-
-	echo "<td> </td></tr>";
-		*/
 	echo "<tr>\n";
 	echo"<td>Tags:</td>\n";
 	$bestell_tag->GetTagsByBestellung($bestellung->bestellung_id);
@@ -2177,7 +2052,8 @@ EOT;
 	echo "<td><input type='text' id='tags' name='tags' size='32' value='".$tag_help."'>\n";
 
 	echo "<script type='text/javascript'>
-			$('#tags').autocomplete({
+		$('#tags').autocomplete(
+		{
 			source: 'wawi_autocomplete.php?work=tags',
 			minChars:1,
 			response:function(event,ui)
@@ -2194,19 +2070,6 @@ EOT;
 			}
 		});
 		</script>";
-
-/*	echo '	<script type="text/javascript">
-				$("#tags").autocomplete("wawi_autocomplete.php",
-				{
-					minChars:1,
-					matchSubset:1,matchContains:1,
-					width:500,
-					multiple: true,
-					multipleSeparator: "; ",
-					formatItem:formatItemTag,
-					extraParams:{"work":"tags", "bestell_id":"'.$bestellung->bestellung_id.'"}
-				});
-			</script>'; */
 
 	echo "</td>\n";
 	echo "<td>Freigabe:</td>\n";
@@ -2267,11 +2130,6 @@ EOT;
 				echo "<span title='$status->insertvon'>".$o.":".$date->formatDatum($status->datum,'d.m.Y')." </span>";
 			}
 		}
-		/*if($freigabe == false)
-		{
-			if(!$bestellung->isFreigegeben($bestellung->bestellung_id))
-				$bestellung->SetFreigegeben($bestellung->bestellung_id);
-		}*/
 	}
 
 	echo "</td></tr>";
@@ -2279,25 +2137,24 @@ EOT;
 	echo "<td><SELECT name='filter_zahlungstyp' id='search_zahlungstyp' >\n";
 	echo "<option value=''>-- bitte auswählen --</option>";
 	$zahlungstyp = new wawi_zahlungstyp();
-        if ($bestellung->insertamum!='')
-        {
-            $datum_helper = new datum();
-            $insertTimestamp = $datum_helper->mktime_fromdate($bestellung->insertamum);
-            $date_newZahlungstyp = mktime(0, 0, 0, 2, 1, 2016);
-            if ($insertTimestamp >= $date_newZahlungstyp)
-            {
-                $zahlungstyp->getAllFiltered();
-            }
-            else
-            {
-                $zahlungstyp->getAll();
-            }
-
-        }
-        else
-        {
-            $zahlungstyp->getAllFiltered();
-        }
+	if ($bestellung->insertamum!='')
+	{
+		$datum_helper = new datum();
+		$insertTimestamp = $datum_helper->mktime_fromdate($bestellung->insertamum);
+		$date_newZahlungstyp = mktime(0, 0, 0, 2, 1, 2016);
+		if ($insertTimestamp >= $date_newZahlungstyp)
+		{
+			$zahlungstyp->getAllFiltered();
+		}
+		else
+		{
+			$zahlungstyp->getAll();
+		}
+	}
+	else
+	{
+		$zahlungstyp->getAllFiltered();
+	}
 
 	foreach($zahlungstyp->result as $typ)
 	{
@@ -2307,35 +2164,35 @@ EOT;
 		echo '<option value='.$typ->zahlungstyp_kurzbz.' '.$selected.'>'.$typ->bezeichnung."</option>\n";
 	}
 	echo "</select> ";
-        echo " <label for=\"auslagenersatz\">Auslagenersatz/IBAN:</label> <input type=\"checkbox\" id=\"auslagenersatz\" name=\"auslagenersatz\" ".($bestellung->auslagenersatz != null && $bestellung->auslagenersatz === true ?'checked':'').">";
+	echo " <label for=\"auslagenersatz\">Auslagenersatz/IBAN:</label> <input type=\"checkbox\" id=\"auslagenersatz\" name=\"auslagenersatz\" ".($bestellung->auslagenersatz != null && $bestellung->auslagenersatz === true ?'checked':'').">";
 
-        echo "<span id=\"bankverbindung_span\" style=\"display:none\"> <input type=\"text\" id=\"bankverbindung\" style=\"width: 110px\" name=\"bankverbindung\" maxlength=\"32\" value=\"".$bestellung->iban."\"></span>";
-        echo "</td>\n";
+	echo "<span id=\"bankverbindung_span\" style=\"display:none\"> <input type=\"text\" id=\"bankverbindung\" style=\"width: 110px\" name=\"bankverbindung\" maxlength=\"32\" value=\"".$bestellung->iban."\"></span>";
+	echo "</td>\n";
 	echo "<td>Rest-Budget:</td>\n";
 
 	$restBudget = sprintf('%01.2f',$restBudget);
 	echo "<td colspan=\"2\" id='restbudget'>$restBudget <small>(nach Abzug dieser Bestellung)</small></td></tr>";
-        echo "<tr>";
-        echo "<td>Zuordnung:</td><td>";
-        $zuordnungListe = wawi_zuordnung::getAll();
+	echo "<tr>";
+	echo "<td>Zuordnung:</td><td>";
+	$zuordnungListe = wawi_zuordnung::getAll();
 
-        while (list($key, $val) = each($zuordnungListe))
-        {
-            $selected = false;
-            if (isset($bestellung->zuordnung) && $bestellung->zuordnung == $key)
-                $selected = true;
-            echo '<input type="radio" id="zuordnung_'.$key.'" name="zuordnung" value="'.$key.'" '.($selected?'checked="1"':'').'\"><label for="zuordnung_'.$key.'"> '.$val.'</label> ';
-        }
-        echo "</td>";
-        echo "<td>Für wen (Person):</td>";
-        echo "<td><input type='text' name='zuordnung_person' id='zuordnung_person' size='30' maxlength='256' value ='".$zuordnung_person_vorname.' '.$zuordnung_person_nachname."'></td>";
-        echo "<td>Wo eingesetzt (Raum): <input name= \"zuordnung_raum\" id=\"zuordnung_raum\" type='text' size='13' maxlength='32' value =\"".$bestellung->zuordnung_raum."\"></td>";
-        echo "</tr>";
+	while (list($key, $val) = each($zuordnungListe))
+	{
+		$selected = false;
+		if (isset($bestellung->zuordnung) && $bestellung->zuordnung == $key)
+		$selected = true;
+		echo '<input type="radio" id="zuordnung_'.$key.'" name="zuordnung" value="'.$key.'" '.($selected?'checked="1"':'').'\"><label for="zuordnung_'.$key.'"> '.$val.'</label> ';
+	}
+	echo "</td>";
+	echo "<td>Für wen (Person):</td>";
+	echo "<td><input type='text' name='zuordnung_person' id='zuordnung_person' size='30' maxlength='256' value ='".$zuordnung_person_vorname.' '.$zuordnung_person_nachname."'></td>";
+	echo "<td>Wo eingesetzt (Raum): <input name= \"zuordnung_raum\" id=\"zuordnung_raum\" type='text' size='13' maxlength='32' value =\"".$bestellung->zuordnung_raum."\"></td>";
+	echo "</tr>";
 
-        echo "<tr>";
-        echo "<td>Auftragsbestätigung</td><td><input type=\"text\" id=\"datepicker_auftragsbestaetigung\" size=\"12\" name=\"auftragsbestaetigung\" value=\"".$date->formatDatum($bestellung->auftragsbestaetigung,'d.m.Y')."\"> Angebote: <ul id=\"angeboteListe\"><li>1<li>2</ul> <input type=\"button\" name=\"angebotBtn\" id=\"angebotBtn\" value=\"hinzufügen\" ></td>";
-        echo "<td>Leasing:</td><td colspan=\"2\"><input type=\"checkbox\" id=\"empfehlung_leasing\" name=\"empfehlung_leasing\"  ".($bestellung->empfehlung_leasing != null && $bestellung->empfehlung_leasing === true ?'checked':'')."><label for=\"empfehlung_leasing\">Empfehlung Leasing</label> <input type=\"checkbox\" id=\"wird_geleast\" name=\"wird_geleast\"  ".($bestellung->wird_geleast != null && $bestellung->wird_geleast === true ?'checked':'')."><label for=\"wird_geleast\">wird geleast</label> </td>";
-        echo "</tr>";
+	echo "<tr>";
+	echo "<td>Auftragsbestätigung</td><td><input type=\"text\" id=\"datepicker_auftragsbestaetigung\" size=\"12\" name=\"auftragsbestaetigung\" value=\"".$date->formatDatum($bestellung->auftragsbestaetigung,'d.m.Y')."\"> Angebote: <ul id=\"angeboteListe\"><li>1<li>2</ul> <input type=\"button\" name=\"angebotBtn\" id=\"angebotBtn\" value=\"hinzufügen\" ></td>";
+	echo "<td>Leasing:</td><td colspan=\"2\"><input type=\"checkbox\" id=\"empfehlung_leasing\" name=\"empfehlung_leasing\" ".($bestellung->empfehlung_leasing != null && $bestellung->empfehlung_leasing === true ?'checked':'')."><label for=\"empfehlung_leasing\">Empfehlung Leasing</label> <input type=\"checkbox\" id=\"wird_geleast\" name=\"wird_geleast\"  ".($bestellung->wird_geleast != null && $bestellung->wird_geleast === true ?'checked':'')."><label for=\"wird_geleast\">wird geleast</label> </td>";
+	echo "</tr>";
 
 	echo "</table>\n";
 	echo "<br>";
@@ -2432,8 +2289,8 @@ EOT;
 		}
 
 		//zeigt/versteckt die Tags an
-        function hideTags()
-        {
+		function hideTags()
+		{
 			i=1;
 			while(i<=anzahlRows)
 			{
@@ -2445,8 +2302,8 @@ EOT;
 		}
 
 		//zeigt die Tags der Details an wenn vorhanden, und versteckt diese wenn sie leer sind
-        function hideTags2()
-        {
+		function hideTags2()
+		{
 			var i=1;
 			var show=false;
 			while(i<=anzahlRows)
@@ -2479,56 +2336,55 @@ EOT;
 				}
 				$("#tags_link").show();
 			}
-        }
+		}
 
 
 
-        // Status bestellt wird gesetzt
+		// Status bestellt wird gesetzt
 		function deleteBtnBestellt(bestellung_id)
 		{
 			$("#btn_bestellt").html();
 			$("btn_bestellt").empty();
-                        $("#btn_erstellt").empty();
-			$.post("bestellung.php", {id: bestellung_id, user_id: uid,  deleteBtnBestellt: "true"},
-						function(data){
+			$("#btn_erstellt").empty();
+			$.post("bestellung.php", {id: bestellung_id, user_id: uid, deleteBtnBestellt: "true"},
+			function(data)
+			{
 
-							if(data.length>10)
-							{
-								alert(data);
-							}
-							else
-							{
-								$("#btn_bestellt").html(" <span style=\"white-space:nowrap\">Bestellt am: " +data + "</span>");
+				if(data.length>10)
+				{
+					alert(data);
+				}
+				else
+				{
+					$("#btn_bestellt").html(" <span style=\"white-space:nowrap\">Bestellt am: " +data + "</span>");
 
-								if(typeof(document.editForm.storniert) != "undefined")
-								{
-									document.editForm.storniert.disabled=true;
-								}
-								document.editForm.bestellt.disabled=true;
-								document.editForm.filter_kst.disabled=true;
-							}
-						});
-
+					if(typeof(document.editForm.storniert) != "undefined")
+					{
+						document.editForm.storniert.disabled=true;
+					}
+					document.editForm.bestellt.disabled=true;
+					document.editForm.filter_kst.disabled=true;
+				}
+			});
 		}
 
 		 // Status geliefert wird gesetzt
 		function deleteBtnGeliefert(bestellung_id)
 		{
 			$("#btn_geliefert").html();
-                        $("#btn_erstellt").empty();
-			$.post("bestellung.php", {id: bestellung_id, user_id: uid,  deleteBtnGeliefert: "true"},
-						function(data){
-							if(data.length>10)
-							{
-								alert(data);
-							}
-							else
-							{
-								$("#btn_geliefert").html(" <span style=\"white-space:nowrap\">Geliefert am: " +data + "</span>");
-								document.editForm.geliefert.disabled=true;
-							}
-						});
-
+			$("#btn_erstellt").empty();
+			$.post("bestellung.php", {id: bestellung_id, user_id: uid, deleteBtnGeliefert: "true"},
+			function(data){
+				if(data.length>10)
+				{
+					alert(data);
+				}
+				else
+				{
+					$("#btn_geliefert").html(" <span style=\"white-space:nowrap\">Geliefert am: " +data + "</span>");
+					document.editForm.geliefert.disabled=true;
+				}
+			});
 		}
 
 		// Status storno wird gesetzt
@@ -2536,30 +2392,30 @@ EOT;
 		{
 			$("#btn_storniert").html();
 			$("#btn_erstellt").empty();
-			$.post("bestellung.php", {id: bestellung_id, user_id: uid,  deleteBtnStorno: "true"},
-						function(data){
-							if(data.length>10)
-							{
-								alert(data);
-							}
-							else
-							{
-								$("#btn_storniert").html(" <span style=\"white-space:nowrap\">Storniert am: " +data + "</span>");
-								document.editForm.btn_submit.disabled=true;
-								document.editForm.btn_abschicken.disabled=true;
-								document.editForm.storniert.disabled=true
-								document.editForm.bestellt.disabled=true
-								document.editForm.filter_kst.disabled=true;
-							}
-						});
+			$.post("bestellung.php", {id: bestellung_id, user_id: uid, deleteBtnStorno: "true"},
+			function(data){
+				if(data.length>10)
+				{
+					alert(data);
+				}
+				else
+				{
+					$("#btn_storniert").html(" <span style=\"white-space:nowrap\">Storniert am: " +data + "</span>");
+					document.editForm.btn_submit.disabled=true;
+					document.editForm.btn_abschicken.disabled=true;
+					document.editForm.storniert.disabled=true
+					document.editForm.bestellt.disabled=true
+					document.editForm.filter_kst.disabled=true;
+				}
+			});
 		}
 
 		/*
 		Berechnet die Brutto Summe für eine Zeile
 		*/
 		function calcBrutto(id)
-	   	{
-	    	var brutto=0;
+		{
+			var brutto=0;
 	    	var menge = $("#menge_"+id).val();
 	    	var betrag = $("#preisprove_"+id).val();
 	    	document.getElementById("preis_"+id).value = betrag;
