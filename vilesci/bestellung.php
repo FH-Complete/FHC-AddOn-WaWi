@@ -2790,7 +2790,7 @@ echo $js;
 
 	if($bestellung->isFreigegeben($bestellung->bestellung_id))
 		echo "<p class='freigegeben'>Die Bestellung wurde vollständig freigegeben</p>";
-
+}
 
 /**
  * Gibt eine Bestelldetail Zeile aus
