@@ -40,7 +40,7 @@ $user = get_uid();
 $rechte = new benutzerberechtigung();
 $rechte->getBerechtigungen($user);
 $datum_obj = new datum();
-$bestellung = new wawi_bestellung(); 
+$bestellung = new wawi_bestellung();
 
 // Kostenstellen auf Grund der Rechte holen
 $kst_array = $rechte->getKostenstelle('wawi/bestellung');
@@ -60,46 +60,46 @@ if(count($kst_array)==0)
 	<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
 	<link rel="stylesheet" href="../../skin/wawi.css" type="text/css">
 	<link rel="stylesheet" href="../../../../skin/tablesort.css" type="text/css">
-		
-	<script type="text/javascript" src="../../../../include/js/jquery1.9.min.js"></script>	 
-	<script type="text/javascript" src="../../../../include/js/jquery.metadata.js"></script> 
+
+	<script type="text/javascript" src="../../../../include/js/jquery1.9.min.js"></script>
+	<script type="text/javascript" src="../../../../include/js/jquery.metadata.js"></script>
 	<script type="text/javascript" src="../../../../include/js/jquery.tablesorter.js"></script>
 	<script type="text/javascript">
- 	function alleMarkieren(checked)
- 	{
- 	 	checkbox = $(':checkbox').prop('checked',checked);
- 	}
+	function alleMarkieren(checked)
+	{
+		checkbox = $(':checkbox').prop('checked',checked);
+	}
 	</script>
 </head>
 <body>
 <h1>Bericht - Konto</h1>
-<?php 
+<?php
 
 if(isset($_POST['show']))
 {
 	if(!isset($_POST['kst']))
 		die('Sie müssen mindestens eine Kostenstelle auswählen!<br> <a href="#Zurueck" onclick="javascript:history.back()">Zurück</a>');
-	
+
 	$db = new basis_db();
-	
+
 	//Vom Studiensemester
 	$geschaeftsjahr = $_POST['geschaeftsjahr'];
 	$gj= new geschaeftsjahr();
 	$gj->load($geschaeftsjahr);
-		
+
 	$kst_konto=array();
 	$konto_array=array();
 	$kstIN=$db->implode4SQL($_POST['kst']);
 	//Tabelle auf Basis der Bestellungen
-	$qry = "SELECT 
+	$qry = "SELECT
 				tbl_bestellung.bestellung_id, sum (menge*preisprove*(100+COALESCE(mwst,0))/100) as brutto,
 				tbl_bestellung.kostenstelle_id, tbl_konto.beschreibung[1], tbl_konto.konto_id
-			FROM 
-				wawi.tbl_bestellung 
+			FROM
+				wawi.tbl_bestellung
 				JOIN wawi.tbl_bestelldetail USING(bestellung_id)
 				JOIN wawi.tbl_konto USING (konto_id)
 			WHERE
-				tbl_bestellung.insertamum>='$gj->start' AND tbl_bestellung.insertamum<='$gj->ende' 
+				tbl_bestellung.insertamum>='$gj->start' AND tbl_bestellung.insertamum<='$gj->ende'
 				AND kostenstelle_id IN($kstIN)
 			group by tbl_bestellung.bestellung_id, tbl_bestellung.kostenstelle_id, tbl_konto.beschreibung, tbl_konto.konto_id
 			order by beschreibung
@@ -111,7 +111,7 @@ if(isset($_POST['show']))
 		{
 			if(!isset($konto_array[$row->konto_id]))
 				$konto_array[$row->konto_id]=0;
-			
+
 			if(isset($kst_konto[$row->kostenstelle_id]) && isset($kst_konto[$row->kostenstelle_id][$row->konto_id]))
 			{
 				$kst_konto[$row->kostenstelle_id][$row->konto_id]+=$row->brutto;
@@ -129,20 +129,20 @@ if(isset($_POST['show']))
 	echo '<H2>Bestellungen</H2>';
 
 	draw_konto_table($konto_array, $kst_konto,'bestellung', $gj);
-	
+
 	//Tabelle auf Basis der Rechnungen
 	$kst_konto=array();
 	$konto_array=array();
-	$qry = "SELECT 
+	$qry = "SELECT
 				(betrag*(100+COALESCE(mwst,0))/100) as brutto, tbl_bestellung.bestellung_id, tbl_bestellung.konto_id,
 				tbl_bestellung.kostenstelle_id, tbl_konto.beschreibung[1]
-			FROM 
-				wawi.tbl_bestellung 
+			FROM
+				wawi.tbl_bestellung
 				JOIN wawi.tbl_konto USING(konto_id)
 				JOIN wawi.tbl_rechnung USING(bestellung_id)
 				JOIN wawi.tbl_rechnungsbetrag USING(rechnung_id)
 			WHERE
-				tbl_bestellung.insertamum::date>='$gj->start' AND tbl_bestellung.insertamum::date<='$gj->ende' 
+				tbl_bestellung.insertamum::date>='$gj->start' AND tbl_bestellung.insertamum::date<='$gj->ende'
 				AND kostenstelle_id IN ($kstIN)
 			order by beschreibung
 			";
@@ -154,34 +154,34 @@ if(isset($_POST['show']))
 			//Bestelldetailtags laden
 			if(!isset($konto_array[$row->konto_id]))
 					$konto_array[$row->konto_id]=0;
-			
+
 			if(isset($kst_konto[$row->kostenstelle_id]) && isset($kst_konto[$row->kostenstelle_id][$row->konto_id]))
 			{
 				$kst_konto[$row->kostenstelle_id][$row->konto_id]+=$row->brutto;
-				
+
 			}
 			else
 			{
 				$kst_konto[$row->kostenstelle_id][$row->konto_id]=$row->brutto;
-				
+
 			}
 		}
 	}
 	else
 		die('Fehler bei Datenbankzugriff');
-	
+
 	echo '<H2>Rechnungen</H2>';
 
 	draw_konto_table($konto_array, $kst_konto,'rechnung', $gj);
 }else {
 
 	$kostenstelle = new wawi_kostenstelle();
-	
+
 	$kostenstelle->loadArray($kst_array, 'bezeichnung',false);
 	echo 'Bitte markieren sie die Kostenstellen die auf der Auswertung aufscheinen sollen:<br /><br />
 	<form action="'.$_SERVER['PHP_SELF'].'" method="POST">
 		<table>
-		
+
 		<tbody>';
 	$anzahl=0;
 	$gesamt = count($kst_array);
@@ -204,7 +204,7 @@ if(isset($_POST['show']))
 		$anzahl++;
 	}
 	echo '</table></td></tr>';
-	
+
 	echo '</tbody>
 	</table>
 	<br />
@@ -219,16 +219,16 @@ if(isset($_POST['show']))
 	<SELECT name="geschaeftsjahr" >';
 	$gj = new geschaeftsjahr();
 	$geschaeftsjahr = $gj->getakt();
-	
+
 	$gj->getAll();
 
 	foreach ($gj->result as $gjahr)
 	{
 		if($gjahr->geschaeftsjahr_kurzbz==$geschaeftsjahr)
 			$selected='selected';
-		else 
+		else
 			$selected='';
-		echo '<option value="'.$gjahr->geschaeftsjahr_kurzbz.'" '.$selected.'>'.$gjahr->geschaeftsjahr_kurzbz.'</option>';				
+		echo '<option value="'.$gjahr->geschaeftsjahr_kurzbz.'" '.$selected.'>'.$gjahr->geschaeftsjahr_kurzbz.'</option>';
 	}
 	echo '
 	</SELECT>
@@ -243,7 +243,7 @@ if(isset($_POST['show']))
 </html>
 
 
-<?php 
+<?php
 
 /**
  * Zeichnet eine Tabelle mit Kostenstellen und Konten
@@ -252,30 +252,30 @@ if(isset($_POST['show']))
  */
 function draw_konto_table($konto_array, $kst_konto, $table_id, $gj)
 {
-	ksort($kst_konto); 
+	ksort($kst_konto);
 
 	$vondatum = $gj->start;
 	$endedatum = $gj->ende;
-	
+
 	echo '
 	<script type="text/javascript">
-	$(document).ready(function() 
+	$(document).ready(function()
 	{
 		$("#'.$table_id.'").tablesorter(
 		{
 			sortList: [[0,0]],
 			widgets: [\'zebra\']
 		});
- 	});
- 	</script>
+	});
+	</script>
 	<table class="tablesorter" id="'.$table_id.'">
 		<thead>
 			<tr>
 				<th>Kostenstelle</th>';
 	foreach(array_keys($konto_array) as $konten)
-	{		
-		$konto = new wawi_konto(); 
-		$konto->load($konten); 
+	{
+		$konto = new wawi_konto();
+		$konto->load($konten);
 		echo '<th>',$konto->kurzbz,'</th>';
 	}
 	echo '
@@ -284,11 +284,11 @@ function draw_konto_table($konto_array, $kst_konto, $table_id, $gj)
 		</thead>
 	<tbody>';
 
-	
+
 	foreach($kst_konto as $kst=>$konten_value)
 	{
 		$kst_summe=0;
-		
+
 		$kostenstelle = new wawi_kostenstelle();
 		$kostenstelle->load($kst);
 		echo '<tr>';
@@ -297,7 +297,7 @@ function draw_konto_table($konto_array, $kst_konto, $table_id, $gj)
 		else
 			$class='class="inaktiv"';
 		echo '<td '.$class.'>'.$kostenstelle->bezeichnung.'</td>';
-		
+
 		foreach(array_keys($konto_array) as $konten)
 		{
 			if(isset($konten_value[$konten]))
@@ -314,9 +314,9 @@ function draw_konto_table($konto_array, $kst_konto, $table_id, $gj)
 
 				//Kontensumme berechnen
 				settype($konto_array[$konten],'float');
-				settype($konten_value[$konten], 'float'); 
+				settype($konten_value[$konten], 'float');
 				$konto_array[$konten] +=$konten_value[$konten];
-				
+
 			}
 			else
 				echo '<td>&nbsp;</td>';
@@ -325,14 +325,14 @@ function draw_konto_table($konto_array, $kst_konto, $table_id, $gj)
 		echo '</tr>';
 	}
 	echo '</tbody>
-		 <tfoot>
-		 	<tr>
-		 		<th>Summe</th>';
+		<tfoot>
+			<tr>
+				<th>Summe</th>';
 	settype($gesamt_summe, 'float');
-	$gesamt_summe = 0; 
+	$gesamt_summe = 0;
 	foreach($konto_array as $konten=>$summe)
 	{
-		settype($summe, 'float'); 
+		settype($summe, 'float');
 		$gesamt_summe+=$summe;
 		echo '<th class="number">',number_format($summe,2,',','.'),'</th>';
 	}
