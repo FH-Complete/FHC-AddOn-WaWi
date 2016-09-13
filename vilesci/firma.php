@@ -89,7 +89,7 @@ if(isset($_POST['save']))
 	$telefon = $_POST['telefon'];
 	$fax = $_POST['fax'];
 	$email = $_POST['email'];
-        $homepage = $_POST['homepage'];
+	$homepage = $_POST['homepage'];
 	$nation = $_POST['nation'];
 	$anmerkung = $_POST['anmerkung'];
 
@@ -132,7 +132,7 @@ if(isset($_POST['save']))
 		{
 			if(!$firma->load($firma_id))
 				die('Lieferant wurde nicht gefunden');
-			$firma->new  = false;
+			$firma->new = false;
 			$firma->updateamum = date('Y-m-d H:i:s');
 			$firma->updatevon = $user;
 		}
@@ -611,7 +611,7 @@ if($method=='new' || $method=='update')
 		<td>Kundennummer TW GmbH:</td>
 		<td><input type="text" name="kundennummer_gmbh" maxlength="128" value="'.$kundennummer_gmbh.'"/></td>
 	</tr>
-        <tr>
+	<tr>
 		<td>Liefer- u.<br>Zahlungsbedingungen:</td>
 		<td><textarea name="lieferbedingungen" cols="50" rows="3" maxlength="255">'.$lieferbedingungen.'</textarea></td>
 	</tr>

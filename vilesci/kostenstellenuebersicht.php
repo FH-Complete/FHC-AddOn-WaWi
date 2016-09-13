@@ -46,7 +46,7 @@ require_once('../include/wawi_benutzerberechtigung.class.php');
 
 		$(document).ready(function()
 			{
-			    $("#myTable").tablesorter(
+				$("#myTable").tablesorter(
 				{
 					sortList: [[3,0]],
 					widgets: ['zebra']
@@ -127,29 +127,29 @@ if(isset($_GET['method']))
 
 					echo "</SELECT>\n";
 
-			 	 	echo "</td><tr>\n";
-			 	 	echo "<td>Bezeichnung</td>\n";
-			 	 	echo "<td><input type=\"text\" size=\"32\" name=\"bezeichnung\" value=\"$kostenstelle->bezeichnung\"></td>\n";
-			 	 	echo "</tr>\n";
-			 	 	echo "<tr>\n";
-			 	 	echo "<td>Kurzbezeichnung</td>\n";
-			 	 	echo "<td><input type=\"text\" size=\"32\" name=\"kurzbezeichnung\" value=\"$kostenstelle->kurzbz\"></td>\n";
-			 	 	echo "</tr>\n";
-			 	 	echo "<tr>\n";
-			 	 	echo "<td>Kostenstellen Nr.</td>\n";
-			 	 	echo "<td><input type=\"text\" size=\"32\" name=\"kostenstelle_nr\" value=\"$kostenstelle->kostenstelle_nr\"></td>\n";
-			 	 	echo "</tr>\n";
-			 	 	echo "<tr>\n";
-			 	 	echo "<td>Aktiv?</td>\n";
-			 	 	echo "<td><input type=\"checkbox\" name=\"aktiv\" value=\"aktiv\" $checked>\n";
-			 	 	echo "</tr>\n";
-			 	 	echo "<tr><td>&nbsp;</td></tr>\n";
-			  		echo "<tr>\n";
-			  		echo "<td><a href=kostenstellenuebersicht.php> zurueck </a></td>\n";
-			  		echo "<td><input type='submit' value='update'></td>";
-			  		echo "</tr>\n";
-			  		echo "</table>\n";
-			  		echo "</form>\n";
+					echo "</td><tr>\n";
+					echo "<td>Bezeichnung</td>\n";
+					echo "<td><input type=\"text\" size=\"32\" name=\"bezeichnung\" value=\"$kostenstelle->bezeichnung\"></td>\n";
+					echo "</tr>\n";
+					echo "<tr>\n";
+					echo "<td>Kurzbezeichnung</td>\n";
+					echo "<td><input type=\"text\" size=\"32\" name=\"kurzbezeichnung\" value=\"$kostenstelle->kurzbz\"></td>\n";
+					echo "</tr>\n";
+					echo "<tr>\n";
+					echo "<td>Kostenstellen Nr.</td>\n";
+					echo "<td><input type=\"text\" size=\"32\" name=\"kostenstelle_nr\" value=\"$kostenstelle->kostenstelle_nr\"></td>\n";
+					echo "</tr>\n";
+					echo "<tr>\n";
+					echo "<td>Aktiv?</td>\n";
+					echo "<td><input type=\"checkbox\" name=\"aktiv\" value=\"aktiv\" $checked>\n";
+					echo "</tr>\n";
+					echo "<tr><td>&nbsp;</td></tr>\n";
+					echo "<tr>\n";
+					echo "<td><a href=kostenstellenuebersicht.php> zurueck </a></td>\n";
+					echo "<td><input type='submit' value='update'></td>";
+					echo "</tr>\n";
+					echo "</table>\n";
+					echo "</form>\n";
 
 				}
 				else
@@ -197,26 +197,26 @@ if(isset($_GET['method']))
 				}
 			}
 			echo "</SELECT>\n";
-	 	 	echo "</td></tr>\n";
-	 	 	echo "<tr>\n";
-	 	 	echo "<td>Bezeichnung</td>\n";
-	 	 	echo "<td><input type=\"text\" size=\"32\" maxlength =\"256\" name=\"bezeichnung\" value=\"\"></td>\n";
-	 	 	echo "</tr>\n";
-	 	 	echo "<tr>\n";
-	 	 	echo "<td>Kurzbezeichnung</td>\n";
-	 	 	echo "<td><input type=\"text\" size=\"32\" maxlength =\"7\" name=\"kurzbezeichnung\" value=\"\"></td>\n";
-	 	 	echo "</tr>\n";
-	 	 	echo "<tr>\n";
-	 	 	echo "<td>Kostenstellen Nr.</td>\n";
-	 	 	echo "<td><input type=\"text\" size=\"32\" maxlength =\"4\" name=\"kostenstelle_nr\" value=\"\"></td>\n";
-	 	 	echo "</tr>\n";
-	 	 	echo "<tr><td>&nbsp;</td></tr>\n";
-	  		echo "<tr>\n";
-	  		echo "<td><a href=kostenstellenuebersicht.php> zurueck </a></td>\n";
-	  		echo "<td><input type='submit' value='Anlegen'></td>\n";
-	  		echo "</tr>\n";
-	  		echo "</table>\n";
-	  		echo "</form>\n";
+			echo "</td></tr>\n";
+			echo "<tr>\n";
+			echo "<td>Bezeichnung</td>\n";
+			echo "<td><input type=\"text\" size=\"32\" maxlength =\"256\" name=\"bezeichnung\" value=\"\"></td>\n";
+			echo "</tr>\n";
+			echo "<tr>\n";
+			echo "<td>Kurzbezeichnung</td>\n";
+			echo "<td><input type=\"text\" size=\"32\" maxlength =\"7\" name=\"kurzbezeichnung\" value=\"\"></td>\n";
+			echo "</tr>\n";
+			echo "<tr>\n";
+			echo "<td>Kostenstellen Nr.</td>\n";
+			echo "<td><input type=\"text\" size=\"32\" maxlength =\"4\" name=\"kostenstelle_nr\" value=\"\"></td>\n";
+			echo "</tr>\n";
+			echo "<tr><td>&nbsp;</td></tr>\n";
+			echo "<tr>\n";
+			echo "<td><a href=kostenstellenuebersicht.php> zurueck </a></td>\n";
+			echo "<td><input type='submit' value='Anlegen'></td>\n";
+			echo "</tr>\n";
+			echo "</table>\n";
+			echo "</form>\n";
 		}
 	}
 	else if($_GET['method']=='delete')
@@ -440,7 +440,7 @@ if(isset($_GET['method']))
 		echo "<th>Aktiv</th>\n";
 		echo "<th>&nbsp;</th></tr></thead><tbody>\n";
 
-		$kostenstelle  = new wawi_kostenstelle();
+		$kostenstelle = new wawi_kostenstelle();
 		$kostenstelle->getAll($filter1);
 		$i=0;
 
@@ -479,7 +479,7 @@ if(isset($_GET['method']))
 		echo "<th>&nbsp;</th></tr></thead><tbody>\n";
 
 
-		$kostenstelle  = new wawi_kostenstelle();
+		$kostenstelle = new wawi_kostenstelle();
 		$kostenstelle->getAll($filter2);
 		$i=0;
 		foreach($kostenstelle->result as $row)
@@ -528,7 +528,7 @@ else
 				<th>Restbudget für <br>'.$geschaeftsjahr_kurzbz.'</th>
 				<th>Organisationseinheit</th>
 				<th>Aktiv</th>
-			  </tr></thead><tbody>';
+				</tr></thead><tbody>';
 
 		$rechnung = new wawi_rechnung();
 		foreach($kostenstelle->result as $row)
@@ -547,7 +547,7 @@ else
 			echo '<td>'.htmlspecialchars($row->bezeichnung)."</td>\n";
 			echo '<td>'.$row->kurzbz."</td>\n";
 			$budget = $kostenstelle->getBudget($row->kostenstelle_id);
-			$ausgaben  = $rechnung->getAusgaben($geschaeftsjahr_kurzbz, $row->kostenstelle_id);
+			$ausgaben = $rechnung->getAusgaben($geschaeftsjahr_kurzbz, $row->kostenstelle_id);
 
 			$restbudget = $budget-$ausgaben;
 			if($restbudget>0)

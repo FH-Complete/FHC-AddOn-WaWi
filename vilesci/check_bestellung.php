@@ -8,7 +8,7 @@
  *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
@@ -51,7 +51,7 @@ require_once dirname(__FILE__).'/../../../include/firma.class.php';
 		if(isNaN(document.checkForm.min.value) || isNaN(document.checkForm.max.value))
 		{
 			alert("Bitte geben Sie eine Nummer ein.");
-			return false;  
+			return false;
 		}
 		return true; 
 	}
@@ -112,7 +112,7 @@ echo '
 	<script type="text/javascript">
 	$(document).ready(function() 
 	{ 
-	    $("#checkTable").tablesorter(
+		$("#checkTable").tablesorter(
 		{
 			sortList: [[4,1]],
 			widgets: ["zebra"]
@@ -130,13 +130,13 @@ echo '
 		$bestellung->loadBestellungForCheck($min, $max);
 	}
 	else
-		die('Fehlerhafte Parameter');	
+		die('Fehlerhafte Parameter');
 		
 	echo '	<table id="checkTable" class="tablesorter" width ="100%">
 			<thead>
 			<tr>
 				<th></th>
-				<th>Bestellnr.</th>				
+				<th>Bestellnr.</th>
 				<th>Firma</th>
 
 				'.
@@ -145,7 +145,7 @@ echo '
 					'<th>Bestellt</th><th>Auftragsbestätigung</th><th>Freigegeben</th><th>Liefertermin</th>').
 				
 				'<th>Brutto</th>
-				<th>Titel</th>				
+				<th>Titel</th>
 			</tr>
 			</thead>
 			<tbody>';		
@@ -159,7 +159,7 @@ echo '
 		$status = new wawi_bestellstatus(); 
 		if(is_numeric($row->firma_id))
 		{
-			$firma->load($row->firma_id);	
+			$firma->load($row->firma_id);
 			$firmenname = $firma->name; 
 		}
 		if($row->freigegeben)
@@ -186,19 +186,19 @@ echo '
 		$brutto = $bestellung->getBrutto($row->bestellung_id);
 		echo '	<tr>
 					<td nowrap><a href="bestellung.php?method=update&id='.$row->bestellung_id.'" title="Bestellung bearbeiten"> <img src="../skin/images/edit_wawi.gif"></a><a href="bestellung.php?method=delete&id='.$row->bestellung_id.'" onclick="return conf_del()" title="Bestellung löschen"> <img src="../../../skin/images/delete_x.png"></a></td>
-					<td>'.$row->bestell_nr.'</td>					
+					<td>'.$row->bestell_nr.'</td>
 					<td>'.$firmenname.'</td>'.
 					($type!='nichtgeliefert'
 					?
-					  '<td>'.$date->formatDatum($row->insertamum, "d.m.Y").'</td>'.					  
-					  '<td>'.$geliefert.'</td>'
+						'<td>'.$date->formatDatum($row->insertamum, "d.m.Y").'</td>'.
+						'<td>'.$geliefert.'</td>'
 					:
-					  '<td>'.($bestellt_datum != null ? $date->formatDatum($bestellt_datum, "d.m.Y") : 'nein').'</td>'.
-					  '<td>'.($row->auftragsbestaetigung != null ? $date->formatDatum($row->auftragsbestaetigung, "d.m.Y") : 'nein').'</td>
-					  <td>'.$freigegeben.'</td>
-					  <td>'.$row->liefertermin.'</td>').'
+						'<td>'.($bestellt_datum != null ? $date->formatDatum($bestellt_datum, "d.m.Y") : 'nein').'</td>'.
+						'<td>'.($row->auftragsbestaetigung != null ? $date->formatDatum($row->auftragsbestaetigung, "d.m.Y") : 'nein').'</td>
+						<td>'.$freigegeben.'</td>
+						<td>'.$row->liefertermin.'</td>').'
 					<td align="right">'.number_format($brutto, 2, ",",".").'</td>
-					<td>'.$row->titel.'</td>					
+					<td>'.$row->titel.'</td>
 				</tr>';
 	}
 	echo '	</tbody>

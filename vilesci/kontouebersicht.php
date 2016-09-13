@@ -42,8 +42,8 @@ require_once dirname(__FILE__).'/../../../include/sprache.class.php';
 	<script type="text/javascript">
 	
 		$(document).ready(function() 
-			{ 
-			    $("#myTable").tablesorter(
+			{
+				$("#myTable").tablesorter(
 				{
 					sortList: [[1,0]],
 					widgets: ['zebra']
@@ -310,7 +310,7 @@ if(isset($_GET['method']))
 		echo "<th>Aktiv</th>\n";
 		echo "<th>&nbsp;</th></tr></thead><tbody>\n";
 
-		$konto  = new wawi_konto();
+		$konto = new wawi_konto();
 		$konto->getKonto($filter1);
 
 		foreach($konto->result as $row)
@@ -348,7 +348,7 @@ if(isset($_GET['method']))
 		echo "<th>Aktiv</th>\n";
 		echo "</tr></thead><tbody>\n";
 
-		$konto  = new wawi_konto();
+		$konto = new wawi_konto();
 		$konto->getKonto($filter2);
 		foreach($konto->result as $row)
 		{
@@ -400,7 +400,7 @@ else
 		}
 
 		echo "<th>aktiv</th>
-			  </tr> </thead><tbody>\n";
+			</tr> </thead><tbody>\n";
 	
 		foreach($konto->result as $row)
 		{

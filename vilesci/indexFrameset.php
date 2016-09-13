@@ -48,14 +48,14 @@ echo '<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Frameset//EN" "http://www.w3.
 	<title>WaWi - Warenwirtschaft</title>
 </head>
 	<frameset cols="220,*" framespacing="1" border="1">
-	  <frame src="'.$menu.'" name="menu" frameborder="0"/>
-	  <frame src="'.$content.'" name="content" frameborder="0"/>
-	  <noframes>
-	    <body>
-	      <h1>Error</h1>
-	      <p>Ihr Browser unterstuetzt leider keine Frames</p>
-	    </body>
-	  </noframes>
+		<frame src="'.$menu.'" name="menu" frameborder="0"/>
+		<frame src="'.$content.'" name="content" frameborder="0"/>
+		<noframes>
+			<body>
+				<h1>Error</h1>
+				<p>Ihr Browser unterstuetzt leider keine Frames</p>
+			</body>
+		</noframes>
 	</frameset>
 </html>
 ';
