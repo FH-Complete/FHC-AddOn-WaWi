@@ -2416,40 +2416,40 @@ echo $js;
 		function calcBrutto(id)
 		{
 			var brutto=0;
-	    	var menge = $("#menge_"+id).val();
-	    	var betrag = $("#preisprove_"+id).val();
-	    	document.getElementById("preis_"+id).value = betrag;
-	    	var betrag = $("#preis_"+id).val();
-	    	var mwst = $("#mwst_"+id).val();
+			var menge = $("#menge_"+id).val();
+			var betrag = $("#preisprove_"+id).val();
+			document.getElementById("preis_"+id).value = betrag;
+			var betrag = $("#preis_"+id).val();
+			var mwst = $("#mwst_"+id).val();
 
-	    	if(mwst =="")
-					mwst = "0";
-	    	if(betrag!="" && mwst!="" && menge!="")
-	    	{
-	    		betrag = betrag.replace(",",".");
+			if(mwst =="")
+				mwst = "0";
+			if(betrag!="" && mwst!="" && menge!="")
+			{
+				betrag = betrag.replace(",",".");
 				mwst = mwst.replace(",",".");
-	    		menge = parseFloat(menge);
+				menge = parseFloat(menge);
 				betrag = parseFloat(betrag);
 				mwst = parseFloat(mwst);
 				brutto = menge * (brutto + (betrag+(betrag*mwst/100)));
-	    	}
-	    	brutto = Math.floor(brutto*100)/100;
-		   	document.getElementById("brutto_"+id).value = brutto;
-		    summe();
-	   	}
+			}
+			brutto = Math.floor(brutto*100)/100;
+			document.getElementById("brutto_"+id).value = brutto;
+			summe();
+		}
 
-	   	function calcNetto(id)
-	   	{
-	    	var brutto=0;
-	    	var menge = $("#menge_"+id).val();
-	    	var brutto = $("#brutto_"+id).val();
-	    	var mwst = $("#mwst_"+id).val();
-	    	if(mwst =="")
-					mwst = "0";
+		function calcNetto(id)
+		{
+			var brutto=0;
+			var menge = $("#menge_"+id).val();
+			var brutto = $("#brutto_"+id).val();
+			var mwst = $("#mwst_"+id).val();
+			if(mwst =="")
+			mwst = "0";
 
-	    	if(brutto!="" && mwst!="" && menge!="")
-	    	{
-		    	brutto = brutto.replace(",",".");
+			if(brutto!="" && mwst!="" && menge!="")
+			{
+				brutto = brutto.replace(",",".");
 				mwst = mwst.replace(",",".");
 				menge = parseFloat(menge);
 				brutto = parseFloat(brutto);
@@ -2464,11 +2464,11 @@ echo $js;
 				netto = Math.round(netto*100)/100;
 				//netto = str_replace(".",",",netto);
 				$("#preisprove_"+id).val(netto);
-	    	}
-		    summe();
-	   	}
+			}
+			summe();
+		}
 
-	   	function calcBruttoNetto(id)
+		function calcBruttoNetto(id)
 		{
 			var inetto = $("#preis_"+id).val();
 			var ibrutto = $("#brutto_"+id).val();
@@ -2534,14 +2534,14 @@ echo $js;
 		{
 			var id = anzahlRows;
 			$.post("bestellung.php", {id: id+1, bestellung_id: bestellung_id, getDetailRow: "true"},
-						function(data){
-							$("#detailTable").append(data);
-							anzahlRows=anzahlRows+1;
-							var test = 0;
-							test = document.getElementById("detail_anz").value;
-							document.getElementById("detail_anz").value = parseFloat(test) +1;
-							hideTags2();
-						});
+				function(data){
+					$("#detailTable").append(data);
+					anzahlRows=anzahlRows+1;
+					var test = 0;
+					test = document.getElementById("detail_anz").value;
+					document.getElementById("detail_anz").value = parseFloat(test) +1;
+					hideTags2();
+				});
 		}
 
 		/**
@@ -2560,14 +2560,14 @@ echo $js;
 			if(betrag.length>0 && anzahlRows==id)
 			{
 				$.post("bestellung.php", {id: id+1, bestellung_id: bestellung_id, getDetailRow: "true"},
-						function(data){
-							$("#detailTable").append(data);
-							anzahlRows=anzahlRows+1;
-							var test = 0;
-							test = document.getElementById("detail_anz").value;
-							document.getElementById("detail_anz").value = parseFloat(test) +1;
-							hideTags2();
-						});
+					function(data){
+						$("#detailTable").append(data);
+						anzahlRows=anzahlRows+1;
+						var test = 0;
+						test = document.getElementById("detail_anz").value;
+						document.getElementById("detail_anz").value = parseFloat(test) +1;
+						hideTags2();
+					});
 			}
 
 			return false;
@@ -2577,15 +2577,15 @@ echo $js;
 		function saveDetail(i)
 		{
 			var pos = $("#pos_"+i).val();
-			var menge =  $("#menge_"+i).val();
-			var ve =  $("#ve_"+i).val();
-			var beschreibung =  $("#beschreibung_"+i).val();
-			var artikelnr =  $("#artikelnr_"+i).val();
-			var preis =  $("#preis_"+i).val();
+			var menge = $("#menge_"+i).val();
+			var ve = $("#ve_"+i).val();
+			var beschreibung = $("#beschreibung_"+i).val();
+			var artikelnr = $("#artikelnr_"+i).val();
+			var preis = $("#preis_"+i).val();
 			preis = preis.replace(",",".");
-			var mwst =  $("#mwst_"+i).val();
+			var mwst = $("#mwst_"+i).val();
 			mwst = mwst.replace(",",".");
-			var brutto =  $("#brutto_"+i).val();
+			var brutto = $("#brutto_"+i).val();
 			brutto = brutto.replace(",",".");
 			var sort = $("#sort_"+i).val();
 
@@ -2597,18 +2597,20 @@ echo $js;
 			var detailid= $("#bestelldetailid_"+i).val();
 			if(detailid != "")
 			{
-					$.post("bestellung.php", {pos: pos, menge: menge, ve: ve, beschreibung: beschreibung, artikelnr: artikelnr, preis: preis, mwst: mwst, brutto: brutto, bestellung: bestellung_id, detail_id: detailid, sort: sort, updateDetail: "true"},
-					function(data){
-						if(isNaN(data))
-						{
+				$.post("bestellung.php", {pos: pos, menge: menge, ve: ve, beschreibung: beschreibung, artikelnr: artikelnr, preis: preis, mwst: mwst, brutto: brutto, bestellung: bestellung_id, detail_id: detailid, sort: sort, updateDetail: "true"},
+				function(data)
+				{
+					if(isNaN(data))
+					{
 
-						}
-					});
+					}
+				});
 			}
 			else
 			{
 				$.post("bestellung.php", {pos: pos, menge: menge, ve: ve, beschreibung: beschreibung, artikelnr: artikelnr, preis: preis, mwst: mwst, brutto: brutto, bestellung: bestellung_id, sort:sort, saveDetail: "true"},
-					function(data){
+					function(data)
+					{
 						if(isNaN(data) == false)
 						{
 							document.getElementById("bestelldetailid_"+i).value = data;
@@ -2627,7 +2629,8 @@ echo $js;
 			var detail_id= $("#bestelldetailid_"+i).val();
 
 			$.post("bestellung.php", {id: detail_id, deleteDetail: "true"},
-			function(data){
+			function(data)
+			{
 				if(data=="")
 				{
 					$("#row_"+i).remove();
@@ -2640,58 +2643,44 @@ echo $js;
 
 		function conf_del_budget(aktBrutto)
 		{
-			/*
-			var bestellungPreis = ($("#brutto").html());
-			var restBudget = ($("#restbudget").html());
-			var differenz = 0;
-			bestellungPreis = parseFloat(bestellungPreis);
-			restBudget = parseFloat(restBudget);
-			differenz = parseFloat(differenz);
-			aktBrutto = parseFloat(aktBrutto);
-			differenz = restBudget - bestellungPreis + aktBrutto;
-
-			if(differenz < 0 && !confirm("Die Bestellung würde das Budget überziehen. Trotzdem fortfahren?"))
-			{
-				return false;
-			}
-
-			*/
-
-			//warnungSummeIst0();
 			FelderSperren(false);
 		}
 
-		function warnungSummeIst0() {
+		function warnungSummeIst0()
+		{
 			var nettoSummeHTML = $("#netto").html();
 			var nettoSumme = parseFloat(nettoSummeHTML);
-			if (nettoSumme == 0.0 ) {
+			if (nettoSumme == 0.0 )
+			{
 				return confirm("Achtung Bestellsumme ist 0!");
 			}
 			return true;
 		}
 
-		function maybeSubmit() {
-	     	if (!warnungSummeIst0()) {
-	     		console.log("cancel");
-	     		return false;
-	     	}
-	     	document.getElementById("filter_kst").disabled=false;
-	     	return true;
-	     }
+		function maybeSubmit()
+		{
+			if (!warnungSummeIst0())
+			{
+				console.log("cancel");
+				return false;
+			}
+			document.getElementById("filter_kst").disabled=false;
+			return true;
+			}
 
 		// beim verlassen der textbox ändere . in ,
 		function replaceKomma(rowid)
 		{
-			var mwst =  $("#mwst_"+rowid).val();
+			var mwst = $("#mwst_"+rowid).val();
 			mwst=str_replace(".",",",mwst);
 			document.getElementById("mwst_"+rowid).value = mwst;
-			var preisprove =  $("#preisprove_"+rowid).val();
+			var preisprove = $("#preisprove_"+rowid).val();
 			preisprove =str_replace(".",",",preisprove);
 			document.getElementById("preisprove_"+rowid).value=preisprove;
-			var preis =  $("#preis_"+rowid).val();
+			var preis = $("#preis_"+rowid).val();
 			preis =str_replace(".",",",preis);
 			document.getElementById("preis_"+rowid).value=preis;
-			var brutto =  $("#brutto_"+rowid).val();
+			var brutto = $("#brutto_"+rowid).val();
 			brutto = str_replace(".",",",brutto);
 			document.getElementById("brutto_"+rowid).value=brutto;
 		}
@@ -2710,17 +2699,16 @@ echo $js;
 		//wie PHP str_replace();
 		var str_replace = function(mysearch, myreplace, mysubject)
 		{
-		    return mysubject.split(mysearch).join(myreplace);
+			return mysubject.split(mysearch).join(myreplace);
 		}
 
 		// check USt
 		function checkUst(i)
 		{
-			var mwst =  $("#mwst_"+i).val();
+			var mwst = $("#mwst_"+i).val();
 			mwst=str_replace(",",".",mwst);
 			if(mwst > 99 || mwst < 0 || isNaN(mwst))
 			{
-
 				alert("Ungültige Mehrwertssteuer eingetragen.");
 				document.getElementById("mwst_"+i).value = "20,00";
 				calcBruttoNetto(i);
@@ -2741,8 +2729,8 @@ echo $js;
 
 			if ($(obj).is(".up"))
 				row.insertBefore(row.prev());
-	        else
-            	row.insertAfter(row.next());
+			else
+				row.insertAfter(row.next());
 
 			// alle Rows durchlaufen, und das Sort Attribut neu setzen
 			rows = $("#detailTable").children();
@@ -2751,13 +2739,11 @@ echo $js;
 			while(i<anzahl)
 			{
 				id = rows[i].id.substring("row_".length);
-
 				sort = document.getElementById("sort_"+id);
 				sort.value=i;
 				i++;
 			}
 		}
-
 		</script>';
 
 	$disabled='';
@@ -2802,115 +2788,13 @@ echo $js;
 	if($bestellung->isFreigegeben($bestellung->bestellung_id))
 		echo "<p class='freigegeben'>Die Bestellung wurde vollständig freigegeben</p>";
 
-	// div Aufteilung --> kann ein und ausgeblendet werden
-	/*
-	echo "<br>";
-	echo "<a id='aufteilung_link' class='cursor' ><img src='../../../skin/images/right.png'>Aufteilung anzeigen / ausblenden</a>\n";
-	echo "<br>";
-	echo "<div id='aufteilung'>\n";
-	echo "<table border=0 width='75%' class='aufteilung'>";
-	echo "<tr><td></td>\n";
-	$help = 0;
-	$anteil = 0;
-	$summe = 0;
-	// alle studiengänge, auch inaktive
-	foreach($studiengang->result as $stud)
-	{
-		$vorhanden = false;
-		if($stud->studiengang_kz < 10000)
-		{
-			if($help%6 == 0)
-			{
-				echo"</tr><tr>";
-			}
-			foreach($aufteilung->result as $auf)
-			{
-				// wenn in aufteilung vorhanden
-				if(mb_strtoupper($auf->oe_kurzbz) == mb_strtoupper($stud->oe_kurzbz))
-				{
-					$anteil = $auf->anteil;
-					$vorhanden = true;
-				}
-			}
-			if($stud->aktiv || $vorhanden)
-			{
-				$summe += $anteil;
-				echo "<td style='text-align:right;'>".mb_strtoupper($stud->oe_kurzbz).":</td> <td><input type='text' size='6' name='aufteilung_$help' onChange='summe_aufteilung()' id='aufteilung_$help' value='".number_format($anteil, 2, ",",".")."'> % <input type='hidden' name='oe_kurzbz_$help' value='$stud->oe_kurzbz'></td>\n";
-				$help++;
-				$anteil = 0;
-			}
-		}
-	}
-	echo "</tr>";
-	echo "<tfoot>\n";
-	echo '<tr>
-			<td><input type="hidden" name="anz_aufteilung" value="'.$help.'"></td>
-			<td></td>
-			<td></td>
-			<td></td>
-			<td></td>
-			<td></td>
-			<td></td>
-			<td></td>
-			<td></td>
-			<td colspan="2" style="text-align:right;">Summe:</td>
-			';
-	echo "<td><input type='text' size ='6' id='aufteilung_summe' name='aufteilung_summe' value ='".number_format($summe, 2, ",",".")."'>%</td>";
-	echo "</tr></tfoot>";
-	echo "</table>";
-	echo "</div>";
-	echo "<br><br></form>";
-	*/
-	/*
-	echo '
-		<script type="text/javascript">
-		var anz='.$help.';
-*/
-		/*
-		Berechnet die Prozentuelle Aufteilung
-		*/
-/*		function summe_aufteilung()
-		{
-			var i=0;
-			var aufteilung=0;
-			var summe = 0;
-
-			while(i<anz)
-			{
-				aufteilung =$("#aufteilung_"+i).val();
-				aufteilung=parseFloat(aufteilung);
-				summe = parseFloat(summe);
-				summe = summe + aufteilung;
-				i=i+1;
-			}
-			 document.getElementById("aufteilung_summe").value = parseFloat(summe).toFixed(2);
-		}
-		</script>';	*/
-}
-
-// ****** FUNKTIONEN ******* //
-
-/* nach functions.inc.php verschoben
-function isGMBHKostenstelle($kostenstelle_id) {
-	$kostenstelle = new wawi_kostenstelle();
-	$kostenstelle->load($kostenstelle_id);
-    if ($kostenstelle->oe_kurzbz == 'gmbh') return true;
-    $oe = new organisationseinheit();
-    $parents = $oe->getParents($oe->oe_kurzbz);
-    foreach ($parents as $oeRow)
-    {
-    	if ($oeRow->oe_kurzbz == 'gmbh') return true;
-    }
-    return false;
-}
-*/
 
 /**
  * Gibt eine Bestelldetail Zeile aus
  */
 function getDetailRow($i, $bestelldetail_id='', $sort='', $menge='', $ve='', $beschreibung='', $artikelnr='', $preisprove='', $mwst='', $brutto='', $bestell_id='', $pos='')
 {
-    global $basepath;
+	global $basepath;
 	$removeDetail ='';
 	$checkSave = "checkSave(".$i.");";
 	$checkRow = '';
@@ -2947,9 +2831,9 @@ function getDetailRow($i, $bestelldetail_id='', $sort='', $menge='', $ve='', $be
 	echo "<td><input type='text' size='5' name='ve_$i' id='ve_$i' maxlength='7' value='$ve' onfocus='$checkSave'></td>\n";
 	echo "<td><input type='text' size='70' name='beschreibung_$i' id='beschreibung_$i' value='$beschreibung' onblur='$checkRow' onfocus='$checkSave'></td>\n";
 	echo "<td><input type='text' size='15' name='artikelnr_$i' id='artikelnr_$i' maxlength='32' value='$artikelnr' onfocus='$checkSave'></td>\n";
-	echo "<td><input type='text'  size='15' class='number' name='preisprove_$i' id='preisprove_$i' maxlength='15' value='".sprintf("%01.2f",$preisprove)."' onblur='$checkRow $replaceKomma' onChange='calcBrutto($i);' onfocus='$checkSave'></td>\n";
-	echo "<td><input type='text'  size='8' class='number' name='mwst_$i' id='mwst_$i' maxlength='5' value='$mwst' onChange='calcBruttoNetto($i);' onfocus='$checkSave' onblur='checkUst($i); $replaceKomma'></td>\n";
-	echo "<td><input type='text'  size='10' class='number' name ='brutto_$i' id='brutto_$i' value='$brutto' onChange ='calcNetto($i);' onBlur='$replaceKomma' onfocus='$checkSave'></td>\n";
+	echo "<td><input type='text' size='15' class='number' name='preisprove_$i' id='preisprove_$i' maxlength='15' value='".sprintf("%01.2f",$preisprove)."' onblur='$checkRow $replaceKomma' onChange='calcBrutto($i);' onfocus='$checkSave'></td>\n";
+	echo "<td><input type='text' size='8' class='number' name='mwst_$i' id='mwst_$i' maxlength='5' value='$mwst' onChange='calcBruttoNetto($i);' onfocus='$checkSave' onblur='checkUst($i); $replaceKomma'></td>\n";
+	echo "<td><input type='text' size='10' class='number' name ='brutto_$i' id='brutto_$i' value='$brutto' onChange ='calcNetto($i);' onBlur='$replaceKomma' onfocus='$checkSave'></td>\n";
 	$detail_tag = new tags();
 	$detail_tag->GetTagsByBestelldetail($bestelldetail_id);
 	$help = $detail_tag->GetStringTags();
@@ -2957,39 +2841,25 @@ function getDetailRow($i, $bestelldetail_id='', $sort='', $menge='', $ve='', $be
 	echo "<script type='text/javascript'>
 		$(document).ready(function()
 		{
-			$('#detail_tag_'+$i).autocomplete({
-			source: 'wawi_autocomplete.php?work=detail_tags',
-			minChars:1,
-			response:function(event,ui)
+			$('#detail_tag_'+$i).autocomplete(
 			{
-				for(i in ui.content)
+				source: 'wawi_autocomplete.php?work=detail_tags',
+				minChars:1,
+				response:function(event,ui)
 				{
-					ui.content[i].value=ui.content[i].tag;
-					ui.content[i].label=ui.content[i].tag;
+					for(i in ui.content)
+					{
+						ui.content[i].value=ui.content[i].tag;
+						ui.content[i].label=ui.content[i].tag;
+					}
+				},
+				select: function(event, ui)
+				{
+					ui.item.value=ui.item.tag;
 				}
-			},
-			select: function(event, ui)
-			{
-				ui.item.value=ui.item.tag;
-			}
-		});
-	});
-	</script>";
-
-/*	echo "	<script type='text/javascript'>
-			$(document).ready(function()
-			{
-				$('#detail_tag_'+$i).autocomplete('wawi_autocomplete.php',
-				{
-					minChars:1,
-					matchSubset:1,matchContains:1,
-					width:500,
-					multiple: true,
-					multipleSeparator: '; ',
-					extraParams:{'work':'detail_tags', 'detail_id':'.$bestelldetail_id.'}
-				});
 			});
-			</script>"; */
+		});
+	</script>";
 
 	echo "<td><input type='text' size='10' name='detail_tag_$i' id='detail_tag_$i' value='$help' ></td>";
 	echo "<td><input type='hidden' size='20' name='bestelldetailid_$i' id='bestelldetailid_$i' value='$bestelldetail_id'></td>";
