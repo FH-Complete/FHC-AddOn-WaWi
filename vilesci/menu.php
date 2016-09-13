@@ -104,7 +104,7 @@ foreach($menu AS $m1)
 		$umbruch=true;
 		foreach($m1 AS $m2)
 		{
-			if (is_array($m2)  && isset($m2['name']))
+			if (is_array($m2) && isset($m2['name']))
 			{
 				if (isset($m2['permissions']) && !checkpermission($m2['permissions']))
 					continue;
@@ -127,7 +127,7 @@ foreach($menu AS $m1)
 
 				foreach($m2 AS $m3)
 				{
-					if (is_array($m3)  && isset($m3['name']))
+					if (is_array($m3) && isset($m3['name']))
 					{
 						if (isset($m3['permissions']) && !checkpermission($m3['permissions']))
 							continue;

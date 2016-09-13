@@ -35,9 +35,9 @@ if (isset($_POST['username']))
 	$passwort = $_POST['passwort'];
 
 	$hostname = $_SERVER['HTTP_HOST'];
-	
+
 	//Benutzername und Passwort werden überprüft
-	if (checkldapuser($username,$passwort)) 
+	if (checkldapuser($username,$passwort))
 	{
 		$_SESSION['user'] = $username;
 		$_SESSION['user_original'] = $username;
