@@ -58,15 +58,15 @@ if(count($kst_array)==0)
 	<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
 	<link rel="stylesheet" href="../../skin/wawi.css" type="text/css">
 	<link rel="stylesheet" href="../../../../skin/tablesort.css" type="text/css">
-		
-	<script type="text/javascript" src="../../../../include/js/jquery1.9.min.js"></script> 
-	<script type="text/javascript" src="../../../../include/js/jquery.metadata.js"></script> 
+
+	<script type="text/javascript" src="../../../../include/js/jquery1.9.min.js"></script>
+	<script type="text/javascript" src="../../../../include/js/jquery.metadata.js"></script>
 	<script type="text/javascript" src="../../../../include/js/jquery.tablesorter.js"></script>
 	<script type="text/javascript">
- 	function alleMarkieren(checked)
- 	{
- 	 	checkbox = $(':checkbox').prop('checked',checked);
- 	}
+	function alleMarkieren(checked)
+	{
+		checkbox = $(':checkbox').prop('checked',checked);
+	}
 	</script>
 </head>
 <body>
@@ -76,35 +76,35 @@ if(isset($_POST['show']))
 {
 	if(!isset($_POST['kst']))
 		die('Sie müssen mindestens eine Kostenstelle auswählen!<br> <a href="#Zurueck" onclick="javascript:history.back()">Zurück</a>');
-	
+
 	$db = new basis_db();
-	
+
 	//Vom Studiensemester
 	$geschaeftsjahr = $_POST['geschaeftsjahr'];
 	$gj= new geschaeftsjahr();
 	$gj->load($geschaeftsjahr);
-		
+
 	$kst_tags=array();
 	$tags_array=array();
 	$kstIN=$db->implode4SQL($_POST['kst']);
 	//Tabelle auf Basis der Bestellungen
-	$qry = "SELECT 
-				(menge*preisprove*(100+mwst)/100) as brutto, tbl_bestellung.bestellung_id, 
+	$qry = "SELECT
+				(menge*preisprove*(100+mwst)/100) as brutto, tbl_bestellung.bestellung_id,
 				tbl_bestellung.kostenstelle_id, tbl_bestelldetail.bestelldetail_id
-			FROM 
-				wawi.tbl_bestellung 
+			FROM
+				wawi.tbl_bestellung
 				JOIN wawi.tbl_bestelldetail USING(bestellung_id)
 			WHERE
-				tbl_bestellung.insertamum::date>='$gj->start' AND tbl_bestellung.insertamum::date<='$gj->ende' 
+				tbl_bestellung.insertamum::date>='$gj->start' AND tbl_bestellung.insertamum::date<='$gj->ende'
 				AND
 				(
 				bestellung_id in (SELECT bestellung_id FROM wawi.tbl_bestellungtag WHERE bestellung_id=tbl_bestellung.bestellung_id)
 				OR
 				bestelldetail_id in (SELECT bestelldetail_id FROM wawi.tbl_bestelldetailtag WHERE bestelldetail_id=tbl_bestelldetail.bestelldetail_id)
-				) 
+				)
 				AND kostenstelle_id IN($kstIN)
 			";
-	
+
 	if($result = $db->db_query($qry))
 	{
 		while($row = $db->db_fetch_object($result))
@@ -112,13 +112,13 @@ if(isset($_POST['show']))
 			//Bestelldetailtags laden
 			$tags = new tags();
 			$tags->GetTagsByBestelldetail($row->bestelldetail_id);
-			
+
 			if(count($tags->result)==0)
 			{
 				//Wenn kein Detailtag vorhanden ist, die Tags der Bestellung verwenden
 				$tags->GetTagsByBestellung($row->bestellung_id);
 			}
-			
+
 			foreach($tags->result as $tag)
 			{
 				if(!isset($tags_array[$tag->tag]))
@@ -127,34 +127,34 @@ if(isset($_POST['show']))
 					$kst_tags[$row->kostenstelle_id][$tag->tag]+=$row->brutto;
 				else
 					$kst_tags[$row->kostenstelle_id][$tag->tag]=$row->brutto;
-				
+
 			}
 		}
 	}
 	else
 		die('Fehler bei Datenbankzugriff');
-	
+
 	echo '<span style="font-size: small">Zeitraum: ',$datum_obj->formatDatum($gj->start,'d.m.Y'),' - ',$datum_obj->formatDatum($gj->ende,'d.m.Y').'</span>';
 	echo '<H2>Bestellungen</H2>';
-	
+
 	draw_tag_table($tags_array, $kst_tags,'bestellung', $gj);
-	
+
 	//Tabelle auf Basis der Rechnungen
 	$kst_tags=array();
 	$tags_array=array();
-	$qry = "SELECT 
-				(betrag*(100+mwst)/100) as brutto, tbl_bestellung.bestellung_id, 
+	$qry = "SELECT
+				(betrag*(100+mwst)/100) as brutto, tbl_bestellung.bestellung_id,
 				tbl_bestellung.kostenstelle_id
-			FROM 
-				wawi.tbl_bestellung 
+			FROM
+				wawi.tbl_bestellung
 				JOIN wawi.tbl_rechnung USING(bestellung_id)
 				JOIN wawi.tbl_rechnungsbetrag USING(rechnung_id)
 			WHERE
-				tbl_bestellung.insertamum::date>='$gj->start' AND tbl_bestellung.insertamum::date<='$gj->ende' 
+				tbl_bestellung.insertamum::date>='$gj->start' AND tbl_bestellung.insertamum::date<='$gj->ende'
 				AND bestellung_id in (SELECT bestellung_id FROM wawi.tbl_bestellungtag WHERE bestellung_id=tbl_bestellung.bestellung_id)
 				AND kostenstelle_id IN ($kstIN)
 			";
-	
+
 	if($result = $db->db_query($qry))
 	{
 		while($row = $db->db_fetch_object($result))
@@ -162,7 +162,7 @@ if(isset($_POST['show']))
 			//Bestelldetailtags laden
 			$tags = new tags();
 			$tags->GetTagsByBestellung($row->bestellung_id);
-			
+
 			foreach($tags->result as $tag)
 			{
 				if(!isset($tags_array[$tag->tag]))
@@ -171,25 +171,25 @@ if(isset($_POST['show']))
 					$kst_tags[$row->kostenstelle_id][$tag->tag]+=$row->brutto;
 				else
 					$kst_tags[$row->kostenstelle_id][$tag->tag]=$row->brutto;
-				
+
 			}
 		}
 	}
 	else
 		die('Fehler bei Datenbankzugriff');
-	
+
 	echo '<H2>Rechnungen</H2>';
 	draw_tag_table($tags_array, $kst_tags,'rechnung', $gj);
 }
 else
 {
 	$kostenstelle = new wawi_kostenstelle();
-	
+
 	$kostenstelle->loadArray($kst_array, 'bezeichnung',false);
 	echo 'Bitte markieren sie die Kostenstellen die auf der Auswertung aufscheinen sollen:<br /><br />
 	<form action="'.$_SERVER['PHP_SELF'].'" method="POST">
 		<table>
-		
+
 		<tbody>';
 	$anzahl=0;
 	$gesamt = count($kst_array);
@@ -212,7 +212,7 @@ else
 		$anzahl++;
 	}
 	echo '</table></td></tr>';
-	
+
 	echo '</tbody>
 	</table>
 	<br />
@@ -227,16 +227,16 @@ else
 	<SELECT name="geschaeftsjahr" >';
 	$gj = new geschaeftsjahr();
 	$geschaeftsjahr = $gj->getakt();
-	
+
 	$gj->getAll();
 
 	foreach ($gj->result as $gjahr)
 	{
 		if($gjahr->geschaeftsjahr_kurzbz==$geschaeftsjahr)
 			$selected='selected';
-		else 
+		else
 			$selected='';
-		echo '<option value="'.$gjahr->geschaeftsjahr_kurzbz.'" '.$selected.'>'.$gjahr->geschaeftsjahr_kurzbz.'</option>';				
+		echo '<option value="'.$gjahr->geschaeftsjahr_kurzbz.'" '.$selected.'>'.$gjahr->geschaeftsjahr_kurzbz.'</option>';
 	}
 	echo '
 	</SELECT>
@@ -260,24 +260,24 @@ function draw_tag_table($tags_array, $kst_tags, $table_id, $gj)
 	ksort($tags_array);
 	$vondatum = $gj->start;
 	$endedatum = $gj->ende;
-	
+
 	echo '
 	<script type="text/javascript">
-	$(document).ready(function() 
+	$(document).ready(function()
 	{
 		$("#'.$table_id.'").tablesorter(
 		{
 			sortList: [[0,0]],
 			widgets: [\'zebra\']
 		});
- 	});
- 	</script>
+	});
+	</script>
 	<table class="tablesorter" id="'.$table_id.'">
 		<thead>
 			<tr>
 				<th>Kostenstelle</th>';
 	foreach(array_keys($tags_array) as $tags)
-	{		
+	{
 		echo '<th>',$tags,'</th>';
 	}
 	echo '
@@ -286,11 +286,11 @@ function draw_tag_table($tags_array, $kst_tags, $table_id, $gj)
 		</thead>
 	<tbody>';
 
-	
+
 	foreach($kst_tags as $kst=>$tags_value)
 	{
 		$kst_summe=0;
-		
+
 		$kostenstelle = new wawi_kostenstelle();
 		$kostenstelle->load($kst);
 		echo '<tr>';
@@ -299,7 +299,7 @@ function draw_tag_table($tags_array, $kst_tags, $table_id, $gj)
 		else
 			$class='class="inaktiv"';
 		echo '<td '.$class.'>'.$kostenstelle->bezeichnung.'</td>';
-		
+
 		foreach(array_keys($tags_array) as $tags)
 		{
 			if(isset($tags_value[$tags]))
@@ -313,7 +313,7 @@ function draw_tag_table($tags_array, $kst_tags, $table_id, $gj)
 				echo '</td>';
 				//Kostenstellensumme berechnen
 				$kst_summe += $tags_value[$tags];
-				
+
 				//Tagsumme berechnen
 				$tags_array[$tags]+=$tags_value[$tags];
 			}
@@ -324,9 +324,9 @@ function draw_tag_table($tags_array, $kst_tags, $table_id, $gj)
 		echo '</tr>';
 	}
 	echo '</tbody>
-		 <tfoot>
-		 	<tr>
-		 		<th>Summe</th>';
+		<tfoot>
+			<tr>
+				<th>Summe</th>';
 	$gesamt_summe=0;
 	foreach($tags_array as $tags=>$summe)
 	{

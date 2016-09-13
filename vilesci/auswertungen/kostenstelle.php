@@ -65,18 +65,18 @@ $datum_obj = new datum();
 
 	<script type="text/javascript" src="../../../../include/js/jquery1.9.min.js"></script>
 	<script type="text/javascript">
- 	function alleMarkieren(checked)
- 	{
- 	 	inputs = document.getElementsByTagName('input');
+	function alleMarkieren(checked)
+	{
+		inputs = document.getElementsByTagName('input');
 
- 	 	foreach(i in inputs)
- 	 	{
- 	 	 	if(i.type=='checkbox')
- 	 	 	{
- 	 	 	 	i.checked=checked;
- 	 	 	}
- 	 	}
- 	}
+		foreach(i in inputs)
+		{
+			if(i.type=='checkbox')
+			{
+				i.checked=checked;
+			}
+		}
+	}
 	</script>
 </head>
 <body>
@@ -221,7 +221,7 @@ $datum_obj = new datum();
 				sortList: [[1,0]],
 				widgets: ["zebra"]
 			});
-	 	});
+		});
 	 </script>';
 	echo '<table id="myTable" class="tablesorter" style="width: auto;">
 			<thead>
