@@ -53,38 +53,38 @@ $datum_obj = new datum();
 <head>
 	<title>WaWi - Firmen zuletzt angelegt - Auswertung</title>
 	<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
-	
+
 	<link rel="stylesheet" href="../../../../skin/jquery.css" type="text/css">
 	<link rel="stylesheet" href="../../../../skin/tablesort.css" type="text/css">
 	<link rel="stylesheet" href="../../../../skin/fhcomplete.css" type="text/css">
 	<link rel="stylesheet" href="../../skin/wawi.css" type="text/css">
-	
-			
-	<script type="text/javascript" src="../../../../include/js/jquery1.9.min.js"></script>	 
-	
+
+
+	<script type="text/javascript" src="../../../../include/js/jquery1.9.min.js"></script>
+
 </head>
 <body>
 <h1>Bericht - Firmen angelegt innerhalb der letzten 7 Tage</h1>
 <?php
 
 	$db = new basis_db();
-	
+
 	$firma = new firma();
 	if($firma->getLatestChanges())
 	{
-	
+
 		echo '<br /><br />
 				<script type="text/javascript">
-				$(document).ready(function() 
-				{ 
-	    			$("#myTable").tablesorter(
+				$(document).ready(function()
+				{
+					$("#myTable").tablesorter(
 					{
 						sortList: [[2,0]],
 						widgets: ["zebra"]
 					});
-				});				
+				});
 				</script>
-				
+
 				<table id="myTable" class="tablesorter">
 				<thead>
 				<tr>
@@ -95,8 +95,8 @@ $datum_obj = new datum();
 				</tr>
 				</thead>
 				<tbody>';
-			
-			
+
+
 		foreach($firma->result as $row)
 		{
 			echo '<tr>';
@@ -106,7 +106,7 @@ $datum_obj = new datum();
 			echo '<td>',$row->strasse,' ',$row->plz,' ',$row->ort,'</td>';
 			echo '</tr>';
 		}
-		
+
 		echo '</tbody></table>';
 	}
 	else

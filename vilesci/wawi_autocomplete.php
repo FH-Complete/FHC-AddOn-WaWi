@@ -38,7 +38,7 @@
 	require_once(dirname(__FILE__).'/../../../include/ort.class.php');
 	require_once(dirname(__FILE__).'/../../../include/bankverbindung.class.php');
 
-  	if (!$uid = get_uid())
+	if (!$uid = get_uid())
 		die('Keine UID gefunden:'.$uid.' !  <a href="javascript:history.back()">Zur&uuml;ck</a>');
 
 	$rechte = new benutzerberechtigung();
@@ -54,9 +54,9 @@
 // ------------------------------------------------------------------------------------------
 // Parameter Aufruf uebernehmen
 // ------------------------------------------------------------------------------------------
-  	$debug=trim(isset($_REQUEST['debug']) ? $_REQUEST['debug']:false);
+	$debug=trim(isset($_REQUEST['debug']) ? $_REQUEST['debug']:false);
 
-  	$work=trim(isset($_REQUEST['work'])?$_REQUEST['work']:(isset($_REQUEST['ajax'])?$_REQUEST['ajax']:false));
+	$work=trim(isset($_REQUEST['work'])?$_REQUEST['work']:(isset($_REQUEST['ajax'])?$_REQUEST['ajax']:false));
 	$work=strtolower($work);
 
 // ------------------------------------------------------------------------------------------
