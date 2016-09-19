@@ -16,12 +16,13 @@
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307, USA.
  *
  * Authors: Christian Paminger <christian.paminger@technikum-wien.at>,
- *          Andreas Oesterreicher <andreas.oesterreicher@technikum-wien.at> and
- *          Karl Burkhart <burkhart@technikum-wien.at>.
+ *          Andreas Oesterreicher <andreas.oesterreicher@technikum-wien.at>,
+ *          Karl Burkhart <burkhart@technikum-wien.at> and
+ *          Andreas Moik <moik@technikum-wien.at>.
  */
 
 
-require_once(dirname(__FILE__).'/../../../config/wawi.config.inc.php');
+require_once(dirname(__FILE__).'/../config.inc.php');
 require_once('auth.php');
 require_once('../include/wawi_kostenstelle.class.php');
 require_once('../include/wawi_benutzerberechtigung.class.php');
@@ -33,11 +34,11 @@ require_once(dirname(__FILE__).'/../../../include/benutzer.class.php');
 <head>
 	<title>WaWi Kostenstellen - Berechtigungen</title>	
 	<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
-	<link rel="stylesheet" href="../skin/tablesort.css" type="text/css"/>
+	<link rel="stylesheet" href="../../../skin/tablesort.css" type="text/css"/>
 	<link rel="stylesheet" href="../skin/wawi.css" type="text/css"/>
 
 	<script type="text/javascript" src="../../../include/js/jquery1.9.min.js"></script>	
-	<link rel="stylesheet" type="text/css" href="../skin/jquery-ui-1.9.2.custom.min.css"/> 
+	<link rel="stylesheet" type="text/css" href="../../../skin/jquery-ui-1.9.2.custom.min.css"/>
 
 </head>
 <body>
@@ -52,7 +53,7 @@ $rechte->getBerechtigungen($uid);
 if(isset($_GET['kostenstelle_id']))
 {
 	$kostenstelle_id = $_GET['kostenstelle_id'];
-	
+
 	if($rechte->isBerechtigt('wawi/rechnung',null, null, $kostenstelle_id)
 	|| $rechte->isBerechtigt('wawi/bestellung',null, null, $kostenstelle_id)
 	|| $rechte->isBerechtigt('wawi/freigabe',null, null, $kostenstelle_id))
@@ -60,13 +61,13 @@ if(isset($_GET['kostenstelle_id']))
 		$kst = new wawi_kostenstelle();
 		if(!$kst->load($kostenstelle_id))
 			die('Fehler beim Laden der Kostenstelle');
-		
+
 		echo '<h1>Berechtigungen - Kostenstelle '.$kst->bezeichnung.'</h1>';
 		echo '<a href="berechtigung.php">Zurück</a>';
 		$rechte->getKostenstelleUser($kostenstelle_id);
-		
+
 		$rights = array();
-		
+
 		function getArt($art)
 		{
 			$value=array();
@@ -80,20 +81,18 @@ if(isset($_GET['kostenstelle_id']))
 				$value['delete']=true;
 			return $value;
 		}
-		
+
 		foreach($rechte->berechtigungen as $row)
 		{
-			
 			if(!isset($rights[$row->uid]))
 			{
 				$benutzer = new benutzer();
 				$benutzer->load($row->uid);
-	
+
 				if($benutzer->bnaktiv==true && in_array($row->berechtigung_kurzbz, array('wawi/rechnung','wawi/bestellung','wawi/freigabe')))
 				{
 					$rights[$row->uid]['vorname']=$benutzer->vorname;
 					$rights[$row->uid]['nachname']=$benutzer->nachname;
-					
 				}
 				else
 					continue;
@@ -105,19 +104,19 @@ if(isset($_GET['kostenstelle_id']))
 				case 'wawi/freigabe': $rights[$row->uid]['freigabe']=true; break;
 				default: break;
 			}
-			
+
 		}
 		echo '
 		<script type="text/javascript">
-			$(document).ready(function() 
-				{ 
-				    $("#myTable").tablesorter(
+			$(document).ready(function()
+				{
+					$("#myTable").tablesorter(
 					{
 						sortList: [[0,0]],
 						widgets: ["zebra"]
-					}); 
-				} 
-			); 			
+					});
+				}
+			);
 		</script>';
 		echo '<table class="tablesorter" id="myTable" style="width:auto">
 			<thead>
@@ -155,11 +154,11 @@ if(isset($_GET['kostenstelle_id']))
 			echo '<td>'.(isset($user1['freigabe'])?'X':'').'</td>';
 			echo '</tr>';
 		}
-		
+
 		echo '</tbody></table>';
 	}
 	else
-		die('Sie haben keine Berechtigung!'); 
+		die('Sie haben keine Berechtigung!');
 }
 else
 {
@@ -171,23 +170,23 @@ else
 	$kst_array = array_unique($kst_array);
 	
 	echo '<h1>Kostenstellen - Berechtigungen</h1>';
-	
+
 	if(count($kst_array)==0)
 		die('Sie benoetigen eine Kostenstellenberechtigung um diese Seite anzuzeigen');
-	
+
 	$kst = new wawi_kostenstelle();
 	$kst->loadArray($kst_array);
 	echo '
 	<script type="text/javascript">
-		$(document).ready(function() 
-			{ 
-			    $("#myTable").tablesorter(
+		$(document).ready(function()
+			{
+				$("#myTable").tablesorter(
 				{
 					sortList: [[1,0]],
 					widgets: ["zebra"]
-				}); 
-			} 
-		); 			
+				});
+			}
+		);
 	</script>';
 	echo '<table id="myTable" class="tablesorter" style="width:auto">
 		<thead>
@@ -210,6 +209,6 @@ else
 		</table>';
 }
 
-echo '<br><br><br><br><br><br>';	
+echo '<br><br><br><br><br><br>';
 
 ?>

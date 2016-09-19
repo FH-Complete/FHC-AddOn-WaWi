@@ -16,11 +16,12 @@
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307, USA.
  *
  * Authors: Christian Paminger <christian.paminger@technikum-wien.at>,
- *          Andreas Oesterreicher <andreas.oesterreicher@technikum-wien.at> and
- *          Karl Burkhart <karl.burkhart@technikum-wien.at>.
+ *          Andreas Oesterreicher <andreas.oesterreicher@technikum-wien.at>,
+ *          Karl Burkhart <burkhart@technikum-wien.at> and
+ *          Andreas Moik <moik@technikum-wien.at>.
  */
 $basepath = dirname(dirname(dirname(dirname($_SERVER['SCRIPT_FILENAME'])))).DIRECTORY_SEPARATOR;
-require_once(dirname(__FILE__).'/../../../config/wawi.config.inc.php');
+require_once(dirname(__FILE__).'/../config.inc.php');
 require_once(dirname(__FILE__).'/../include/wawi_konto.class.php');
 require_once(dirname(__FILE__).'/../include/functions.inc.php');
 
@@ -34,9 +35,9 @@ if (isset($_POST['username']))
 	$passwort = $_POST['passwort'];
 
 	$hostname = $_SERVER['HTTP_HOST'];
-	
+
 	//Benutzername und Passwort werden überprüft
-	if (checkldapuser($username,$passwort)) 
+	if (checkldapuser($username,$passwort))
 	{
 		$_SESSION['user'] = $username;
 		$_SESSION['user_original'] = $username;
@@ -63,7 +64,7 @@ if (isset($_POST['username']))
 <head>
 	<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
 	<title>Login - Bestellwesen Technikum Wien V 2.0.0</title>
-	<link rel="stylesheet" href="../skin/fhcomplete.css" type="text/css">
+	<link rel="stylesheet" href="../../../skin/fhcomplete.css" type="text/css">
 	<link rel="stylesheet" href="../skin/wawi.css" type="text/css">
 </head>
 <body onload="document.getElementById('username').focus();">

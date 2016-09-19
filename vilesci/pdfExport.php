@@ -98,30 +98,31 @@ $output = 'pdf';
 $model = bestellungReadModel((int)$_GET['id']);
 //var_dump($model);die();
 $addonpath = dirname(dirname($_SERVER['SCRIPT_FILENAME'])).DIRECTORY_SEPARATOR;
-$odt = $addonpath.'system/vorlage_zip/Bestellschein.odt';  
-$contentTemplate = $addonpath.'system/vorlage_zip/Bestellschein.content.php';  
+$odt = $addonpath.'system/vorlage_zip/Bestellschein.odt';
+$contentTemplate = $addonpath.'system/vorlage_zip/Bestellschein.content.php';
 $styleTemplate = $addonpath.'system/vorlage_zip/Bestellschein.styles.php'; 
 $logoGmbH = ($xsl_oe_kurzbz=='gmbh'?$addonpath.'system/vorlage_zip/Logo_GMBH.png':null);
 $converter = new BestellungPDFConverter();
 $tempPdfName = $converter->convert2pdf($model, $odt, $contentTemplate, !$model->lieferant->deutsch, $styleTemplate, $logoGmbH);
 
 if ($tempPdfName !== false)
-{    
-    if (!file_exists($tempPdfName))
-    {
-        throw new RuntimeException("PDF nicht gefunden: ".$tempPdfName);
-    }
-    $fsize = filesize($tempPdfName);
-    $handle = fopen($tempPdfName,'r');
-    if ($handle !== false) {
-        header('Content-type: application/pdf');
-        header('Content-Disposition: inline; filename="Bestellschein_'.$model->bestell_nr.'.pdf"');
-        header('Content-Length: '.$fsize);
-        while (!feof($handle))
-        {
-            echo fread($handle, 8192);
-        }
-        fclose($handle);   
-    }
+{
+	if (!file_exists($tempPdfName))
+	{
+		throw new RuntimeException("PDF nicht gefunden: ".$tempPdfName);
+	}
+	$fsize = filesize($tempPdfName);
+	$handle = fopen($tempPdfName,'r');
+	if ($handle !== false)
+	{
+		header('Content-type: application/pdf');
+		header('Content-Disposition: inline; filename="Bestellschein_'.$model->bestell_nr.'.pdf"');
+		header('Content-Length: '.$fsize);
+		while (!feof($handle))
+		{
+			echo fread($handle, 8192);
+		}
+		fclose($handle);
+	}
 }
 ?>

@@ -16,8 +16,9 @@
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307, USA.
  *
  * Authors: Christian Paminger <christian.paminger@technikum-wien.at>,
- *          Andreas Oesterreicher <andreas.oesterreicher@technikum-wien.at> and
- *          Karl Burkhart <burkhart@technikum-wien.at>.
+ *          Andreas Oesterreicher <andreas.oesterreicher@technikum-wien.at>,
+ *          Karl Burkhart <burkhart@technikum-wien.at> and
+ *          Andreas Moik <moik@technikum-wien.at>.
  */
 
 	header( 'Expires:  -1' );
@@ -26,7 +27,7 @@
 	header( 'Pragma: no-cache' );
 	header( 'Content-Type: text/html;charset=UTF-8');
 
-	require_once(dirname(__FILE__).'/../../../config/wawi.config.inc.php');
+	require_once(dirname(__FILE__).'/../config.inc.php');
 	require_once('auth.php');
 	require_once(dirname(__FILE__).'/../../../include/functions.inc.php');
 	require_once('../include/wawi_benutzerberechtigung.class.php');
@@ -37,7 +38,7 @@
 	require_once(dirname(__FILE__).'/../../../include/ort.class.php');
 	require_once(dirname(__FILE__).'/../../../include/bankverbindung.class.php');
 
-  	if (!$uid = get_uid())
+	if (!$uid = get_uid())
 		die('Keine UID gefunden:'.$uid.' !  <a href="javascript:history.back()">Zur&uuml;ck</a>');
 
 	$rechte = new benutzerberechtigung();
@@ -53,9 +54,9 @@
 // ------------------------------------------------------------------------------------------
 // Parameter Aufruf uebernehmen
 // ------------------------------------------------------------------------------------------
-  	$debug=trim(isset($_REQUEST['debug']) ? $_REQUEST['debug']:false);
+	$debug=trim(isset($_REQUEST['debug']) ? $_REQUEST['debug']:false);
 
-  	$work=trim(isset($_REQUEST['work'])?$_REQUEST['work']:(isset($_REQUEST['ajax'])?$_REQUEST['ajax']:false));
+	$work=trim(isset($_REQUEST['work'])?$_REQUEST['work']:(isset($_REQUEST['ajax'])?$_REQUEST['ajax']:false));
 	$work=strtolower($work);
 
 // ------------------------------------------------------------------------------------------

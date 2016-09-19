@@ -16,11 +16,12 @@
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307, USA.
  *
  * Authors: Christian Paminger <christian.paminger@technikum-wien.at>,
- *          Andreas Oesterreicher <andreas.oesterreicher@technikum-wien.at> and
- *          Karl Burkhart <karl.burkhart@technikum-wien.at>.
+ *          Andreas Oesterreicher <andreas.oesterreicher@technikum-wien.at>,
+ *          Karl Burkhart <burkhart@technikum-wien.at> and
+ *          Andreas Moik <moik@technikum-wien.at>.
  */
 
-require_once dirname(__FILE__).'/../../../config/wawi.config.inc.php';
+require_once(dirname(__FILE__).'/../config.inc.php');
 require_once('auth.php');
 require_once('../include/functions.inc.php');
 require_once('../include/wawi_benutzerberechtigung.class.php');
@@ -51,13 +52,15 @@ echo '<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www
 
 <body class="menue">
 <h3><a href="home.php" target="content">WaWi Home</a></h3>
-<a href="WaWi.pdf" target="_blank"><img src="../skin/images/pdfpic.gif" /> Handbuch</a>
+<a href="wawi.pdf" target="_blank"><img src="../../../skin/images/pdfpic.gif" /> PDF Handbuch</a>
+<br>
+<a href="http://fhcomplete.technikum-wien.at/dokuwiki/doku.php?id=wawi:allgemeines" target="_blank"><img src="../../../skin/images/help.png" height="15px"/> Online Handbuch</a>
 <hr>';
 
 function checkpermission($permissions)
 {
 	global $berechtigung;
-	
+
 	$permission=false;
 	foreach ($permissions as $perm)
 	{
@@ -78,14 +81,14 @@ foreach($menu AS $m1)
 	{
 		if (isset($m1['permissions']) && !checkpermission($m1['permissions']))
 			continue;
-		
+
 		if (isset($m1['link']))
 			echo '<a href="'.$m1['link'].'" ';
 		if (isset($m1['target']))
 			echo 'target="'.$m1['target'].'" ';
 		if (isset($m1['link']))
 			echo '>';
-		
+
 		if (isset($m1['name']) && !isset($m1['link']) )
 		{
 			if($umbruch)
@@ -94,21 +97,21 @@ foreach($menu AS $m1)
 		}
 		else
 			echo $m1['name'];
-			
+
 		if (isset($m1['link']))
 			echo '</a>';
 		echo '<br />';
 		$umbruch=true;
 		foreach($m1 AS $m2)
 		{
-			if (is_array($m2)  && isset($m2['name']))
+			if (is_array($m2) && isset($m2['name']))
 			{
 				if (isset($m2['permissions']) && !checkpermission($m2['permissions']))
 					continue;
-				
+
 				if($m2['name']!='')
 				{
-					echo "\n\t\t".'<img title="'.$m2['name'].'" src="../skin/images/bullet_arrow_down.png" alt="page go" border="0">&nbsp;';
+					echo "\n\t\t".'<img title="'.$m2['name'].'" src="../../../skin/images/bullet_arrow_down.png" alt="page go" border="0">&nbsp;';
 					if (isset($m2['link']))
 						echo '<a href="'.$m2['link'].'" ';
 					if (isset($m2['target']))
@@ -121,14 +124,14 @@ foreach($menu AS $m1)
 						echo '</a><br>';
 					$umbruch=false;
 				}
-			
+
 				foreach($m2 AS $m3)
 				{
-					if (is_array($m3)  && isset($m3['name']))
+					if (is_array($m3) && isset($m3['name']))
 					{
 						if (isset($m3['permissions']) && !checkpermission($m3['permissions']))
 							continue;
-						echo "\n\t\t&nbsp;&nbsp;&nbsp;".'<img title="'.$m3['name'].'" src="../skin/images/bullet_go.png" alt="page go" border="0">&nbsp;';
+						echo "\n\t\t&nbsp;&nbsp;&nbsp;".'<img title="'.$m3['name'].'" src="../../../skin/images/bullet_go.png" alt="page go" border="0">&nbsp;';
 						if (isset($m3['link']))
 							echo '<a href="'.$m3['link'].'" ';
 						if (isset($m3['target']))
@@ -145,7 +148,7 @@ foreach($menu AS $m1)
 				echo '<br />';
 			}
 		}
-		
+
 
 			echo '<br>';
 	}
@@ -174,7 +177,7 @@ if($user!=$user_original)
 }
 
 // Formular zum Wechseln des Benutzers anzeigen wenn berechtigt
-/*
+
 if($berechtigung_orig->isBerechtigt('system/loginasuser'))
 {
 	echo '<tr bgcolor="#c0cce0" >
@@ -186,7 +189,7 @@ if($berechtigung_orig->isBerechtigt('system/loginasuser'))
 				</form>
 			</td>
 		</tr>';
-} */
+}
 echo '
 	</table>
 </p><br>

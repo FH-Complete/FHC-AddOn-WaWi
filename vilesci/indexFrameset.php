@@ -16,10 +16,11 @@
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307, USA.
  *
  * Authors: Christian Paminger <christian.paminger@technikum-wien.at>,
- *          Andreas Oesterreicher <andreas.oesterreicher@technikum-wien.at> and
- *          Karl Burkhart <karl.burkhart@technikum-wien.at>.
+ *          Andreas Oesterreicher <andreas.oesterreicher@technikum-wien.at>,
+ *          Karl Burkhart <burkhart@technikum-wien.at> and
+ *          Andreas Moik <moik@technikum-wien.at>.
  */
-require_once dirname(__FILE__).'/../../../config/wawi.config.inc.php';
+require_once(dirname(__FILE__).'/../config.inc.php');
 require_once('auth.php');
 
 $menu = isset($_GET['menu'])?$_GET['menu']:'menu.php';
@@ -47,14 +48,14 @@ echo '<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Frameset//EN" "http://www.w3.
 	<title>WaWi - Warenwirtschaft</title>
 </head>
 	<frameset cols="220,*" framespacing="1" border="1">
-	  <frame src="'.$menu.'" name="menu" frameborder="0"/>
-	  <frame src="'.$content.'" name="content" frameborder="0"/>
-	  <noframes>
-	    <body>
-	      <h1>Error</h1>
-	      <p>Ihr Browser unterstuetzt leider keine Frames</p>
-	    </body>
-	  </noframes>
+		<frame src="'.$menu.'" name="menu" frameborder="0"/>
+		<frame src="'.$content.'" name="content" frameborder="0"/>
+		<noframes>
+			<body>
+				<h1>Error</h1>
+				<p>Ihr Browser unterstuetzt leider keine Frames</p>
+			</body>
+		</noframes>
 	</frameset>
 </html>
 ';

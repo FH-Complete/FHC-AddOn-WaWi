@@ -16,14 +16,15 @@
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307, USA.
  *
  * Authors: Christian Paminger <christian.paminger@technikum-wien.at>,
- *          Andreas Oesterreicher <andreas.oesterreicher@technikum-wien.at> and
- *          Karl Burkhart <karl.burkhart@technikum-wien.at>.
+ *          Andreas Oesterreicher <andreas.oesterreicher@technikum-wien.at>,
+ *          Karl Burkhart <burkhart@technikum-wien.at> and
+ *          Andreas Moik <moik@technikum-wien.at>.
  */
 /**
  * Auswertung der Bestellungen und Rechnungen auf Kostenstellen
  */
 
-require_once(dirname(__FILE__).'/../../../../config/wawi.config.inc.php');
+require_once(dirname(__FILE__).'/../../config.inc.php');
 require_once('../auth.php');
 require_once(dirname(__FILE__).'/../../include/wawi_benutzerberechtigung.class.php');
 require_once(dirname(__FILE__).'/../../../../include/functions.inc.php');
@@ -52,38 +53,38 @@ $datum_obj = new datum();
 <head>
 	<title>WaWi - Firmen zuletzt angelegt - Auswertung</title>
 	<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
-	
-	<link rel="stylesheet" href="../../skin/jquery.css" type="text/css">
-	<link rel="stylesheet" href="../../skin/tablesort.css" type="text/css">
-	<link rel="stylesheet" href="../../skin/fhcomplete.css" type="text/css">
+
+	<link rel="stylesheet" href="../../../../skin/jquery.css" type="text/css">
+	<link rel="stylesheet" href="../../../../skin/tablesort.css" type="text/css">
+	<link rel="stylesheet" href="../../../../skin/fhcomplete.css" type="text/css">
 	<link rel="stylesheet" href="../../skin/wawi.css" type="text/css">
-	
-			
-	<script type="text/javascript" src="../../../../include/js/jquery1.9.min.js"></script>	 
-	
+
+
+	<script type="text/javascript" src="../../../../include/js/jquery1.9.min.js"></script>
+
 </head>
 <body>
 <h1>Bericht - Firmen angelegt innerhalb der letzten 7 Tage</h1>
 <?php
 
 	$db = new basis_db();
-	
+
 	$firma = new firma();
 	if($firma->getLatestChanges())
 	{
-	
+
 		echo '<br /><br />
 				<script type="text/javascript">
-				$(document).ready(function() 
-				{ 
-	    			$("#myTable").tablesorter(
+				$(document).ready(function()
+				{
+					$("#myTable").tablesorter(
 					{
 						sortList: [[2,0]],
 						widgets: ["zebra"]
 					});
-				});				
+				});
 				</script>
-				
+
 				<table id="myTable" class="tablesorter">
 				<thead>
 				<tr>
@@ -94,8 +95,8 @@ $datum_obj = new datum();
 				</tr>
 				</thead>
 				<tbody>';
-			
-			
+
+
 		foreach($firma->result as $row)
 		{
 			echo '<tr>';
@@ -105,7 +106,7 @@ $datum_obj = new datum();
 			echo '<td>',$row->strasse,' ',$row->plz,' ',$row->ort,'</td>';
 			echo '</tr>';
 		}
-		
+
 		echo '</tbody></table>';
 	}
 	else

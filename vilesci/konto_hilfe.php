@@ -8,7 +8,7 @@
  *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
@@ -16,7 +16,7 @@
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307, USA.
  */
 
-require_once dirname(__FILE__).'/../../../config/wawi.config.inc.php';
+require_once(dirname(__FILE__).'/../config.inc.php');
 require_once '../include/wawi_konto.class.php';
 $konto = new wawi_konto(); 
 if (!$konto->getAll(true, 'kontonr ASC'))
@@ -29,27 +29,31 @@ $result = $konto->result;
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
 <title>Info zu den Konten</title>
 <style>
-body {
+body
+{
 	font-family: "Arial", sans-serif;
-    background-color: white;
+	background-color: white;
 }
 
-dt {
-    font-weight:bold;
-} 
-dd {
+dt
+{
+	font-weight:bold;
+}
+dd
+{
 	font-weight: normal;
 }
 </style>
 </head>
 <body>
-    <dl>
-<?php
-	foreach ($result as $r) {
-		echo '<dt>'.$r->kurzbz.'</dt>';
-		echo '<dd>'.$r->hilfe.'</dd>';
-	}
-?>      
+	<dl>
+	<?php
+		foreach ($result as $r)
+		{
+			echo '<dt>'.$r->kurzbz.'</dt>';
+			echo '<dd>'.$r->hilfe.'</dd>';
+		}
+	?>
 	</dl>
 
 

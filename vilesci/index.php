@@ -16,7 +16,7 @@
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307, USA.
  *
  */
-require_once dirname(__FILE__).'/../../../config/wawi.config.inc.php';
+require_once(dirname(__FILE__).'/../config.inc.php');
 require_once('auth.php');
 require_once dirname(__FILE__).'/../../../include/functions.inc.php';
 require_once dirname(__FILE__).'/../../../include/benutzerberechtigung.class.php';
@@ -27,19 +27,19 @@ $rechte->getBerechtigungen($uid);
 
 if(!$rechte->isBerechtigt('addon/wawi'))
 {
-        echo '<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN"
-        "http://www.w3.org/TR/html4/strict.dtd">
-        <html>
-        <head>
-                <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
-                <link rel="stylesheet" href="../../../skin/fhcomplete.css" type="text/css">
-                <link rel="stylesheet" href="../../../skin/vilesci.css" type="text/css">
-                <title>Template</title>
-        </head>
-        <body>
-        <h1>WAWI</h1>';
+	echo '<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN"
+	"http://www.w3.org/TR/html4/strict.dtd">
+	<html>
+	<head>
+		<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+		<link rel="stylesheet" href="../../../skin/fhcomplete.css" type="text/css">
+		<link rel="stylesheet" href="../../../skin/vilesci.css" type="text/css">
+		<title>Template</title>
+	</head>
+	<body>
+		<h1>WAWI</h1>';
 	die('Sie haben keine Berechtigung fuer diese Seite');
 }
-    header('Location: indexFrameset.php');
+header('Location: indexFrameset.php');
 //echo '<a href="indexFrameset.php">Addon WAWI starten</a>';
 ?>
