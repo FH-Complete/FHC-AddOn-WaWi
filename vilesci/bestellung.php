@@ -814,7 +814,7 @@ elseif($aktion == 'new')
 		echo '	<script type="text/javascript">
 		function FensterOeffnen (adresse)
 		{
-			MeinFenster = window.open(adresse, "Info", "width=600,height=500,left=100,top=200");
+			MeinFenster = window.open(adresse, "Info", "scrollbars=1,width=600,height=500,left=100,top=200");
 			MeinFenster.focus();
 		}
 		</script>';
