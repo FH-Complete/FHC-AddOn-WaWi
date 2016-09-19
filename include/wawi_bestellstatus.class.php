@@ -167,7 +167,7 @@ class wawi_bestellstatus extends basis_db
 				FROM wawi.tbl_bestellung_bestellstatus as bestellstatus
 				WHERE 
 					bestellung_id = ".$this->db_add_param($bestellung_id).$status."
-				ORDER BY insertamum LIMIT 1;";
+				ORDER BY insertamum DESC LIMIT 1;";
 		
 		if($this->db_query($qry))
 		{
