@@ -2084,7 +2084,7 @@ echo $js;
 
 	$freigabebutton = true;
 	// Freigabe Buttons fuer Kostenstelle Anzeigen
-	if($status->isStatiVorhanden($bestellung->bestellung_id, 'Freigabe'))
+	if($status->isStatiVorhanden($bestellung->bestellung_id, 'Freigabe','','ASC'))
 	{
 		echo "<span title='$status->insertvon'>KST:".$date->formatDatum($status->datum,'d.m.Y')." </span>";
 	}
