@@ -192,7 +192,7 @@ if(isset($_POST['deleteDetail']) && isset($_POST['id']))
 	}
 	else
 	{
-		die('ID ungueltig');
+		die('ID ungültig: '.$_POST['id']);
 	}
 }
 
@@ -795,7 +795,7 @@ if($aktion == 'suche')
 						echo "</tr>\n";
 					}
 					echo "</tbody>\n";
-					echo "<tfooter><tr><td></td><td></td><td></td><td></td><td></td><td><td>Summe:</td><td colspan='2'>".number_format($gesamtpreis,2, ",",".")." €</td></tr></tfooter></table>\n";
+					echo "<tfoot><tr><td></td><td></td><td></td><td></td><td></td><td><td>Summe:</td><td colspan=\"2\">".number_format($gesamtpreis,2, ",",".")." €</td></tr></tfoot></table>\n";
 				}
 				else
 					echo $bestellung->errormsg;
@@ -1566,6 +1566,16 @@ if($_GET['method']=='update')
 
 $js = <<<EOT
 <script type="text/javascript" >
+
+  function maybeShowNichtBestellen() {
+		if ($('#nicht_bestellen').is(':checked'))
+		{
+			$('#nichtbestellen_tr').show();
+		} else {
+			$('#nichtbestellen_tr').hide();
+		}
+	}
+
 	function maybeShowBankverbindung()
 	{
 		if ($('#auslagenersatz').is(':checked'))
@@ -1598,6 +1608,11 @@ $js = <<<EOT
 		{
 			maybeShowBankverbindung();
 		});
+		maybeShowNichtBestellen();
+		$('#nicht_bestellen').on('change', function()
+		{
+			maybeShowNichtBestellen();
+		});
 	});
 
 	$(function()
@@ -1614,7 +1629,6 @@ $js = <<<EOT
 
 			$.post( "angebot.php", { method: 'list', bestellung_id: bestellung_id }, function(data)
 			{
-				console.log(data);
 				if (data.result ==undefined || data.result != 1)
 				{
 					alert("Fehler: Check console");
@@ -2232,6 +2246,13 @@ echo $js;
 	$test = $i;
 	echo "</tbody>";
 	echo "<tfoot>";
+?>
+	<tr id="nichtbestellen_tr" style="display:none"><td colspan="6"></td>
+			<td style="font-family:'Courier New',Arial,TimesNewRoman;font-size:10pt;font-weight:bold;background:#FFF;color:#FF0000;border:1px solid #ccc;">Bitte nicht Bestellen!</td>
+			<td colspan="5"></td>
+	</tr>
+<?php
+
 	echo "<tr>";
 	echo "<td></td>";
 	echo "<td></td>";
@@ -2555,7 +2576,6 @@ echo $js;
 		function checkNewRow(id, bestellung_id)
 		{
 			var betrag="";
-
 			betrag = $("#preisprove_"+id).val();
 			// Wenn der betrag nicht leer ist,
 			// und die letzte reihe ist,
@@ -2630,7 +2650,11 @@ echo $js;
 		function removeDetail(i)
 		{
 			var detail_id= $("#bestelldetailid_"+i).val();
-
+			if (!detail_id) {
+				// leere Zeile ohne Post entfernen (damit keine Fehlermeldung kommt)
+				$("#row_"+i).remove();
+				return;
+			}
 			$.post("bestellung.php", {id: detail_id, deleteDetail: "true"},
 			function(data)
 			{
@@ -2664,7 +2688,6 @@ echo $js;
 		{
 			if (!warnungSummeIst0())
 			{
-				console.log("cancel");
 				return false;
 			}
 			document.getElementById("filter_kst").disabled=false;
