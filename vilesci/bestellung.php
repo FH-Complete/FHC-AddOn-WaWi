@@ -1620,6 +1620,26 @@ $js = <<<EOT
 		var dialog;
 		var angebotDeleteDialog;
 
+		function getExtension(path) {
+            var basename = path.split(/[\\/]/).pop(),  
+                                                   
+            pos = basename.lastIndexOf(".");       
+
+            if (basename === "" || pos < 1)            
+                return "";                             
+
+            return basename.slice(pos + 1);          
+        }
+ 
+        function getIcon(filename) {
+            var ext = getExtension(filename);
+
+            if (ext == 'pdf' || ext == 'PDF') 
+            	return '../../../skin/images/pdf_icon.png';
+
+            return '../../../skin/images/ExcelIcon.png'
+        }
+
 		function renderAngebote()
 		{
 			var angeboteDummy = [ {'name' : 'Angebot 1 ','angebot_id' : 1, 'bestellung_id' : 2 },
@@ -1639,7 +1659,7 @@ $js = <<<EOT
 					{
 						return $('<li>',{}).append(
 							$('<a>',{ target: '_blank', href: 'angebot.php?method=download&angebotId=' + al.angebot_id + "&bestellung_id=" + bestellung_id }).append(
-							$('<img>',{ src :'../../../skin/images/pdf_icon.png', class : 'cursor' }))
+							$('<img>',{ src : getIcon(al.name), class : 'cursor' }))
 							//.text(al.name)
 						).append(
 							$('<a style="background: transparent;padding-left:1px;padding-right:1px">',{ href: '#' }).append(
@@ -1690,13 +1710,22 @@ $js = <<<EOT
 			width: 550,
 			modal: true,
 			buttons:
-			{
-				"OK": doUpload,
-				Cancel: function()
-				{
-					dialog.dialog( "close" );
-				}
-			},
+			[		        
+		        {
+		            id: "upload-button-ok",
+		            text: "Ok",
+		            click: function() {
+		                doUpload();
+		            }
+		        },
+		        {
+		            id: "button-cancel",
+		            text: "Cancel",
+		            click: function() {
+		                $(this).dialog("close");
+		            }
+		        }
+		    ],
 			close: function()
 			{
 				//form[ 0 ].reset();
@@ -1716,10 +1745,10 @@ $js = <<<EOT
 			var file = this.files[0];
 			var name = file.name;
 			var size = file.size;
-			var type = file.type;
-			if (!file.type.match(/.*pdf$/i))
+			var type = getExtension(file.name);
+			if (!type.match(/.*(ods|xlsx|xls|pdf)$/i))
 			{
-				$("<div title='Fehler'>Es werden nur PDF-Dateien akzeptiert.</div>").dialog(
+				$("<div title='Fehler'>Es werden nur Dateien mit folgenden Endungen akzeptiert: PDF, XLS, XLSX, ODS<br/>Diese Datei hat die Endung <i>" + type.toUpperCase() + "</i>.</div>").dialog(
 				{
 					title: 'Fehler',
 					resizable: false,
@@ -1732,7 +1761,10 @@ $js = <<<EOT
 						}
 					}
 				});
+				$("#upload-button-ok").button("disable");
 				$(':file').value='';
+			} else {
+				$("#upload-button-ok").button("enable");
 			}
 		});
 
@@ -1824,7 +1856,7 @@ echo $js;
 
 <div id="angebot-upload" title="Angebot hochladen">
 	<form enctype="multipart/form-data" id="uploadFrm">
-		<input name="file" type="file" accept="application/pdf"/>
+		<input name="file" type="file" />
 		<br><br>
 		<div id="progressbar">
 		</div>
@@ -2248,7 +2280,7 @@ echo $js;
 	echo "<tfoot>";
 ?>
 	<tr id="nichtbestellen_tr" style="display:none"><td colspan="6"></td>
-			<td style="font-family:'Courier New',Arial,TimesNewRoman;font-size:10pt;font-weight:bold;background:#FFF;color:#FF0000;border:1px solid #ccc;">Bitte nicht Bestellen!</td>
+			<td style="font-family:'Courier New',Arial,TimesNewRoman;font-size:10pt;font-weight:bold;background:#FFF;color:#FF0000;border:1px solid #ccc;">Bitte nicht bestellen!</td>
 			<td colspan="5"></td>
 	</tr>
 <?php
