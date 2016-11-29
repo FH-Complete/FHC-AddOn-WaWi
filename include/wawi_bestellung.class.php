@@ -1162,6 +1162,75 @@ class wawi_bestellung extends basis_db
 		}
 		return true;
 	}
+
+	/**
+	 * @return alle freigegebenen Bestellungen die noch nicht bestellt wurden
+	 */
+	public function loadNichtBestellt()
+	{
+		$qry ="
+			SELECT
+				*
+			FROM
+				wawi.tbl_bestellung b
+			WHERE
+				EXISTS (SELECT bestellung_id FROM wawi.tbl_bestellung_bestellstatus
+						WHERE bestellung_id=b.bestellung_id AND bestellstatus_kurzbz ='Freigabe')
+				AND NOT EXISTS (SELECT bestellung_id FROM wawi.tbl_bestellung_bestellstatus
+						WHERE bestellung_id=b.bestellung_id AND bestellstatus_kurzbz ='Bestellung')
+				AND NOT EXISTS (SELECT bestellung_id FROM wawi.tbl_bestellung_bestellstatus
+						WHERE bestellung_id=b.bestellung_id AND bestellstatus_kurzbz ='Lieferung')
+				AND NOT EXISTS (SELECT bestellung_id FROM wawi.tbl_bestellung_bestellstatus
+						WHERE bestellung_id=b.bestellung_id AND bestellstatus_kurzbz ='Storno')
+				AND b.insertamum>CURRENT_DATE - '1 year'::interval
+			ORDER BY bestellung_id";
+
+		if($result = $this->db_query($qry))
+		{
+			while($row = $this->db_fetch_object($result))
+			{
+				$bestellung = new wawi_bestellung();
+
+				$bestellung->bestellung_id = $row->bestellung_id;
+				$bestellung->bestell_nr = $row->bestell_nr;
+				$bestellung->titel = $row->titel;
+				$bestellung->bemerkung = $row->bemerkung;
+				$bestellung->liefertermin = $row->liefertermin;
+				$bestellung->besteller_uid = $row->besteller_uid;
+				$bestellung->lieferadresse = $row->lieferadresse;
+				$bestellung->kostenstelle_id = $row->kostenstelle_id;
+                                $bestellung->zuordnung_uid = $row->zuordnung_uid;
+                                $bestellung->zuordnung_raum = $row->zuordnung_raum;
+                                $bestellung->zuordnung = $row->zuordnung;
+                //                $bestellung->bkategorie_id = $row->bkategorie_id;
+				$bestellung->konto_id = $row->konto_id;
+				$bestellung->rechnungsadresse = $row->rechnungsadresse;
+				$bestellung->firma_id = $row->firma_id;
+				$bestellung->freigegeben = $this->db_parse_bool($row->freigegeben);
+				$bestellung->updateamum = $row->updateamum;
+				$bestellung->updatevon = $row->updatevon;
+				$bestellung->insertamum = $row->insertamum;
+				$bestellung->insertvon = $row->insertvon;
+				$bestellung->ext_id = $row->ext_id;
+				$bestellung->zahlungstyp_kurzbz = $row->zahlungstyp_kurzbz;
+                                $bestellung->auftragsbestaetigung = $row->auftragsbestaetigung;
+                                $bestellung->auslagenersatz = $this->db_parse_bool($row->auslagenersatz);
+                                $bestellung->iban = $row->iban;
+				$bestellung->wird_geleast = $this->db_parse_bool($row->wird_geleast);
+				$bestellung->empfehlung_leasing = $this->db_parse_bool($row->empfehlung_leasing);
+				$bestellung->nicht_bestellen = $this->db_parse_bool($row->nicht_bestellen);
+				$this->result[] = $bestellung;
+			}
+		}
+		else
+		{
+			$this->errormsg ="Fehler bei der Abfrage aufgetreten.";
+			return false;
+		}
+		return true;
+	}
+
+
 	/**
 	 *
 	 * true wenn die Bestellung schon freigegeben wurde

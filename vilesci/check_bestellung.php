@@ -55,6 +55,14 @@ require_once dirname(__FILE__).'/../../../include/firma.class.php';
 		}
 		return true; 
 	}
+
+	function updateReport() 
+	{	
+		var report = $('input[name="reportselector"]:checked').val();
+		console.log(report);
+		$('input[name="type"]').val(report);
+		$('form[name="reportForm"]').submit();
+	}
 	</script>
 	
 </head>
@@ -63,10 +71,12 @@ require_once dirname(__FILE__).'/../../../include/firma.class.php';
 <?php 
 $min = (isset($_POST['min'])?$_REQUEST['min']:'1');
 $max = (isset($_POST['max'])?$_REQUEST['max']:'42');
-$type = (isset($_GET['type'])?$_GET['type']:'');
+$type = (isset($_REQUEST['type'])?$_REQUEST['type']:'');
 
 if ($type == 'nichtgeliefert')
 	echo "<h1>Offene Lieferungen</h1>";
+else if ($type == 'nichtbestellt')
+	echo "<h1>Freigegeben aber nicht bestellt</h1>";
 else
 	echo "<h1>Offene Freigaben</h1>";
 ?>
@@ -79,29 +89,24 @@ else
 			<tr><td>max (Wochen): </td><td><input type="text" name="max" id="max" value="<?php echo $max ?>"></td></tr>
 			<tr><td>&nbsp;</td><td><input type="submit" name="submit" value="anzeigen" onclick="return checkKst();"></td></tr>
 		</table>
+		<input type="hidden" name="type" value="<?php echo $type ?>" >
 		</form>
 	</td>
 	<td width="100px">&nbsp;</td>
 	<td valign="top">
-<?php
-
-if ($type != 'nichtgeliefert')
-{
-?>
-		<form action ="check_bestellung.php?type=nichtgeliefert" method="post" name="checkForm">
-			<input type="submit" name="submit" value="Nicht gelieferte Bestellungen anzeigen">
-		</form>
-<?php
-}
-else
-{
-?>
-	<form action ="check_bestellung.php" method="post" name="checkForm">
-		<input type="submit" name="submit" value="Offene Freigaben anzeigen">
+	<form action ="check_bestellung.php" method="post" name="reportForm">
+		<fieldset>
+		    <legend>Berichtauswahl: </legend>
+		    <label for="radio-1">Offene Freigaben</label>
+		    <input type="radio" name="reportselector" id="radio-1" <?php if ($type == '' || $type=='offenefreigaben') echo 'checked="checked"' ?> onchange="updateReport(this)" value="offenefreigaben">
+		    <label for="radio-2">Nicht bestellt</label>
+		    <input type="radio" name="reportselector" id="radio-2" <?php if ($type == 'nichtbestellt') echo 'checked="checked"' ?> onchange="updateReport(this)" value="nichtbestellt">
+		    <label for="radio-3">Nicht geliefert</label>
+		    <input type="radio" name="reportselector" id="radio-3" <?php if ($type == 'nichtgeliefert') echo 'checked="checked"' ?> onchange="updateReport(this)" value="nichtgeliefert">
+		    <input type="hidden" name="type" value="<?php echo $type ?>" >
+	    </fieldset>
 	</form>
-<?php
-}
-?>
+
 	</td>
 	</tr>
 </table>
@@ -125,7 +130,9 @@ echo '
 	$bestellung = new wawi_bestellung();
 	if($type=='nichtgeliefert')
 		$bestellung->loadBestellungNichtGeliefert();
-	else if(is_numeric($min) && is_numeric($max))
+	else if ($type=='nichtbestellt')
+		$bestellung->loadNichtBestellt();
+	else if(is_numeric($min) && is_numeric($max) && ($type=='offenefreigaben' || $type==''))
 	{
 		$bestellung->loadBestellungForCheck($min, $max);
 	}
