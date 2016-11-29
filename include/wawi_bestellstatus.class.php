@@ -188,6 +188,57 @@ class wawi_bestellstatus extends basis_db
 	}
 
 	/**
+	 * speichert alle gefundenen Bestellstatus in $this->result
+	 * @param $bestellung_id
+	 * @param $status_kurzbz
+	 * @return true wenn ok, false im Fehlerfall
+	 */
+	public function getAllStatiFromBestellung($bestellung_id, $status_kurzbz='')
+	{
+		if(!is_numeric($bestellung_id) || $bestellung_id == '')
+		{
+			$this->errormsg = "Bestellung ID fehlerhaft.";
+			return false;
+		}
+
+		$qry ="
+			SELECT
+				*
+			FROM
+				wawi.tbl_bestellung_bestellstatus
+			WHERE
+				bestellstatus_kurzbz=".$this->db_add_param($status_kurzbz)."
+				AND bestellung_id=".$this->db_add_param($bestellung_id, FHC_INTEGER).
+				" ORDER BY insertamum";		
+
+		if($this->db_query($qry))
+		{
+			while($row = $this->db_fetch_object())
+			{
+
+				$obj = new wawi_bestellstatus();
+
+				$obj->bestellung_bestellstatus_id = $row->bestellung_bestellstatus_id;
+				$obj->bestellung_id = $row->bestellung_id;
+				$obj->bestellstatus_kurzbz = $row->bestellstatus_kurzbz;
+				$obj->uid = $row->uid;
+				$obj->oe_kurzbz= $row->oe_kurzbz;
+				$obj->datum = $row->datum;
+				$obj->insertvon = $row->insertvon;
+				$obj->insertamum = $row->insertamum;
+				$obj->updatevon = $row->updatevon;
+				$obj->updateamum = $row->updateamum;
+
+				$this->result[] = $obj;
+				
+			}
+			return true;
+		}
+		else
+			return false;
+	}
+
+	/**
 	 *
 	 * Speichert den Status in die Datenbank
 	 */
@@ -263,6 +314,7 @@ class wawi_bestellstatus extends basis_db
 		else
 			return false;
 	}
+
 
 	/**
 	 *

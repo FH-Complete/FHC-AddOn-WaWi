@@ -2840,8 +2840,18 @@ echo $js;
 	if($status->isStatiVorhanden($bestellung->bestellung_id, 'Abgeschickt'))
 		echo "Bestellung wurde am ".$date->formatDatum($status->datum,'d.m.Y')." zur Freigabe abgeschickt.";
 
-	if($status->isStatiVorhanden($bestellung->bestellung_id, 'Abgeschickt-Erneut'))
-		echo "<br>Bestellung wurde zuletzt am ".$date->formatDatum($status->datum,'d.m.Y')." erneut zur Freigabe abgeschickt.";
+	
+	if ($status->getAllStatiFromBestellung($bestellung->bestellung_id, 'Abgeschickt-Erneut'))
+	{
+		
+		foreach ($status->result as $s)
+		{
+			echo "<br>Bestellung wurde am ".$date->formatDatum($s->datum,'d.m.Y')." erneut zur Freigabe abgeschickt.";
+		}
+
+	} else {
+		echo '<br/>'.$status->errormsg;
+	}
 
 	if($bestellung->isFreigegeben($bestellung->bestellung_id))
 		echo "<p class='freigegeben'>Die Bestellung wurde vollständig freigegeben</p>";
