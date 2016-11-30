@@ -662,9 +662,6 @@ if($aktion == 'suche')
 			});
 			</script>";
 
-
-
-		echo "<tr>\n";
 		echo "<tr>\n";
 		echo "<td> Änderung durch: </td>\n";
 		echo "<td> <input id='mitarbeiter_name' name='mitarbeiter_name' size='32' maxlength='30' value=''  >\n";

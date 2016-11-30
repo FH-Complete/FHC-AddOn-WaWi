@@ -234,6 +234,35 @@ if($aktion == 'suche')
 		echo "</SELECT>\n";
 		echo "</td>\n";
 		echo "</tr>\n";
+
+
+		echo "<tr>\n";
+		echo "<td>Tag:</td>\n";
+		echo "<td> <input id='tag' name='tag' size='32' maxlength='30' value=''  /></td>\n";
+		echo "</tr>\n";
+
+		echo "<script type='text/javascript'>
+			$('#tag').autocomplete(
+			{
+				source: 'wawi_autocomplete.php?work=tags',
+				minChars:2,
+				response:function(event,ui)
+				{
+					for(i in ui.content)
+					{
+						ui.content[i].value=ui.content[i].tag;
+						ui.content[i].label=ui.content[i].tag;
+					}
+				},
+				select: function(event, ui)
+				{
+					ui.item.value=ui.item.tag;
+				}
+			});
+			</script>";
+
+		echo "</tr>\n";
+
 		echo "<tr>\n";
 		echo "<td> Ohne Transferdatum: </td>\n";
 		echo "<td><input type ='checkbox' name ='ohneTransferdatum'></td>\n";
@@ -260,6 +289,7 @@ if($aktion == 'suche')
 		$oe_kurzbz = (isset($_REQUEST['filter_oe_kurzbz'])?$_REQUEST['filter_oe_kurzbz']:'');
 		$filter_konto = (isset($_REQUEST['filter_konto'])?$_REQUEST['filter_konto']:'');
 		$filter_kostenstelle = (isset($_REQUEST['filter_kostenstelle'])?$_REQUEST['filter_kostenstelle']:'');
+		$tag = (isset($_REQUEST['tag'])?$_REQUEST['tag']:'');
 		if(isset($_REQUEST['filter_betrag']))
 			$filter_betrag = mb_str_replace(',','.',$_REQUEST['filter_betrag']);
 		else
@@ -292,7 +322,7 @@ if($aktion == 'suche')
 		&& $bestelldatum_von!==false && $bestelldatum_bis!==false
 		)
 		{
-			if($rechnung->getAllSearch($rechnungsnr, $rechnungsdatum_von, $rechnungsdatum_bis, $buchungsdatum_von, $buchungsdatum_bis, $erstelldatum_von, $erstelldatum_bis, $bestelldatum_von, $bestelldatum_bis, $bestellnummer, $firma_id, $oe_kurzbz, $filter_konto, $filter_kostenstelle, $filter_betrag, $filter_zahlungstyp, $ohneTransferdatum))
+			if($rechnung->getAllSearch($rechnungsnr, $rechnungsdatum_von, $rechnungsdatum_bis, $buchungsdatum_von, $buchungsdatum_bis, $erstelldatum_von, $erstelldatum_bis, $bestelldatum_von, $bestelldatum_bis, $bestellnummer, $firma_id, $oe_kurzbz, $filter_konto, $filter_kostenstelle, $filter_betrag, $filter_zahlungstyp, $ohneTransferdatum, $tag))
 			{
 				$date = new datum();
 
