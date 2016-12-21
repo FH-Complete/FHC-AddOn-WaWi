@@ -139,6 +139,8 @@ echo '
 	else
 		die('Fehlerhafte Parameter');
 		
+
+
 	echo '	<table id="checkTable" class="tablesorter" width ="100%">
 			<thead>
 			<tr>
@@ -172,10 +174,13 @@ echo '
 		if($row->freigegeben)
 		{			
 			$freigegeben = 'ja';
-			if ($type!='nichtgeliefert') continue;
+			if ($type!='nichtgeliefert' && $type!='nichtbestellt') continue;
 		}
-		else
-			$freigegeben = 'nein';
+		else {
+            $freigegeben = 'nein';
+            if ($type=='nichtbestellt') continue;
+        }
+
 		
 		if($status->isStatiVorhanden($row->bestellung_id, 'Lieferung'))
 		{

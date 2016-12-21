@@ -1182,6 +1182,7 @@ class wawi_bestellung extends basis_db
 						WHERE bestellung_id=b.bestellung_id AND bestellstatus_kurzbz ='Lieferung')
 				AND NOT EXISTS (SELECT bestellung_id FROM wawi.tbl_bestellung_bestellstatus
 						WHERE bestellung_id=b.bestellung_id AND bestellstatus_kurzbz ='Storno')
+				AND b.freigegeben = true
 				AND b.insertamum>CURRENT_DATE - '1 year'::interval
 			ORDER BY bestellung_id";
 
