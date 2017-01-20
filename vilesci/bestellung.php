@@ -412,6 +412,7 @@ if(isset($_POST['deleteBtnStorno']) && isset($_POST['id']))
 		$( "#datepicker_bvon" ).datepicker($.datepicker.regional['de']);
 		$( "#datepicker_bbis" ).datepicker($.datepicker.regional['de']);
 		$( "#datepicker_auftragsbestaetigung" ).datepicker($.datepicker.regional['de']);
+		$( "#datepicker_erstelldatum" ).datepicker($.datepicker.regional['de']);
 
 		$('#aufteilung').hide();
 
@@ -594,11 +595,11 @@ if($aktion == 'suche')
 		echo "<tr>\n";
 		echo "<td>Bestellposition:</td>\n";
 		echo "<td><input type='text' name='bestellposition' size='32' maxlength='256'></td>";
-		echo "</tr>";
+		echo "</tr>";		
 		echo "<tr>\n";
 		echo "<td>Erstelldatum</td>\n";
 		echo "<td>von <input type ='text' id='datepicker_evon' size ='12' name ='evon' value='$suchdatum'> bis <input type ='text' id='datepicker_ebis' size ='12' name = 'ebis'></td>\n";
-		echo "</tr>\n";
+		echo "</tr>\n";		
 		echo "<tr>\n";
 		echo "<td>Bestelldatum</td>\n";
 		echo "<td>von <input type ='text' id='datepicker_bvon' size ='12' name ='bvon'> bis <input type ='text' id='datepicker_bbis' size ='12' name = 'bbis'></td>\n";
@@ -858,6 +859,18 @@ elseif($aktion == 'new')
 	echo '<a href="konto_hilfe.php" onclick="FensterOeffnen(this.href); return false" title="Informationen zu den Konten"> <img src="../../../skin/images/question.png"> </a>';
 
 	echo "</td></tr>\n";
+
+	// Bestelldatum Override fuer Leute mit entsprechender Berechtigung
+	if($rechte->isBerechtigt('wawi/bestellung_advanced',null,'sui'))		
+	{		
+		$aktuellesdatum=date('d.m.Y');
+		echo "<tr>";
+		echo "<td>Erstelldatum: </td>\n";
+		echo "<td>\n";
+		echo "<input type =\"text\" id=\"datepicker_erstelldatum\" size =\"12\" name =\"erstelldatum_override\" value=\"$aktuellesdatum\"> ";
+		echo "</td></tr>\n";
+	}
+
 	echo "<tr>\n";
 	echo "<td>&nbsp;</td></tr>\n";
 	echo "<tr><td><input type='submit' id='submit' name='submit' value='Anlegen' onclick='return checkKst();' class='cursor'></td></tr>\n";
@@ -906,7 +919,27 @@ elseif($aktion == 'save')
 		else
 			$newBestellung->konto_id = $_POST['konto'];
 
-		$newBestellung->insertamum = date('Y-m-d H:i:s');
+		if (isset($_POST['erstelldatum_override']) && 
+			trim($_POST['erstelldatum_override']) != '' &&
+			$rechte->isberechtigt('wawi/bestellung_advanced'))			
+		{
+			$date = new datum();
+			$erstelldatum_override = $date->formatDatum($_POST['erstelldatum_override']);
+			if ($erstelldatum_override !== false)
+			{
+				$newBestellung->insertamum = $erstelldatum_override;
+			}
+			else
+			{
+				// Datum Konvertierung fehlgeschlagen -> nimm aktuelles
+				$newBestellung->insertamum = date('Y-m-d H:i:s');
+			}
+		} 
+		else
+		{
+			$newBestellung->insertamum = date('Y-m-d H:i:s');
+		}		
+		
 		$newBestellung->insertvon = $user;
 		$newBestellung->updateamum = date('Y-m-d H:i:s');
 		$newBestellung->updatevon = $user;
@@ -926,7 +959,10 @@ elseif($aktion == 'save')
 			$newBestellung->lieferadresse = '1';
 			$newBestellung->rechnungsadresse = '1';
 		}
-		$newBestellung->bestell_nr = $newBestellung->createBestellNr($newBestellung->kostenstelle_id);
+		$newBestellung->bestell_nr = 
+			$newBestellung->createBestellNr(
+				$newBestellung->kostenstelle_id, 
+				$date->mktime_fromtimestamp($newBestellung->insertamum));
 		if (!$bestell_id = $newBestellung->save())
 		{
 			echo $newBestellung->errormsg;

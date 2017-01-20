@@ -1335,8 +1335,9 @@ class wawi_bestellung extends basis_db
 	 *
 	 * Liefert die nächste Bestellnummer der Kostenstelle zurück
 	 * @param $kostenstelle_id
+	 * @param $datum timestamp in Unix-Format (sollte nur für Admins gesetzt werden)
 	 */
-	public function createBestellNr($kostenstelle_id)
+	public function createBestellNr($kostenstelle_id, $datum = null)
 	{
 		// kostenstelle holen
 		$qry="SELECT
@@ -1361,7 +1362,14 @@ class wawi_bestellung extends basis_db
 			$kurzzeichen = mb_substr($kurzzeichen, 0,3);
 		}
 		$kurzzeichen = mb_strtoupper($kurzzeichen);
-		$akt_timestamp=time();
+		if ($datum != null)
+		{			
+			$akt_timestamp=$datum;			
+		}
+		else 
+		{
+			$akt_timestamp=time();
+		}				
 		$akt_datum=getdate($akt_timestamp);
 		$akt_mon=$akt_datum['mon'];
 		$akt_year=$akt_datum['year'];
