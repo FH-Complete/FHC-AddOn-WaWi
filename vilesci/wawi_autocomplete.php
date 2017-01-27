@@ -99,7 +99,7 @@
 		//	if (is_null($bestell_id) || $tag_search=='')
 			//	exit();	
 			$tags = new tags(); 
-			if (!$tags->getAll())
+			if (!$tags->getAll($tag_search))
 				exit($tags->errormsg."\n");
 			
 			$result=array();

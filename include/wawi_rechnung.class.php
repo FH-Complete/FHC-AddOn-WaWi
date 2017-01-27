@@ -128,7 +128,7 @@ class wawi_rechnung extends basis_db
 	 * @param $betrag
 	 * @param $zahlungstyp
 	 */
-	public function getAllSearch($rechnungsnr, $rechnungsdatum_von, $rechnungsdatum_bis, $buchungsdatum_von, $buchungsdatum_bis, $erstelldatum_von, $erstelldatum_bis, $bestelldatum_von, $bestelldatum_bis, $bestellnummer, $firma_id, $oe_kurzbz, $konto_id, $kostenstelle_id, $betrag, $zahlungstyp='', $ohneTransferdatum=false)
+	public function getAllSearch($rechnungsnr, $rechnungsdatum_von, $rechnungsdatum_bis, $buchungsdatum_von, $buchungsdatum_bis, $erstelldatum_von, $erstelldatum_bis, $bestelldatum_von, $bestelldatum_bis, $bestellnummer, $firma_id, $oe_kurzbz, $konto_id, $kostenstelle_id, $betrag, $zahlungstyp='', $ohneTransferdatum=false, $tag=null)
 	{
 		$first = true; 
 		$qry = "
@@ -185,6 +185,11 @@ class wawi_rechnung extends basis_db
 //			$qry.= " AND (UPPER(bestellung.bestell_nr) LIKE UPPER('%".$this->db_escape($bestellnr)."%') OR UPPER(betriebsmittel.inventarnummer) LIKE UPPER('%".$this->db_escape($bestellnr)."%'))"; 
 			$qry.= " AND UPPER(tbl_bestellung.bestell_nr) LIKE UPPER('%".$this->db_escape($bestellnummer)."%')";
 		
+		if($tag!='')
+			$qry.= ' AND (EXISTS (SELECT 1 FROM wawi.tbl_bestellungtag WHERE tag='.$this->db_add_param($tag).' AND bestellung_id=wawi.tbl_bestellung.bestellung_id)
+						OR EXISTS (SELECT 1 FROM wawi.tbl_bestelldetailtag JOIN wawi.tbl_bestelldetail USING(bestelldetail_id) WHERE tag='.$this->db_add_param($tag).' AND bestellung_id=wawi.tbl_bestellung.bestellung_id)
+						)';
+
 		if ($betrag != '')
 			$qry.= ' AND ('.$this->db_add_param($betrag).' = (SELECT sum(betrag) FROM wawi.tbl_rechnungsbetrag WHERE rechnung_id=tbl_rechnung.rechnung_id)
 					   OR '.$this->db_add_param($betrag).' = (SELECT sum((betrag*(mwst+100)/100)) FROM wawi.tbl_rechnungsbetrag WHERE rechnung_id=tbl_rechnung.rechnung_id))';
@@ -200,7 +205,7 @@ class wawi_rechnung extends basis_db
 			$this->errormsg = "Fehler bei der Datenbankabfrage.";
 			return false; 
 		}
-		
+
 		while($row = $this->db_fetch_object())
 		{
 			$obj = new wawi_rechnung(); 

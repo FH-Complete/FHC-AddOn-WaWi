@@ -206,15 +206,15 @@ else if (isset($_GET['method']) && $_GET['method'] == 'download')
 
 	if (!file_exists($tempPdfName))
 	{
-		throw new RuntimeException("PDF nicht gefunden: ".$tempPdfName);
+		throw new RuntimeException("Datei nicht gefunden: ".$tempPdfName);
 	}
 
 	$fsize = filesize($tempPdfName);
 	$handle = fopen($tempPdfName,'r');
 	if ($handle !== false)
 	{
-		header('Content-type: application/pdf');
-		header('Content-Disposition: inline; filename="'.$dms->name.'.pdf"');
+		header('Content-type: '.$dms->mimetype);
+		header('Content-Disposition: inline; filename="'.$dms->name);
 		header('Content-Length: '.$fsize);
 		while (!feof($handle))
 		{

@@ -192,7 +192,7 @@ if(isset($_POST['deleteDetail']) && isset($_POST['id']))
 	}
 	else
 	{
-		die('ID ungueltig');
+		die('ID ungültig: '.$_POST['id']);
 	}
 }
 
@@ -412,6 +412,7 @@ if(isset($_POST['deleteBtnStorno']) && isset($_POST['id']))
 		$( "#datepicker_bvon" ).datepicker($.datepicker.regional['de']);
 		$( "#datepicker_bbis" ).datepicker($.datepicker.regional['de']);
 		$( "#datepicker_auftragsbestaetigung" ).datepicker($.datepicker.regional['de']);
+		$( "#datepicker_erstelldatum" ).datepicker($.datepicker.regional['de']);
 
 		$('#aufteilung').hide();
 
@@ -594,11 +595,11 @@ if($aktion == 'suche')
 		echo "<tr>\n";
 		echo "<td>Bestellposition:</td>\n";
 		echo "<td><input type='text' name='bestellposition' size='32' maxlength='256'></td>";
-		echo "</tr>";
+		echo "</tr>";		
 		echo "<tr>\n";
 		echo "<td>Erstelldatum</td>\n";
 		echo "<td>von <input type ='text' id='datepicker_evon' size ='12' name ='evon' value='$suchdatum'> bis <input type ='text' id='datepicker_ebis' size ='12' name = 'ebis'></td>\n";
-		echo "</tr>\n";
+		echo "</tr>\n";		
 		echo "<tr>\n";
 		echo "<td>Bestelldatum</td>\n";
 		echo "<td>von <input type ='text' id='datepicker_bvon' size ='12' name ='bvon'> bis <input type ='text' id='datepicker_bbis' size ='12' name = 'bbis'></td>\n";
@@ -662,9 +663,6 @@ if($aktion == 'suche')
 			});
 			</script>";
 
-
-
-		echo "<tr>\n";
 		echo "<tr>\n";
 		echo "<td> Änderung durch: </td>\n";
 		echo "<td> <input id='mitarbeiter_name' name='mitarbeiter_name' size='32' maxlength='30' value=''  >\n";
@@ -795,7 +793,7 @@ if($aktion == 'suche')
 						echo "</tr>\n";
 					}
 					echo "</tbody>\n";
-					echo "<tfooter><tr><td></td><td></td><td></td><td></td><td></td><td><td>Summe:</td><td colspan='2'>".number_format($gesamtpreis,2, ",",".")." €</td></tr></tfooter></table>\n";
+					echo "<tfoot><tr><td></td><td></td><td></td><td></td><td></td><td><td>Summe:</td><td colspan=\"2\">".number_format($gesamtpreis,2, ",",".")." €</td></tr></tfoot></table>\n";
 				}
 				else
 					echo $bestellung->errormsg;
@@ -861,6 +859,18 @@ elseif($aktion == 'new')
 	echo '<a href="konto_hilfe.php" onclick="FensterOeffnen(this.href); return false" title="Informationen zu den Konten"> <img src="../../../skin/images/question.png"> </a>';
 
 	echo "</td></tr>\n";
+
+	// Bestelldatum Override fuer Leute mit entsprechender Berechtigung
+	if($rechte->isBerechtigt('wawi/bestellung_advanced',null,'sui'))		
+	{		
+		$aktuellesdatum=date('d.m.Y');
+		echo "<tr>";
+		echo "<td>Erstelldatum: </td>\n";
+		echo "<td>\n";
+		echo "<input type =\"text\" id=\"datepicker_erstelldatum\" size =\"12\" name =\"erstelldatum_override\" value=\"$aktuellesdatum\"> ";
+		echo "</td></tr>\n";
+	}
+
 	echo "<tr>\n";
 	echo "<td>&nbsp;</td></tr>\n";
 	echo "<tr><td><input type='submit' id='submit' name='submit' value='Anlegen' onclick='return checkKst();' class='cursor'></td></tr>\n";
@@ -909,7 +919,27 @@ elseif($aktion == 'save')
 		else
 			$newBestellung->konto_id = $_POST['konto'];
 
-		$newBestellung->insertamum = date('Y-m-d H:i:s');
+		if (isset($_POST['erstelldatum_override']) && 
+			trim($_POST['erstelldatum_override']) != '' &&
+			$rechte->isberechtigt('wawi/bestellung_advanced'))			
+		{
+			$date = new datum();
+			$erstelldatum_override = $date->formatDatum($_POST['erstelldatum_override']);
+			if ($erstelldatum_override !== false)
+			{
+				$newBestellung->insertamum = $erstelldatum_override;
+			}
+			else
+			{
+				// Datum Konvertierung fehlgeschlagen -> nimm aktuelles
+				$newBestellung->insertamum = date('Y-m-d H:i:s');
+			}
+		} 
+		else
+		{
+			$newBestellung->insertamum = date('Y-m-d H:i:s');
+		}		
+		
 		$newBestellung->insertvon = $user;
 		$newBestellung->updateamum = date('Y-m-d H:i:s');
 		$newBestellung->updatevon = $user;
@@ -929,7 +959,10 @@ elseif($aktion == 'save')
 			$newBestellung->lieferadresse = '1';
 			$newBestellung->rechnungsadresse = '1';
 		}
-		$newBestellung->bestell_nr = $newBestellung->createBestellNr($newBestellung->kostenstelle_id);
+		$newBestellung->bestell_nr = 
+			$newBestellung->createBestellNr(
+				$newBestellung->kostenstelle_id, 
+				$date->mktime_fromtimestamp($newBestellung->insertamum));
 		if (!$bestell_id = $newBestellung->save())
 		{
 			echo $newBestellung->errormsg;
@@ -1566,6 +1599,16 @@ if($_GET['method']=='update')
 
 $js = <<<EOT
 <script type="text/javascript" >
+
+  function maybeShowNichtBestellen() {
+		if ($('#nicht_bestellen').is(':checked'))
+		{
+			$('#nichtbestellen_tr').show();
+		} else {
+			$('#nichtbestellen_tr').hide();
+		}
+	}
+
 	function maybeShowBankverbindung()
 	{
 		if ($('#auslagenersatz').is(':checked'))
@@ -1598,12 +1641,37 @@ $js = <<<EOT
 		{
 			maybeShowBankverbindung();
 		});
+		maybeShowNichtBestellen();
+		$('#nicht_bestellen').on('change', function()
+		{
+			maybeShowNichtBestellen();
+		});
 	});
 
 	$(function()
 	{
 		var dialog;
 		var angebotDeleteDialog;
+
+		function getExtension(path) {
+            var basename = path.split(/[\\/]/).pop(),  
+                                                   
+            pos = basename.lastIndexOf(".");       
+
+            if (basename === "" || pos < 1)            
+                return "";                             
+
+            return basename.slice(pos + 1);          
+        }
+ 
+        function getIcon(filename) {
+            var ext = getExtension(filename);
+
+            if (ext == 'pdf' || ext == 'PDF') 
+            	return '../../../skin/images/pdf_icon.png';
+
+            return '../../../skin/images/ExcelIcon.png'
+        }
 
 		function renderAngebote()
 		{
@@ -1614,7 +1682,6 @@ $js = <<<EOT
 
 			$.post( "angebot.php", { method: 'list', bestellung_id: bestellung_id }, function(data)
 			{
-				console.log(data);
 				if (data.result ==undefined || data.result != 1)
 				{
 					alert("Fehler: Check console");
@@ -1625,7 +1692,7 @@ $js = <<<EOT
 					{
 						return $('<li>',{}).append(
 							$('<a>',{ target: '_blank', href: 'angebot.php?method=download&angebotId=' + al.angebot_id + "&bestellung_id=" + bestellung_id }).append(
-							$('<img>',{ src :'../../../skin/images/pdf_icon.png', class : 'cursor' }))
+							$('<img>',{ src : getIcon(al.name), class : 'cursor' }))
 							//.text(al.name)
 						).append(
 							$('<a style="background: transparent;padding-left:1px;padding-right:1px">',{ href: '#' }).append(
@@ -1676,13 +1743,22 @@ $js = <<<EOT
 			width: 550,
 			modal: true,
 			buttons:
-			{
-				"OK": doUpload,
-				Cancel: function()
-				{
-					dialog.dialog( "close" );
-				}
-			},
+			[		        
+		        {
+		            id: "upload-button-ok",
+		            text: "Ok",
+		            click: function() {
+		                doUpload();
+		            }
+		        },
+		        {
+		            id: "button-cancel",
+		            text: "Cancel",
+		            click: function() {
+		                $(this).dialog("close");
+		            }
+		        }
+		    ],
 			close: function()
 			{
 				//form[ 0 ].reset();
@@ -1702,10 +1778,10 @@ $js = <<<EOT
 			var file = this.files[0];
 			var name = file.name;
 			var size = file.size;
-			var type = file.type;
-			if (!file.type.match(/.*pdf$/i))
+			var type = getExtension(file.name);
+			if (!type.match(/.*(ods|xlsx|xls|pdf)$/i))
 			{
-				$("<div title='Fehler'>Es werden nur PDF-Dateien akzeptiert.</div>").dialog(
+				$("<div title='Fehler'>Es werden nur Dateien mit folgenden Endungen akzeptiert: PDF, XLS, XLSX, ODS<br/>Diese Datei hat die Endung <i>" + type.toUpperCase() + "</i>.</div>").dialog(
 				{
 					title: 'Fehler',
 					resizable: false,
@@ -1718,7 +1794,10 @@ $js = <<<EOT
 						}
 					}
 				});
+				$("#upload-button-ok").button("disable");
 				$(':file').value='';
+			} else {
+				$("#upload-button-ok").button("enable");
 			}
 		});
 
@@ -1810,7 +1889,7 @@ echo $js;
 
 <div id="angebot-upload" title="Angebot hochladen">
 	<form enctype="multipart/form-data" id="uploadFrm">
-		<input name="file" type="file" accept="application/pdf"/>
+		<input name="file" type="file" />
 		<br><br>
 		<div id="progressbar">
 		</div>
@@ -2084,7 +2163,7 @@ echo $js;
 
 	$freigabebutton = true;
 	// Freigabe Buttons fuer Kostenstelle Anzeigen
-	if($status->isStatiVorhanden($bestellung->bestellung_id, 'Freigabe'))
+	if($status->isStatiVorhanden($bestellung->bestellung_id, 'Freigabe','','ASC'))
 	{
 		echo "<span title='$status->insertvon'>KST:".$date->formatDatum($status->datum,'d.m.Y')." </span>";
 	}
@@ -2232,6 +2311,13 @@ echo $js;
 	$test = $i;
 	echo "</tbody>";
 	echo "<tfoot>";
+?>
+	<tr id="nichtbestellen_tr" style="display:none"><td colspan="6"></td>
+			<td style="font-family:'Courier New',Arial,TimesNewRoman;font-size:10pt;font-weight:bold;background:#FFF;color:#FF0000;border:1px solid #ccc;">Bitte nicht bestellen!</td>
+			<td colspan="5"></td>
+	</tr>
+<?php
+
 	echo "<tr>";
 	echo "<td></td>";
 	echo "<td></td>";
@@ -2555,7 +2641,6 @@ echo $js;
 		function checkNewRow(id, bestellung_id)
 		{
 			var betrag="";
-
 			betrag = $("#preisprove_"+id).val();
 			// Wenn der betrag nicht leer ist,
 			// und die letzte reihe ist,
@@ -2630,7 +2715,11 @@ echo $js;
 		function removeDetail(i)
 		{
 			var detail_id= $("#bestelldetailid_"+i).val();
-
+			if (!detail_id) {
+				// leere Zeile ohne Post entfernen (damit keine Fehlermeldung kommt)
+				$("#row_"+i).remove();
+				return;
+			}
 			$.post("bestellung.php", {id: detail_id, deleteDetail: "true"},
 			function(data)
 			{
@@ -2664,7 +2753,6 @@ echo $js;
 		{
 			if (!warnungSummeIst0())
 			{
-				console.log("cancel");
 				return false;
 			}
 			document.getElementById("filter_kst").disabled=false;
@@ -2785,8 +2873,18 @@ echo $js;
 	if($status->isStatiVorhanden($bestellung->bestellung_id, 'Abgeschickt'))
 		echo "Bestellung wurde am ".$date->formatDatum($status->datum,'d.m.Y')." zur Freigabe abgeschickt.";
 
-	if($status->isStatiVorhanden($bestellung->bestellung_id, 'Abgeschickt-Erneut'))
-		echo "<br>Bestellung wurde zuletzt am ".$date->formatDatum($status->datum,'d.m.Y')." erneut zur Freigabe abgeschickt.";
+	
+	if ($status->getAllStatiFromBestellung($bestellung->bestellung_id, 'Abgeschickt-Erneut'))
+	{
+		
+		foreach ($status->result as $s)
+		{
+			echo "<br>Bestellung wurde am ".$date->formatDatum($s->datum,'d.m.Y')." erneut zur Freigabe abgeschickt.";
+		}
+
+	} else {
+		echo '<br/>'.$status->errormsg;
+	}
 
 	if($bestellung->isFreigegeben($bestellung->bestellung_id))
 		echo "<p class='freigegeben'>Die Bestellung wurde vollständig freigegeben</p>";

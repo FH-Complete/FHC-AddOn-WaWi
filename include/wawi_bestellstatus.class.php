@@ -22,15 +22,15 @@
 /**
  * Klasse WaWi Bestelldetail
  */
- 
+
 
 require_once(dirname(__FILE__).'/../../../include/basis_db.class.php');
 
 class wawi_bestellstatus extends basis_db
 {
 	public $new;
-	public $result = array(); 
-	
+	public $result = array();
+
 	public $bestellung_bestellstatus_id; 	// integer
 	public $bestellung_id; 					// integer
 	public $bestellstatus_kurzbz; 			// varchar(32)
@@ -41,23 +41,23 @@ class wawi_bestellstatus extends basis_db
 	public $insertamum; 					// timestamp
 	public $updatevon; 						// varchar(32)
 	public $updateamum; 					// timestamp
-		
+
 	/**
-	 * 
+	 *
 	 * Konstruktor
 	 * @param unknown_type $aufteilung_id
 	 */
 	public function __construct($bestellung_bestellstatus_id=null)
 	{
 		parent::__construct();
-		
+
 		if(!is_null($bestellung_bestellstatus_id))
 			$this->load($bestellung_bestellstatus_id);
 	}
 
 	/**
-	 * 
-	 * lädt den Bestellstatus der übergebenen ID 
+	 *
+	 * lädt den Bestellstatus der übergebenen ID
 	 * @param $bestellung_bestellstatus_id
 	 */
 	public function load($bestellung_bestellstatus_id)
@@ -65,140 +65,191 @@ class wawi_bestellstatus extends basis_db
 		if(!is_numeric($bestellung_bestellstatus_id))
 		{
 			$this->errormsg ="Ungültige Bestellstatus ID.";
-			return false; 
+			return false;
 		}
-		
-		$qry= "SELECT bestellstatus.* FROM wawi.tbl_bestellung_bestellstatus as bestellstatus 
+
+		$qry= "SELECT bestellstatus.* FROM wawi.tbl_bestellung_bestellstatus as bestellstatus
 				WHERE bestellung_bestellstatus_id = ".$this->db_add_param($bestellung_bestellstatus_id).";";
-		
+
 		if($this->db_query($qry))
 		{
 			if($row = $this->db_fetch_object())
 			{
-				$this->bestellung_bestellstatus_id = $row->bestellung_bestellstatus_id; 
-				$this->bestellung_id = $row->bestellung_id; 
-				$this->bestellstatus_kurzbz = $row->bestellstatus_kurzbz; 
-				$this->uid = $row->uid; 
-				$this->oe_kurzbz = $row->oe_kurzbz; 
-				$this->datum = $row->datum; 
-				$this->insertvon = $row->insertvon; 
-				$this->insertamum = $row->insertamum; 
-				$this->updatevon = $row->updatevon; 
-				$this->updateamum = $row->updateamum; 
+				$this->bestellung_bestellstatus_id = $row->bestellung_bestellstatus_id;
+				$this->bestellung_id = $row->bestellung_id;
+				$this->bestellstatus_kurzbz = $row->bestellstatus_kurzbz;
+				$this->uid = $row->uid;
+				$this->oe_kurzbz = $row->oe_kurzbz;
+				$this->datum = $row->datum;
+				$this->insertvon = $row->insertvon;
+				$this->insertamum = $row->insertamum;
+				$this->updatevon = $row->updatevon;
+				$this->updateamum = $row->updateamum;
 			}
-			return true; 
+			return true;
 		}
 		else
 		{
 			$this->errormsg = "Fehler bei der Abfrage aufgetreten.";
-			return false; 
+			return false;
 		}
 	}
 
-	
-	
+
+
 	/**
-	 * 
+	 *
 	 * Lädt alle Bestellstati zurück
 	 */
 	public function getAll()
 	{
 		$qry = "SELECT bestellstatus.* FROM wawi.tbl_bestellung_bestellstatus as bestellstatus;";
-		
+
 		if($this->db_query($qry))
 		{
 			while($row = $this->db_fetch_object())
 			{
 				$status = new wawi_bestellstatus();
-				
-				$status->bestellung_bestellstatus_id = $row->bestellung_bestellstatus_id; 
-				$status->bestellung_id = $row->bestellung_id; 
-				$status->bestellstatus_kurzbz = $row->bestellstatus_kurzbz; 
-				$status->uid = $row->uid; 
-				$status->oe_kurzbz = $row->oe_kurzbz; 
-				$status->datum = $row->datum; 
-				$status->insertvon = $row->insertvon; 
-				$status->insertamum = $row->insertamum; 
-				$status->updatevon = $row->updatevon; 
-				$status->updateamum = $row->updateamum; 
-				
-				$this->result[] = $status; 
+
+				$status->bestellung_bestellstatus_id = $row->bestellung_bestellstatus_id;
+				$status->bestellung_id = $row->bestellung_id;
+				$status->bestellstatus_kurzbz = $row->bestellstatus_kurzbz;
+				$status->uid = $row->uid;
+				$status->oe_kurzbz = $row->oe_kurzbz;
+				$status->datum = $row->datum;
+				$status->insertvon = $row->insertvon;
+				$status->insertamum = $row->insertamum;
+				$status->updatevon = $row->updatevon;
+				$status->updateamum = $row->updateamum;
+
+				$this->result[] = $status;
 			}
-			return true; 
-			
+			return true;
+
 		}
 		else
 		{
 			$this->errormsg = "Fehler bei der Abfrage aufgetreten.";
-			return false; 
+			return false;
 		}
 	}
-	
+
 	/**
-	 * 
+	 *
 	 * Return true wenn es den übergebenen Statuseintrag für die Übergebene Bestell ID gibt
 	 * @param $bestellung_id
 	 * @param $status_kurzbz
 	 */
-	public function isStatiVorhanden($bestellung_id, $status_kurzbz='', $oe_kurzbz ='')
+	public function isStatiVorhanden($bestellung_id, $status_kurzbz='', $oe_kurzbz ='', $order='DESC')
 	{
 		$status='';
 		if(!is_numeric($bestellung_id) || $bestellung_id == '')
 		{
-			$this->errormsg = "Bestellung ID fehlerhaft."; 
-			return false; 
+			$this->errormsg = "Bestellung ID fehlerhaft.";
+			return false;
 		}
 		if($status_kurzbz == '')
 		{
-			$this->errormsg = "Status Kurzbezeichnung ist fehlerhaft."; 
-			return false; 
+			$this->errormsg = "Status Kurzbezeichnung ist fehlerhaft.";
+			return false;
 		}
- 
+
 		if($oe_kurzbz!='')
 		{
-			$status .= " AND oe_kurzbz = ".$this->db_add_param($oe_kurzbz); 
+			$status .= " AND oe_kurzbz = ".$this->db_add_param($oe_kurzbz);
 		}
 		if($status_kurzbz!='')
 		{
 			$status.=" AND bestellstatus_kurzbz = ".$this->db_add_param($status_kurzbz);
 		}
-		
-		$qry = "SELECT bestellstatus.* 
+
+		$qry = "SELECT bestellstatus.*
 				FROM wawi.tbl_bestellung_bestellstatus as bestellstatus
-				WHERE 
+				WHERE
 					bestellung_id = ".$this->db_add_param($bestellung_id).$status."
-				ORDER BY insertamum DESC LIMIT 1;";
-		
+				ORDER BY insertamum $order LIMIT 1;";
+
 		if($this->db_query($qry))
 		{
 			if($row = $this->db_fetch_object())
 			{
-				$this->datum = $row->datum; 
-				$this->insertvon = $row->insertvon; 
+				$this->datum = $row->datum;
+				$this->insertvon = $row->insertvon;
 				return true;
 			}
-			else 
+			else
 				return false;
-		} 
+		}
 		else
 		{
 			$this->errormsg = "Fehler bei der Abfrage aufgetreten.";
-			return false; 
+			return false;
 		}
 	}
-	
+
 	/**
-	 * 
+	 * speichert alle gefundenen Bestellstatus in $this->result
+	 * @param $bestellung_id
+	 * @param $status_kurzbz
+	 * @return true wenn ok, false im Fehlerfall
+	 */
+	public function getAllStatiFromBestellung($bestellung_id, $status_kurzbz='')
+	{
+		if(!is_numeric($bestellung_id) || $bestellung_id == '')
+		{
+			$this->errormsg = "Bestellung ID fehlerhaft.";
+			return false;
+		}
+
+		$qry ="
+			SELECT
+				*
+			FROM
+				wawi.tbl_bestellung_bestellstatus
+			WHERE
+				bestellstatus_kurzbz=".$this->db_add_param($status_kurzbz)."
+				AND bestellung_id=".$this->db_add_param($bestellung_id, FHC_INTEGER).
+				" ORDER BY insertamum";		
+
+		if($this->db_query($qry))
+		{
+			while($row = $this->db_fetch_object())
+			{
+
+				$obj = new wawi_bestellstatus();
+
+				$obj->bestellung_bestellstatus_id = $row->bestellung_bestellstatus_id;
+				$obj->bestellung_id = $row->bestellung_id;
+				$obj->bestellstatus_kurzbz = $row->bestellstatus_kurzbz;
+				$obj->uid = $row->uid;
+				$obj->oe_kurzbz= $row->oe_kurzbz;
+				$obj->datum = $row->datum;
+				$obj->insertvon = $row->insertvon;
+				$obj->insertamum = $row->insertamum;
+				$obj->updatevon = $row->updatevon;
+				$obj->updateamum = $row->updateamum;
+
+				$this->result[] = $obj;
+				
+			}
+			return true;
+		}
+		else
+			return false;
+	}
+
+	/**
+	 *
 	 * Speichert den Status in die Datenbank
 	 */
 	public function save()
 	{
 		if(!is_numeric($this->bestellung_id))
 		{
-			return false; 
+			return false;
 		}
-		
-		$qry = "INSERT INTO wawi.tbl_bestellung_bestellstatus (bestellung_id, bestellstatus_kurzbz, uid, 
+
+		$qry = "INSERT INTO wawi.tbl_bestellung_bestellstatus (bestellung_id, bestellstatus_kurzbz, uid,
 				oe_kurzbz, datum, insertvon, insertamum, updatevon, updateamum)	VALUES(".
 				$this->db_add_param($this->bestellung_id, FHC_INTEGER).", ".
 				$this->db_add_param($this->bestellstatus_kurzbz).", ".
@@ -209,18 +260,18 @@ class wawi_bestellstatus extends basis_db
 				$this->db_add_param($this->insertamum).", ".
 				$this->db_add_param($this->updatevon).", ".
 				$this->db_add_param($this->updateamum).");";
-		
+
 		if(!$this->db_query($qry))
 		{
-			$this->errormsg ="Fehler bei der Abfrage aufgetreten."; 
-			return false; 
+			$this->errormsg ="Fehler bei der Abfrage aufgetreten.";
+			return false;
 		}
 
-		return true; 
+		return true;
 	}
-	
+
 	/**
-	 * 
+	 *
 	 * Gibt das Bestelldetail einer Bestellung zur übergebenen BestellungID zurück
 	 * @param $bestellung_id
 	 */
@@ -228,44 +279,45 @@ class wawi_bestellstatus extends basis_db
 	{
 		if(!is_numeric($bestellung_id) || $bestellung_id == '')
 		{
-			$this->errormsg = "Bestellung ID fehlerhaft."; 
-			return false; 
+			$this->errormsg = "Bestellung ID fehlerhaft.";
+			return false;
 		}
-		
+
 		$qry ="
-			SELECT 
-				* 
-			FROM 
-				wawi.tbl_bestellung_bestellstatus 
-			WHERE 
-				bestellstatus_kurzbz=".$this->db_add_param($status)." 
+			SELECT
+				*
+			FROM
+				wawi.tbl_bestellung_bestellstatus
+			WHERE
+				bestellstatus_kurzbz=".$this->db_add_param($status)."
 				AND bestellung_id=".$this->db_add_param($bestellung_id, FHC_INTEGER).";";
-		 
+
 		if($this->db_query($qry))
 		{
 			if($row = $this->db_fetch_object())
 			{
 
-				$this->bestellung_bestellstatus_id = $row->bestellung_bestellstatus_id; 
-				$this->bestellung_id = $row->bestellung_id; 
-				$this->bestellstatus_kurzbz = $row->bestellstatus_kurzbz; 
-				$this->uid = $row->uid; 
-				$this->oe_kurzbz= $row->oe_kurzbz; 
-				$this->datum = $row->datum; 
-				$this->insertvon = $row->insertvon; 
-				$this->insertamum = $row->insertamum; 
-				$this->updatevon = $row->updatevon; 
-				$this->updateamum = $row->updateamum; 
-				
-				return true; 
+				$this->bestellung_bestellstatus_id = $row->bestellung_bestellstatus_id;
+				$this->bestellung_id = $row->bestellung_id;
+				$this->bestellstatus_kurzbz = $row->bestellstatus_kurzbz;
+				$this->uid = $row->uid;
+				$this->oe_kurzbz= $row->oe_kurzbz;
+				$this->datum = $row->datum;
+				$this->insertvon = $row->insertvon;
+				$this->insertamum = $row->insertamum;
+				$this->updatevon = $row->updatevon;
+				$this->updateamum = $row->updateamum;
+
+				return true;
 			}
 		}
 		else
-			return false; 
+			return false;
 	}
-	
+
+
 	/**
-	 * 
+	 *
 	 * liefert die Freigaben zu Kostenstellen oder Organisationseinheiten zurück, true wenn es einen Eintrag gibt, false wenn nicht
 	 * wenn oe_kurzbz nicht mitangegeben wird, wird auf Kostenstelle Freigabe geprüft
 	 * @param $bestellung_id
@@ -276,40 +328,40 @@ class wawi_bestellstatus extends basis_db
 		if($oe_kurzbz == '')
 			$oe = ' AND oe_kurzbz is null';
 		else
-			$oe = ' AND oe_kurzbz= '.$this->db_add_param($oe_kurzbz); 
-		
-		$qry = "SELECT 
-					* 
-				FROM 
-					wawi.tbl_bestellung_bestellstatus 
-				WHERE 
+			$oe = ' AND oe_kurzbz= '.$this->db_add_param($oe_kurzbz);
+
+		$qry = "SELECT
+					*
+				FROM
+					wawi.tbl_bestellung_bestellstatus
+				WHERE
 					bestellung_id = ".$this->db_add_param($bestellung_id, FHC_INTEGER).
 					' '.$oe.
 					" AND bestellstatus_kurzbz = 'Freigabe';";
-		
+
 		if($this->db_query($qry))
 		{
 			if($row = $this->db_fetch_object())
 			{
-				$this->bestellung_bestellstatus_id = $row->bestellung_bestellstatus_id; 
-				$this->bestellung_id = $row->bestellung_id; 
-				$this->bestellstatus_kurzbz = $row->bestellstatus_kurzbz; 
-				$this->uid = $row->uid; 
-				$this->oe_kurzbz = $row->oe_kurzbz; 
-				$this->datum = $row->datum; 
-				$this->insertvon = $row->insertvon; 
-				$this->insertamum = $row->insertamum; 
-				$this->updatevon = $row->updatevon; 
-				$this->updateamum = $row->updateamum; 
-				
+				$this->bestellung_bestellstatus_id = $row->bestellung_bestellstatus_id;
+				$this->bestellung_id = $row->bestellung_id;
+				$this->bestellstatus_kurzbz = $row->bestellstatus_kurzbz;
+				$this->uid = $row->uid;
+				$this->oe_kurzbz = $row->oe_kurzbz;
+				$this->datum = $row->datum;
+				$this->insertvon = $row->insertvon;
+				$this->insertamum = $row->insertamum;
+				$this->updatevon = $row->updatevon;
+				$this->updateamum = $row->updateamum;
+
 				return true;
 			}
 			else
-				return false; 
+				return false;
 		}
-		else 
-			return false; 
-		
+		else
+			return false;
+
 	}
-	
+
 }

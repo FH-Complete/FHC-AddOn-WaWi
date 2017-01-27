@@ -307,8 +307,10 @@ function draw_tag_table($tags_array, $kst_tags, $table_id, $gj)
 				echo '<td class="number">';
 				if($table_id=='bestellung')
 					echo '<a href="../bestellung.php?method=suche&submit=1&tag=',$tags,'&filter_kostenstelle=',$kst,'&evon=',$vondatum,'&ebis=',$endedatum,'">';
+				else
+					echo '<a href="../rechnung.php?method=suche&submit=1&tag=',$tags,'&filter_kostenstelle=',$kst,'&erstelldatum_von=',$vondatum,'&erstelldatum_bis=',$endedatum,'">';
 				echo number_format($tags_value[$tags],2,',','.');
-				if($table_id=='bestellung')
+				//if($table_id=='bestellung')
 					echo '</a>';
 				echo '</td>';
 				//Kostenstellensumme berechnen
