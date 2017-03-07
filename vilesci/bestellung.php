@@ -1151,7 +1151,7 @@ if($_GET['method']=='update')
 				}
 
 				// wenn sich kostenstelle geändert hat, neue bestellnummer generieren
-				if($bestellung_new->kostenstelle_id != $bestellung_old->kostenstelle_id && !$status->isStatiVorhanden($bestellung_id, 'Bestellung') )
+				if($bestellung_new->kostenstelle_id != $bestellung_old->kostenstelle_id)
 				{
 						$bestellung_new->bestell_nr = $bestellung_new->createBestellNr($bestellung_new->kostenstelle_id);
 				}
