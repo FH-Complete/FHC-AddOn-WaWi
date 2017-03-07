@@ -48,7 +48,7 @@ $uid = get_uid();
 $rechte = new benutzerberechtigung();
 $rechte->getBerechtigungen($uid);
 
-if(!$rechte->isBerechtigt('basis/addon'))
+if(!$rechte->isBerechtigt('basis/addon', null, 'suid'))
 {
 	exit('Sie haben keine Berechtigung für die Verwaltung von Addons');
 }
@@ -69,9 +69,9 @@ if(!tableExists($schemaName,$tableName))
         $sequenceName = $tableName.'_seq';
 	$qry = "
                 SET search_path = wawi, pg_catalog;
-                
+
                 CREATE TABLE $tableName (
-                    bkategorie_id bigint NOT NULL,                  
+                    bkategorie_id bigint NOT NULL,
                     beschreibung character varying(256),
                     kommentar text,
                     aktiv boolean NOT NULL,
@@ -79,19 +79,19 @@ if(!tableExists($schemaName,$tableName))
                     insertvon character varying(32),
                     updateamum timestamp without time zone,
                     updatevon character varying(32)
-		);                                
-                 
+		);
+
                 CREATE SEQUENCE $sequenceName
 		 INCREMENT BY 1
 		 NO MAXVALUE
 		 NO MINVALUE
 		 CACHE 1;
-                 
+
                 ALTER TABLE $tableName
                     ADD CONSTRAINT ${tableName}_bkategorie_id_pkey PRIMARY KEY (bkategorie_id);
-                ALTER TABLE $tableName 
+                ALTER TABLE $tableName
                     ALTER COLUMN bkategorie_id SET DEFAULT nextval('$sequenceName');
-                
+
         GRANT SELECT ON $tableName TO web;
 		GRANT SELECT, UPDATE, INSERT, DELETE ON $tableName TO vilesci;
 		GRANT SELECT, UPDATE ON $sequenceName TO vilesci;
@@ -153,7 +153,7 @@ if(!tableExists($schemaName,$tableName))
         $sequenceName = $tableName.'_seq';
 	$qry = "
                 SET search_path = wawi, pg_catalog;
-                
+
                 CREATE TABLE $tableName (
                     konto_id bigint bigint NOT NULL,
                     kontonr character varying(32),
@@ -168,16 +168,16 @@ if(!tableExists($schemaName,$tableName))
                     person_id bigint,
                     ext_id bigint
 		);
-                
+
                 CREATE SEQUENCE $sequenceName
 		 INCREMENT BY 1
 		 NO MAXVALUE
 		 NO MINVALUE
 		 CACHE 1;
-                 
+
                 ALTER TABLE $tableName
                     ADD CONSTRAINT ${tablename}_konto_id_pkey PRIMARY KEY (konto_id);
-                ALTER TABLE $tableName 
+                ALTER TABLE $tableName
                     ALTER COLUMN konto_id SET DEFAULT nextval('$sequenceName');
 
                 GRANT SELECT ON $tableName TO web;
@@ -187,7 +187,7 @@ if(!tableExists($schemaName,$tableName))
 
 	if(!$db->db_query($qry))
 		echo '<strong>$tableName: '.$db->db_last_error().'</strong><br>';
-	else 
+	else
 		echo ' $tableName: Tabelle $tableName hinzugefuegt!<br>';
 
 }
@@ -201,7 +201,7 @@ if(!tableExists($schemaName,$tableName))
         $sequenceName = $tableName.'_seq';
 	$qry = "
                 SET search_path = wawi, pg_catalog;
-                
+
                 CREATE TABLE $tableName (
                     kostenstelle_id bigint NOT NULL,
                     oe_kurzbz character varying(32),
@@ -217,19 +217,19 @@ if(!tableExists($schemaName,$tableName))
                     deaktiviertvon character varying(32),
                     deaktiviertamum timestamp without time zone
 		);
-                
+
                 CREATE SEQUENCE $sequenceName
 		 INCREMENT BY 1
 		 NO MAXVALUE
 		 NO MINVALUE
 		 CACHE 1;
-                 
+
                 ALTER TABLE $tableName
                     ADD CONSTRAINT ${tableName}_kostenstelle_id_pkey PRIMARY KEY (kostenstelle_id);
-                ALTER TABLE $tableName 
+                ALTER TABLE $tableName
                     ALTER COLUMN konto_id SET DEFAULT nextval('$sequenceName');
-                        
-                ALTER TABLE $tableName 
+
+                ALTER TABLE $tableName
                     ADD CONSTRAINT ${tableName}_oe_kurzbz_fkey FOREIGN KEY (oe_kurzbz) REFERENCES public.tbl_organisationseinheit(oe_kurzbz) ON UPDATE CASCADE ON DELETE RESTRICT;
 
                 GRANT SELECT ON $tableName TO web;
@@ -239,7 +239,7 @@ if(!tableExists($schemaName,$tableName))
 
 	if(!$db->db_query($qry))
 		echo '<strong>$tableName: '.$db->db_last_error().'</strong><br>';
-	else 
+	else
 		echo ' $tableName: Tabelle $tableName hinzugefuegt!<br>';
 
 }
@@ -257,7 +257,7 @@ if(!tableExists($schemaName,$tableName))
         $sequenceName = $tableName.'_seq';
 	$qry = "
                 SET search_path = $schemaName, pg_catalog;
-                
+
                 CREATE TABLE $tableName (
                     bestellung_id bigint NOT NULL,
                     bestell_nr character varying(16),
@@ -284,36 +284,36 @@ if(!tableExists($schemaName,$tableName))
                     wird_geleast boolean default false,
                     nicht_bestellen default false
                 );
-                
+
                 CREATE SEQUENCE $sequenceName
                     START WITH 1
                     INCREMENT BY 1
                     NO MINVALUE
                     NO MAXVALUE
                     CACHE 1;
-                 
+
                 ALTER TABLE $tableName
                     ADD CONSTRAINT ${tableName}_bestellung_id_pkey PRIMARY KEY (bestellung_id);
-                ALTER TABLE $tableName 
+                ALTER TABLE $tableName
                     ALTER COLUMN konto_id SET DEFAULT nextval('$sequenceName');
-                        
+
                 CREATE INDEX ${tableName}_freigegeben_id_idx ON $tableName USING btree (freigegeben_id);
                 CREATE INDEX ${tableName}_kostenstelle_id_idx ON $tableName USING btree (kostenstelle_id);
-                    
-                ALTER TABLE $tableName 
+
+                ALTER TABLE $tableName
                     ADD CONSTRAINT ${tableName}_besteller_uid_fkey FOREIGN KEY (besteller_uid) REFERENCES public.tbl_benutzer(uid) ON UPDATE CASCADE ON DELETE RESTRICT;
-                ALTER TABLE $tableName 
+                ALTER TABLE $tableName
                     ADD CONSTRAINT ${tableName}_firma_id_fkey FOREIGN KEY (firma_id) REFERENCES public.tbl_firma(firma_id) ON UPDATE CASCADE ON DELETE RESTRICT;
-                ALTER TABLE $tableName 
+                ALTER TABLE $tableName
                     ADD CONSTRAINT ${tableName}_kostenstelle_id_fkey FOREIGN KEY (kostenstelle_id) REFERENCES tbl_kostenstelle(kostenstelle_id) ON UPDATE CASCADE ON DELETE RESTRICT;
-                ALTER TABLE $tableName 
+                ALTER TABLE $tableName
                     ADD CONSTRAINT ${tableName}_konto_id_fkey FOREIGN KEY (konto_id) REFERENCES tbl_konto(konto_id) ON UPDATE CASCADE ON DELETE RESTRICT;
-                ALTER TABLE $tableName 
+                ALTER TABLE $tableName
                     ADD CONSTRAINT ${tableName}_lieferadresse_fkey FOREIGN KEY (lieferadresse) REFERENCES public.tbl_adresse(adresse_id) ON UPDATE CASCADE ON DELETE RESTRICT;
-                ALTER TABLE $tableName 
-                    ADD CONSTRAINT ${tableName}_rechnungsadresse_fkey FOREIGN KEY (rechnungsadresse) REFERENCES public.tbl_adresse(adresse_id) ON UPDATE CASCADE ON DELETE RESTRICT;        
-                ALTER TABLE $tableName 
-                    ADD CONSTRAINT ${tableName}_zahlungstyp_kurzbz_fkey FOREIGN KEY (zahlungstyp_kurzbz) REFERENCES tbl_zahlungstyp(zahlungstyp_kurzbz) ON UPDATE CASCADE ON DELETE CASCADE;        
+                ALTER TABLE $tableName
+                    ADD CONSTRAINT ${tableName}_rechnungsadresse_fkey FOREIGN KEY (rechnungsadresse) REFERENCES public.tbl_adresse(adresse_id) ON UPDATE CASCADE ON DELETE RESTRICT;
+                ALTER TABLE $tableName
+                    ADD CONSTRAINT ${tableName}_zahlungstyp_kurzbz_fkey FOREIGN KEY (zahlungstyp_kurzbz) REFERENCES tbl_zahlungstyp(zahlungstyp_kurzbz) ON UPDATE CASCADE ON DELETE CASCADE;
 
                 GRANT SELECT ON $tableName TO web;
 		GRANT SELECT, UPDATE, INSERT, DELETE ON $tableName TO vilesci;
@@ -323,14 +323,14 @@ if(!tableExists($schemaName,$tableName))
 
 	if(!$db->db_query($qry))
 		echo '<strong>$tableName: '.$db->db_last_error().'</strong><br>';
-	else 
+	else
 		echo ' $tableName: Tabelle $tableName hinzugefuegt!<br>';
 
 }
-else 
+else
 {
     // Migration zu AddOn
-    
+
     $schemaName = "wawi";
     $columnName = 'zuordnung_uid';
     print "Erstelle Attribute für Tabelle $tableName:";
@@ -339,55 +339,55 @@ else
         $qry = "alter table $schemaName.$tableName add column $columnName varchar(32);";
         if(!$db->db_query($qry))
 		echo "<strong>$columnName: '.$db->db_last_error().'</strong><br>";
-	else 
+	else
 		echo " $columnName: Attribut $columnName hinzugefuegt!<br>";
     }
     else
     {
         print "<br>Attribut $columnName exitiert bereits";
     }
-  
+
     $columnName = 'zuordnung_raum';
     if (!columnExists($schemaName, $tableName, $columnName))
     {
         $qry = "alter table $schemaName.$tableName add column $columnName varchar(256);";
         if(!$db->db_query($qry))
 		echo '<strong>$columnName: '.$db->db_last_error().'</strong><br>';
-	else 
+	else
 		echo " $columnName: Attribut $columnName hinzugefuegt!<br>";
     }
     else
     {
         print "<br>Attribut $columnName exitiert bereits";
     }
-    
+
     /*
     $columnName = 'bkategorie_id';
     if (!columnExists($schemaName, $tableName, $columnName))
     {
         $qry = "alter table $schemaName.$tableName add column $columnName bigint;
-            
-                ALTER TABLE $tableName 
-                    ADD CONSTRAINT ${tableName}_bkategorie_id_fkey FOREIGN KEY (bkategorie_id) REFERENCES tbl_bestellung_kategorie(bkategorie_id) ON UPDATE CASCADE ON DELETE CASCADE;        
+
+                ALTER TABLE $tableName
+                    ADD CONSTRAINT ${tableName}_bkategorie_id_fkey FOREIGN KEY (bkategorie_id) REFERENCES tbl_bestellung_kategorie(bkategorie_id) ON UPDATE CASCADE ON DELETE CASCADE;
 
                 . ";
         if(!$db->db_query($qry))
 		echo '<strong>$columnName: '.$db->db_last_error().'</strong><br>';
-	else 
+	else
 		echo " $columnName: Attribut $columnName hinzugefuegt!<br>";
     }
     else
     {
         print "<br>Attribut $columnName exitiert bereits";
     }*/
-    
+
     $columnName = 'zuordnung';
     if (!columnExists($schemaName, $tableName, $columnName))
     {
         $qry = "alter table $schemaName.$tableName add column $columnName varchar(256);";
         if(!$db->db_query($qry))
 		echo '<strong>$columnName: '.$db->db_last_error().'</strong><br>';
-	else 
+	else
 		echo " $columnName: Attribut $columnName hinzugefuegt!<br>";
     }
     else
@@ -404,29 +404,29 @@ if(!tableExists($schemaName,$tableName))
         $sequenceName = $tableName.'_seq';
 	$qry = "
                 SET search_path = $schemaName, pg_catalog;
-                
+
                 CREATE TABLE $tableName (
                     angebot_id bigint NOT NULL,
                     bestellung_id bigint NOT NULL,
                     dms_id bigint NOT NULL
                 );
-                
+
                 CREATE SEQUENCE $sequenceName
                     START WITH 1
                     INCREMENT BY 1
                     NO MINVALUE
                     NO MAXVALUE
                     CACHE 1;
-                 
+
                 ALTER TABLE $tableName
                     ADD CONSTRAINT ${tableName}_angebot_id_pkey PRIMARY KEY (angebot_id);
-                ALTER TABLE $tableName 
+                ALTER TABLE $tableName
                     ALTER COLUMN angebot_id SET DEFAULT nextval('$sequenceName');
-                        
-                ALTER TABLE $tableName 
-                    ADD CONSTRAINT ${tableName}_bestellung_id_fkey FOREIGN KEY (bestellung_id) REFERENCES tbl_bestellung(bestellung_id) ON UPDATE CASCADE ON DELETE CASCADE;        
-                ALTER TABLE $tableName 
-                    ADD CONSTRAINT ${tableName}_dms_id_fkey FOREIGN KEY (dms_id) REFERENCES campus.tbl_dms(dms_id) ON UPDATE CASCADE ON DELETE CASCADE;        
+
+                ALTER TABLE $tableName
+                    ADD CONSTRAINT ${tableName}_bestellung_id_fkey FOREIGN KEY (bestellung_id) REFERENCES tbl_bestellung(bestellung_id) ON UPDATE CASCADE ON DELETE CASCADE;
+                ALTER TABLE $tableName
+                    ADD CONSTRAINT ${tableName}_dms_id_fkey FOREIGN KEY (dms_id) REFERENCES campus.tbl_dms(dms_id) ON UPDATE CASCADE ON DELETE CASCADE;
 
                 GRANT SELECT ON $tableName TO web;
 		GRANT SELECT, UPDATE, INSERT, DELETE ON $tableName TO vilesci;
@@ -444,7 +444,7 @@ if(!tableExists($schemaName,$tableName))
 
 	if(!$db->db_query($qry))
 		echo "<strong>$tableName: ".$db->db_last_error()."</strong><br>";
-	else 
+	else
 		echo " $tableName: Tabelle $tableName hinzugefuegt!<br>";
 
 }
@@ -458,7 +458,7 @@ if(!tableExists($schemaName,$tableName))
         $sequenceName = $tableName.'_seq';
 	$qry = "
                 SET search_path = $schemaName, pg_catalog;
-                
+
                 CREATE TABLE $tableName (
                     aufteilung_id bigint NOT NULL,
                     bestellung_id bigint NOT NULL,
@@ -469,23 +469,23 @@ if(!tableExists($schemaName,$tableName))
                     updateamum timestamp without time zone,
                     updatevon character varying(32)
                 );
-                
+
                 CREATE SEQUENCE $sequenceName
                     START WITH 1
                     INCREMENT BY 1
                     NO MINVALUE
                     NO MAXVALUE
                     CACHE 1;
-                 
+
                 ALTER TABLE $tableName
                     ADD CONSTRAINT ${tableName}_aufteilung_id_pkey PRIMARY KEY (aufteilung_id);
-                ALTER TABLE $tableName 
+                ALTER TABLE $tableName
                     ALTER COLUMN aufteilung_id SET DEFAULT nextval('$sequenceName');
-                        
-                ALTER TABLE $tableName 
-                    ADD CONSTRAINT ${tableName}_bestellung_id_fkey FOREIGN KEY (bestellung_id) REFERENCES tbl_bestellung(bestellung_id) ON UPDATE CASCADE ON DELETE CASCADE;        
-                ALTER TABLE $tableName 
-                    ADD CONSTRAINT ${tableName}_oe_kurzbz_fkey FOREIGN KEY (oe_kurzbz) REFERENCES public.tbl_organisationseinheit(oe_kurzbz) ON UPDATE CASCADE ON DELETE CASCADE;        
+
+                ALTER TABLE $tableName
+                    ADD CONSTRAINT ${tableName}_bestellung_id_fkey FOREIGN KEY (bestellung_id) REFERENCES tbl_bestellung(bestellung_id) ON UPDATE CASCADE ON DELETE CASCADE;
+                ALTER TABLE $tableName
+                    ADD CONSTRAINT ${tableName}_oe_kurzbz_fkey FOREIGN KEY (oe_kurzbz) REFERENCES public.tbl_organisationseinheit(oe_kurzbz) ON UPDATE CASCADE ON DELETE CASCADE;
 
                 GRANT SELECT ON $tableName TO web;
 		GRANT SELECT, UPDATE, INSERT, DELETE ON $tableName TO vilesci;
@@ -495,7 +495,7 @@ if(!tableExists($schemaName,$tableName))
 
 	if(!$db->db_query($qry))
 		echo '<strong>$tableName: '.$db->db_last_error().'</strong><br>';
-	else 
+	else
 		echo ' $tableName: Tabelle $tableName hinzugefuegt!<br>';
 
 }
@@ -509,7 +509,7 @@ if(!tableExists($schemaName,$tableName))
         $sequenceName = $tableName.'_seq';
 	$qry = "
                 SET search_path = $schemaName, pg_catalog;
-                
+
                 CREATE TABLE $tableName (
                     aufteilung_id bigint NOT NULL,
                     kostenstelle_id bigint NOT NULL,
@@ -520,23 +520,23 @@ if(!tableExists($schemaName,$tableName))
                     updateamum timestamp without time zone,
                     updatevon character varying(32)
                 );
-                
+
                 CREATE SEQUENCE $sequenceName
                     START WITH 1
                     INCREMENT BY 1
                     NO MINVALUE
                     NO MAXVALUE
                     CACHE 1;
-                 
+
                 ALTER TABLE $tableName
                     ADD CONSTRAINT ${tableName}_aufteilung_id_pkey PRIMARY KEY (aufteilung_id);
-                ALTER TABLE $tableName 
+                ALTER TABLE $tableName
                     ALTER COLUMN aufteilung_id SET DEFAULT nextval('$sequenceName');
-                        
-                ALTER TABLE $tableName 
+
+                ALTER TABLE $tableName
                     ADD CONSTRAINT ${tableName}_kostenstelle_id_fkey FOREIGN KEY (kostenstelle_id) REFERENCES tbl_kostenstelle(kostenstelle_id) ON UPDATE CASCADE ON DELETE CASCADE;
-                ALTER TABLE $tableName 
-                    ADD CONSTRAINT ${tableName}_oe_kurzbz_fkey FOREIGN KEY (oe_kurzbz) REFERENCES public.tbl_organisationseinheit(oe_kurzbz) ON UPDATE CASCADE ON DELETE CASCADE;        
+                ALTER TABLE $tableName
+                    ADD CONSTRAINT ${tableName}_oe_kurzbz_fkey FOREIGN KEY (oe_kurzbz) REFERENCES public.tbl_organisationseinheit(oe_kurzbz) ON UPDATE CASCADE ON DELETE CASCADE;
 
                 GRANT SELECT ON $tableName TO web;
 		GRANT SELECT, UPDATE, INSERT, DELETE ON $tableName TO vilesci;
@@ -546,7 +546,7 @@ if(!tableExists($schemaName,$tableName))
 
 	if(!$db->db_query($qry))
 		echo '<strong>$tableName: '.$db->db_last_error().'</strong><br>';
-	else 
+	else
 		echo ' $tableName: Tabelle $tableName hinzugefuegt!<br>';
 
 }
@@ -563,7 +563,7 @@ if(!tableExists($schemaName,$tableName))
         $sequenceName = $tableName.'_seq';
 	$qry = "
                 SET search_path = $schemaName, pg_catalog;
-                
+
                 CREATE TABLE $tableName (
                     bestelldetail_id bigint NOT NULL,
                     bestellung_id bigint NOT NULL,
@@ -582,21 +582,21 @@ if(!tableExists($schemaName,$tableName))
                     updateamum timestamp without time zone,
                     updatevon character varying(32)
                 );
-                
+
                 CREATE SEQUENCE $sequenceName
                     START WITH 1
                     INCREMENT BY 1
                     NO MINVALUE
                     NO MAXVALUE
                     CACHE 1;
-                 
+
                 ALTER TABLE $tableName
                     ADD CONSTRAINT ${tableName}_bestelldetail_id_pkey PRIMARY KEY (bestelldetail_id);
-                ALTER TABLE $tableName 
+                ALTER TABLE $tableName
                     ALTER COLUMN bestelldetail_id SET DEFAULT nextval('$sequenceName');
-                        
-                ALTER TABLE $tableName 
-                    ADD CONSTRAINT ${tableName}_bestellung_id_fkey FOREIGN KEY (bestellung_id) REFERENCES tbl_bestellung(bestellung_id) ON UPDATE CASCADE ON DELETE CASCADE;                
+
+                ALTER TABLE $tableName
+                    ADD CONSTRAINT ${tableName}_bestellung_id_fkey FOREIGN KEY (bestellung_id) REFERENCES tbl_bestellung(bestellung_id) ON UPDATE CASCADE ON DELETE CASCADE;
 
                 GRANT SELECT ON $tableName TO web;
 		GRANT SELECT, UPDATE, INSERT, DELETE ON $tableName TO vilesci;
@@ -606,7 +606,7 @@ if(!tableExists($schemaName,$tableName))
 
 	if(!$db->db_query($qry))
 		echo '<strong>$tableName: '.$db->db_last_error().'</strong><br>';
-	else 
+	else
 		echo ' $tableName: Tabelle $tableName hinzugefuegt!<br>';
 
 }
@@ -619,32 +619,32 @@ if(!tableExists($schemaName,$tableName))
 {
 	$qry = "
                 SET search_path = $schemaName, pg_catalog;
-                
+
                 CREATE TABLE $tableName (
                     tag character varying(128) NOT NULL,
                     bestelldetail_id bigint NOT NULL,
                     insertamum timestamp without time zone,
                     insertvon character varying(32)
                 );
-                
+
                 ALTER TABLE $tableName
                     ADD CONSTRAINT ${tableName}_tag_pkey PRIMARY KEY (tag);
 
-                ALTER TABLE $tableName 
-         <           ADD CONSTRAINT ${tableName}_bestelldetail_id_fkey FOREIGN KEY (bestellung_id) REFERENCES tbl_bestelldetail(bestelldetail_id) ON UPDATE CASCADE ON DELETE CASCADE;                
-                ALTER TABLE $tableName 
+                ALTER TABLE $tableName
+         <           ADD CONSTRAINT ${tableName}_bestelldetail_id_fkey FOREIGN KEY (bestellung_id) REFERENCES tbl_bestelldetail(bestelldetail_id) ON UPDATE CASCADE ON DELETE CASCADE;
+                ALTER TABLE $tableName
                     ADD CONSTRAINT ${tableName}_tag_fkey FOREIGN KEY (tag) REFERENCES public.tbl_tag(tag) ON UPDATE CASCADE ON DELETE CASCADE;
-                
+
 
                 GRANT SELECT ON $tableName TO web;
 		GRANT SELECT, UPDATE, INSERT, DELETE ON $tableName TO vilesci;
-	
+
 
                 ";
 
 	if(!$db->db_query($qry))
 		echo '<strong>$tableName: '.$db->db_last_error().'</strong><br>';
-	else 
+	else
 		echo ' $tableName: Tabelle $tableName hinzugefuegt!<br>';
 
 }
@@ -655,21 +655,21 @@ $tableName = "tbl_bestellstatus";
 $tabellen[$schemaName.'.'.$tableName] = array("bestellstatus_kurzbz","beschreibung");
 if(!tableExists($schemaName,$tableName))
 {
-        
+
 	$qry = "
                 SET search_path = $schemaName, pg_catalog;
-                
+
                 CREATE TABLE $tableName (
                     bestellstatus_kurzbz character varying(32) NOT NULL,
                     beschreibung character varying(256)
                 );
-                
+
                 ALTER TABLE $tableName
                     ADD CONSTRAINT ${tableName}_tag_pkey PRIMARY KEY (bestellstatus_kurzbz);
-                
+
                 GRANT SELECT ON $tableName TO web;
 		GRANT SELECT, UPDATE, INSERT, DELETE ON $tableName TO vilesci;
-                    
+
                 INSERT INTO $schemaName.$tableName(bestellstatus_kurzbz,beschreibung) VALUES('Freigabe','Freigabe der Bestellung');
                 INSERT INTO $schemaName.$tableName(bestellstatus_kurzbz,beschreibung) VALUES('Storno','Stornierung einer Bestellung');
                 INSERT INTO $schemaName.$tableName(bestellstatus_kurzbz,beschreibung) VALUES('Lieferung','Ware wurde geliefert');
@@ -681,7 +681,7 @@ if(!tableExists($schemaName,$tableName))
 
 	if(!$db->db_query($qry))
 		echo '<strong>$tableName: '.$db->db_last_error().'</strong><br>';
-	else 
+	else
 		echo ' $tableName: Tabelle $tableName hinzugefuegt!<br>';
 
 }
@@ -692,7 +692,7 @@ else
         $qry=" INSERT INTO $schemaName.$tableName(bestellstatus_kurzbz,beschreibung) VALUES('Abgeschickt-Erneut','Bestellung wurde nochmal abgeschickt');";
         if(!$db->db_query($qry))
             echo '<strong>$tableName: '.$db->db_last_error().'</strong><br>';
-        else 
+        else
             echo " $tableName: Bestellstatus 'Abgeschickt-Erneut'  hinzugefuegt!<br>";
     }
     else
@@ -713,7 +713,7 @@ if(!tableExists($schemaName,$tableName))
         $sequenceName = $tableName.'_seq';
 	$qry = "
                 SET search_path = $schemaName, pg_catalog;
-                
+
                 CREATE TABLE $tableName (
                     bestellung_bestellstatus_id bigint NOT NULL,
                     bestellung_id bigint NOT NULL,
@@ -726,28 +726,28 @@ if(!tableExists($schemaName,$tableName))
                     updatevon character varying(32),
                     updateamum timestamp without time zone
                 );
-                
+
                 CREATE SEQUENCE $sequenceName
                     START WITH 1
                     INCREMENT BY 1
                     NO MINVALUE
                     NO MAXVALUE
                     CACHE 1;
-                 
+
                 ALTER TABLE $tableName
                     ADD CONSTRAINT ${tableName}_bestellung_bestellstatus_id_pkey PRIMARY KEY (bestellung_bestellstatus_id);
-                ALTER TABLE $tableName 
+                ALTER TABLE $tableName
                     ALTER COLUMN bestellung_bestellstatus_id SET DEFAULT nextval('$sequenceName');
-                        
-                ALTER TABLE $tableName 
-                    ADD CONSTRAINT ${tableName}_uid_fkey FOREIGN KEY (uid) REFERENCES public.tbl_benutzer(uid) ON UPDATE CASCADE ON DELETE RESTRICT;              
-                ALTER TABLE $tableName 
+
+                ALTER TABLE $tableName
+                    ADD CONSTRAINT ${tableName}_uid_fkey FOREIGN KEY (uid) REFERENCES public.tbl_benutzer(uid) ON UPDATE CASCADE ON DELETE RESTRICT;
+                ALTER TABLE $tableName
                     ADD CONSTRAINT ${tableName}_bestellstatus_kurzbz_fkey FOREIGN KEY (bestellstatus_kurzbz) REFERENCES tbl_bestellstatus(bestellstatus_kurzbz) ON UPDATE CASCADE ON DELETE RESTRICT;
-                ALTER TABLE $tableName 
+                ALTER TABLE $tableName
                     ADD CONSTRAINT ${tableName}_bestellung_id_fkey FOREIGN KEY (bestellung_id) REFERENCES tbl_bestellung(bestellung_id)ON UPDATE CASCADE ON DELETE CASCADE;
-                ALTER TABLE $tableName 
+                ALTER TABLE $tableName
                     ADD CONSTRAINT ${tableName}_oe_kurzbz_fkey FOREIGN KEY (oe_kurzbz) REFERENCES public.tbl_organisationseinheit(oe_kurzbz)) ON UPDATE CASCADE ON DELETE RESTRICT;
-                        
+
 
                 GRANT SELECT ON $tableName TO web;
 		GRANT SELECT, UPDATE, INSERT, DELETE ON $tableName TO vilesci;
@@ -757,7 +757,7 @@ if(!tableExists($schemaName,$tableName))
 
 	if(!$db->db_query($qry))
 		echo '<strong>$tableName: '.$db->db_last_error().'</strong><br>';
-	else 
+	else
 		echo ' $tableName: Tabelle $tableName hinzugefuegt!<br>';
 
 }
@@ -769,32 +769,32 @@ if(!tableExists($schemaName,$tableName))
 {
 	$qry = "
                 SET search_path = $schemaName, pg_catalog;
-                
+
                 CREATE TABLE $tableName (
                     tag character varying(128) NOT NULL,
                     bestellung_id bigint NOT NULL,
                     insertamum timestamp without time zone,
                     insertvon character varying(32)
                 );
-                
+
                 ALTER TABLE $tableName
                     ADD CONSTRAINT ${tableName}_tag_bestellung_id_pkey PRIMARY KEY (tag, bestellung_id);
-                
 
-                ALTER TABLE $tableName 
-                    ADD CONSTRAINT ${tableName}_bestellung_id_fkey FOREIGN KEY (bestellung_id) REFERENCES tbl_bestellung(bestellung_id) ON UPDATE CASCADE ON DELETE CASCADE;              
-                ALTER TABLE $tableName 
-                    ADD CONSTRAINT ${tableName}_tag_fkey FOREIGN KEY (tag) REFERENCES public.tbl_tag(tag) ON UPDATE CASCADE ON DELETE CASCADE;              
+
+                ALTER TABLE $tableName
+                    ADD CONSTRAINT ${tableName}_bestellung_id_fkey FOREIGN KEY (bestellung_id) REFERENCES tbl_bestellung(bestellung_id) ON UPDATE CASCADE ON DELETE CASCADE;
+                ALTER TABLE $tableName
+                    ADD CONSTRAINT ${tableName}_tag_fkey FOREIGN KEY (tag) REFERENCES public.tbl_tag(tag) ON UPDATE CASCADE ON DELETE CASCADE;
 
 
                 GRANT SELECT ON $tableName TO web;
 		GRANT SELECT, UPDATE, INSERT, DELETE ON $tableName TO vilesci;
-                   
+
                 ";
 
 	if(!$db->db_query($qry))
 		echo '<strong>$tableName: '.$db->db_last_error().'</strong><br>';
-	else 
+	else
 		echo ' $tableName: Tabelle $tableName hinzugefuegt!<br>';
 }
 
@@ -814,7 +814,7 @@ if(!tableExists($schemaName,$tableName))
         $sequenceName = $tableName.'_seq';
 	$qry = "
                 SET search_path = $schemaName, pg_catalog;
-                
+
                 CREATE TABLE $tableName (
                     betriebsmittel_id integer NOT NULL,
                     beschreibung character varying(256),
@@ -847,43 +847,43 @@ if(!tableExists($schemaName,$tableName))
                     nummer2 character varying(32),
                     verplanen  boolean DEFAULT false NOT NULL
                 );
-                
+
                 CREATE SEQUENCE $sequenceName
                     START WITH 1
                     INCREMENT BY 1
                     NO MINVALUE
                     NO MAXVALUE
                     CACHE 1;
-                 
+
                 ALTER TABLE $tableName
                     ADD CONSTRAINT ${tableName}_betriebsmittel_id_pkey PRIMARY KEY (betriebsmittel_id);
-                ALTER TABLE $tableName 
+                ALTER TABLE $tableName
                     ALTER COLUMN betriebsmittel_id SET DEFAULT nextval('$sequenceName');
-                        
-                ALTER TABLE $tableName 
-                    ADD CONSTRAINT ${tableName}_betriebsmitteltyp_fkey 
-                    FOREIGN KEY (betriebsmitteltyp) 
-                    REFERENCES tbl_betriebsmitteltyp(betriebsmitteltyp) 
+
+                ALTER TABLE $tableName
+                    ADD CONSTRAINT ${tableName}_betriebsmitteltyp_fkey
+                    FOREIGN KEY (betriebsmitteltyp)
+                    REFERENCES tbl_betriebsmitteltyp(betriebsmitteltyp)
                     ON UPDATE CASCADE ON DELETE RESTRICT;
-                ALTER TABLE $tableName 
-                    ADD CONSTRAINT ${tableName}_bestelldetail_id_fkey 
-                    FOREIGN KEY (bestelldetail_id) 
-                    REFERENCES tbl_bestelldetail(bestelldetail_id) 
+                ALTER TABLE $tableName
+                    ADD CONSTRAINT ${tableName}_bestelldetail_id_fkey
+                    FOREIGN KEY (bestelldetail_id)
+                    REFERENCES tbl_bestelldetail(bestelldetail_id)
                     ON UPDATE CASCADE ON DELETE RESTRICT;
-                ALTER TABLE $tableName 
-                    ADD CONSTRAINT ${tableName}_bestellung_id_fkey 
-                    FOREIGN KEY (bestellung_id) 
-                    REFERENCES tbl_bestellung(bestellung_id) 
+                ALTER TABLE $tableName
+                    ADD CONSTRAINT ${tableName}_bestellung_id_fkey
+                    FOREIGN KEY (bestellung_id)
+                    REFERENCES tbl_bestellung(bestellung_id)
                     ON UPDATE CASCADE ON DELETE RESTRICT;
-                ALTER TABLE $tableName 
-                    ADD CONSTRAINT ${tableName}_oe_kurzbz_fkey 
-                    FOREIGN KEY (oe_kurzbz) 
-                    REFERENCES public.tbl_organisationseinheit(oe_kurzbz) 
+                ALTER TABLE $tableName
+                    ADD CONSTRAINT ${tableName}_oe_kurzbz_fkey
+                    FOREIGN KEY (oe_kurzbz)
+                    REFERENCES public.tbl_organisationseinheit(oe_kurzbz)
                     ON UPDATE CASCADE ON DELETE RESTRICT;
-                ALTER TABLE $tableName 
-                    ADD CONSTRAINT ${tableName}_ort_kurzbz_fkey 
-                    FOREIGN KEY (oe_kurzbz) 
-                    REFERENCES public.tbl_ort(ort_kurzbz) 
+                ALTER TABLE $tableName
+                    ADD CONSTRAINT ${tableName}_ort_kurzbz_fkey
+                    FOREIGN KEY (oe_kurzbz)
+                    REFERENCES public.tbl_ort(ort_kurzbz)
                     ON UPDATE CASCADE ON DELETE RESTRICT;
 
                 GRANT SELECT ON $tableName TO web;
@@ -894,7 +894,7 @@ if(!tableExists($schemaName,$tableName))
 
 	if(!$db->db_query($qry))
 		echo '<strong>$tableName: '.$db->db_last_error().'</strong><br>';
-	else 
+	else
 		echo ' $tableName: Tabelle $tableName hinzugefuegt!<br>';
 
 }
@@ -908,23 +908,23 @@ if(!tableExists($schemaName,$tableName))
 {
 	$qry = "
                 SET search_path = $schemaName, pg_catalog;
-                
+
                 CREATE TABLE $tableName (
                     betriebsmittelstatus_kurzbz character varying(16) NOT NULL,
                     beschreibung character varying(256)
                 );
-                
+
                 ALTER TABLE $tableName
                     ADD CONSTRAINT ${tableName}_betriebsmittelstatus_kurzbz_pkey PRIMARY KEY (betriebsmittelstatus_kurzbz);
-                
+
                 GRANT SELECT ON $tableName TO web;
 		GRANT SELECT, UPDATE, INSERT, DELETE ON $tableName TO vilesci;
-                   
+
                 ";
 
 	if(!$db->db_query($qry))
 		echo '<strong>$tableName: '.$db->db_last_error().'</strong><br>';
-	else 
+	else
 		echo ' $tableName: Tabelle $tableName hinzugefuegt!<br>';
 }
 
@@ -942,7 +942,7 @@ if(!tableExists($schemaName,$tableName))
         $sequenceName = $tableName.'_seq';
 	$qry = "
                 SET search_path = $schemaName, pg_catalog;
-                
+
                 CREATE TABLE $tableName (
                     betriebsmittelbetriebsmittelstatus_id integer NOT NULL,
                     betriebsmittel_id integer NOT NULL,
@@ -954,28 +954,28 @@ if(!tableExists($schemaName,$tableName))
                     insertamum timestamp without time zone,
                     insertvon character varying(32)
                 );
-                
+
                 CREATE SEQUENCE $sequenceName
                     START WITH 1
                     INCREMENT BY 1
                     NO MINVALUE
                     NO MAXVALUE
                     CACHE 1;
-                 
+
                 ALTER TABLE $tableName
                     ADD CONSTRAINT ${tableName}_betriebsmittelbetriebsmittelstatus_id_pkey PRIMARY KEY (betriebsmittelbetriebsmittelstatus_id);
-                ALTER TABLE $tableName 
+                ALTER TABLE $tableName
                     ALTER COLUMN betriebsmittelbetriebsmittelstatus_id SET DEFAULT nextval('$sequenceName');
-                        
-                ALTER TABLE $tableName 
-                    ADD CONSTRAINT ${tableName}_bestellung_id_fkey 
-                    FOREIGN KEY (bestellung_id) 
-                    REFERENCES tbl_bestellung(bestellung_id) 
+
+                ALTER TABLE $tableName
+                    ADD CONSTRAINT ${tableName}_bestellung_id_fkey
+                    FOREIGN KEY (bestellung_id)
+                    REFERENCES tbl_bestellung(bestellung_id)
                     ON UPDATE CASCADE ON DELETE CASCADE;
-                ALTER TABLE $tableName 
-                    ADD CONSTRAINT ${tableName}_oe_kurzbz_fkey 
-                    FOREIGN KEY (oe_kurzbz) 
-                    REFERENCES public.tbl_organisationseinheit(oe_kurzbz) 
+                ALTER TABLE $tableName
+                    ADD CONSTRAINT ${tableName}_oe_kurzbz_fkey
+                    FOREIGN KEY (oe_kurzbz)
+                    REFERENCES public.tbl_organisationseinheit(oe_kurzbz)
                     ON UPDATE CASCADE ON DELETE CASCADE;
 
                 GRANT SELECT ON $tableName TO web;
@@ -986,7 +986,7 @@ if(!tableExists($schemaName,$tableName))
 
 	if(!$db->db_query($qry))
 		echo '<strong>$tableName: '.$db->db_last_error().'</strong><br>';
-	else 
+	else
 		echo ' $tableName: Tabelle $tableName hinzugefuegt!<br>';
 
 }
@@ -1005,7 +1005,7 @@ if(!tableExists($schemaName,$tableName))
         $sequenceName = $tableName.'_seq';
 	$qry = "
                 SET search_path = $schemaName, pg_catalog;
-                
+
                 CREATE TABLE $tableName (
                     betriebsmittelperson_id integer NOT NULL,
                     betriebsmittel_id integer NOT NULL,
@@ -1018,36 +1018,36 @@ if(!tableExists($schemaName,$tableName))
                     insertvon character varying(32),
                     updateamum timestamp without time zone,
                     updatevon character varying(32),
-                    ext_id bigint,                    
+                    ext_id bigint,
                     uid character varying(32)
                 );
-                
+
                 CREATE SEQUENCE $sequenceName
                     START WITH 1
                     INCREMENT BY 1
                     NO MINVALUE
                     NO MAXVALUE
                     CACHE 1;
-                 
+
                 ALTER TABLE $tableName
                     ADD CONSTRAINT ${tableName}_betriebsmittelperson_id_pkey PRIMARY KEY (betriebsmittelperson_id);
-                ALTER TABLE $tableName 
+                ALTER TABLE $tableName
                     ALTER COLUMN betriebsmittelperson_id SET DEFAULT nextval('$sequenceName');
-                        
-                ALTER TABLE $tableName 
-                    ADD CONSTRAINT ${tableName}_betriebsmittel_id_fkey 
-                    FOREIGN KEY (betriebsmittel_id) 
-                    REFERENCES tbl_betriebsmittel(betriebsmittel_id) 
+
+                ALTER TABLE $tableName
+                    ADD CONSTRAINT ${tableName}_betriebsmittel_id_fkey
+                    FOREIGN KEY (betriebsmittel_id)
+                    REFERENCES tbl_betriebsmittel(betriebsmittel_id)
                     ON UPDATE CASCADE ON DELETE RESTRICT;
-                ALTER TABLE $tableName 
-                    ADD CONSTRAINT ${tableName}_uid_fkey 
-                    FOREIGN KEY (uid) 
-                    REFERENCES public.tbl_benutzer(uid) 
+                ALTER TABLE $tableName
+                    ADD CONSTRAINT ${tableName}_uid_fkey
+                    FOREIGN KEY (uid)
+                    REFERENCES public.tbl_benutzer(uid)
                     ON UPDATE CASCADE ON DELETE RESTRICT;
-                ALTER TABLE $tableName 
-                    ADD CONSTRAINT ${tableName}_person_id_fkey 
-                    FOREIGN KEY (person_id) 
-                    REFERENCES public.tbl_person(person_id) 
+                ALTER TABLE $tableName
+                    ADD CONSTRAINT ${tableName}_person_id_fkey
+                    FOREIGN KEY (person_id)
+                    REFERENCES public.tbl_person(person_id)
                     ON UPDATE CASCADE ON DELETE RESTRICT;
 
                 GRANT SELECT ON $tableName TO web;
@@ -1058,7 +1058,7 @@ if(!tableExists($schemaName,$tableName))
 
 	if(!$db->db_query($qry))
 		echo '<strong>$tableName: '.$db->db_last_error().'</strong><br>';
-	else 
+	else
 		echo ' $tableName: Tabelle $tableName hinzugefuegt!<br>';
 
 }
@@ -1072,7 +1072,7 @@ if(!tableExists($schemaName,$tableName))
 {
 	$qry = "
                 SET search_path = $schemaName, pg_catalog;
-                
+
                 CREATE TABLE $tableName (
                     betriebsmitteltyp character varying(16) NOT NULL,
                     beschreibung character varying(256),
@@ -1081,24 +1081,24 @@ if(!tableExists($schemaName,$tableName))
                     typ_code character(2),
                     mastershapename character varying(256)
                 );
-                
+
                 ALTER TABLE $tableName
                     ADD CONSTRAINT ${tableName}_betriebsmitteltyp_pkey PRIMARY KEY (betriebsmitteltyp);
-                        
-                ALTER TABLE $tableName 
-                    ADD CONSTRAINT ${tableName}_betriebsmitteltyp_fkey 
-                    FOREIGN KEY (betriebsmitteltyp) 
-                    REFERENCES tbl_betriebsmitteltyp(betriebsmitteltyp) 
-                    ON UPDATE CASCADE ON DELETE RESTRICT;                    
-                
+
+                ALTER TABLE $tableName
+                    ADD CONSTRAINT ${tableName}_betriebsmitteltyp_fkey
+                    FOREIGN KEY (betriebsmitteltyp)
+                    REFERENCES tbl_betriebsmitteltyp(betriebsmitteltyp)
+                    ON UPDATE CASCADE ON DELETE RESTRICT;
+
                 GRANT SELECT ON $tableName TO web;
 		GRANT SELECT, UPDATE, INSERT, DELETE ON $tableName TO vilesci;
-                   
+
                 ";
 
 	if(!$db->db_query($qry))
 		echo '<strong>$tableName: '.$db->db_last_error().'</strong><br>';
-	else 
+	else
 		echo ' $tableName: Tabelle $tableName hinzugefuegt!<br>';
 }
 
@@ -1111,7 +1111,7 @@ if(!tableExists($schemaName,$tableName))
         $sequenceName = $tableName.'_seq';
 	$qry = "
                 SET search_path = $schemaName, pg_catalog;
-                
+
                 CREATE TABLE $tableName (
                     betriebsmitteltyp character varying(16) NOT NULL,
                     beschreibung character varying(256),
@@ -1120,24 +1120,24 @@ if(!tableExists($schemaName,$tableName))
                     typ_code character(2),
                     mastershapename character varying(256)
                 );
-                
+
                 ALTER TABLE $tableName
                     ADD CONSTRAINT ${tableName}_betriebsmitteltyp_pkey PRIMARY KEY (betriebsmitteltyp);
-                        
-                ALTER TABLE $tableName 
-                    ADD CONSTRAINT ${tableName}_betriebsmitteltyp_fkey 
-                    FOREIGN KEY (betriebsmitteltyp) 
-                    REFERENCES tbl_betriebsmitteltyp(betriebsmitteltyp) 
-                    ON UPDATE CASCADE ON DELETE RESTRICT;                    
-                
+
+                ALTER TABLE $tableName
+                    ADD CONSTRAINT ${tableName}_betriebsmitteltyp_fkey
+                    FOREIGN KEY (betriebsmitteltyp)
+                    REFERENCES tbl_betriebsmitteltyp(betriebsmitteltyp)
+                    ON UPDATE CASCADE ON DELETE RESTRICT;
+
                 GRANT SELECT ON $tableName TO web;
 		GRANT SELECT, UPDATE, INSERT, DELETE ON $tableName TO vilesci;
-                   
+
                 ";
 
 	if(!$db->db_query($qry))
 		echo '<strong>$tableName: '.$db->db_last_error().'</strong><br>';
-	else 
+	else
 		echo ' $tableName: Tabelle $tableName hinzugefuegt!<br>';
 }
 
@@ -1148,14 +1148,14 @@ if(!tableExists($schemaName,$tableName))
 {
 	$qry = "
                 SET search_path = $schemaName, pg_catalog;
-                
+
                 CREATE TABLE $tableName (
                     buchungstyp_kurzbz character varying(32) NOT NULL,
                     bezeichnung character varying(256)
                 );
-                               
+
                 ALTER TABLE $tableName
-                    ADD CONSTRAINT ${tableName}_buchungstyp_kurzbz_pkey PRIMARY KEY (buchungstyp_kurzbz);                
+                    ADD CONSTRAINT ${tableName}_buchungstyp_kurzbz_pkey PRIMARY KEY (buchungstyp_kurzbz);
 
                 GRANT SELECT ON $tableName TO web;
 		GRANT SELECT, UPDATE, INSERT, DELETE ON $tableName TO vilesci;
@@ -1164,7 +1164,7 @@ if(!tableExists($schemaName,$tableName))
 
 	if(!$db->db_query($qry))
 		echo '<strong>$tableName: '.$db->db_last_error().'</strong><br>';
-	else 
+	else
 		echo ' $tableName: Tabelle $tableName hinzugefuegt!<br>';
 
 }
@@ -1176,25 +1176,25 @@ if(!tableExists($schemaName,$tableName))
 {
 	$qry = "
                 SET search_path = $schemaName, pg_catalog;
-                
+
                 CREATE TABLE $tableName (
                     geschaeftsjahr_kurzbz character varying(32) NOT NULL,
                     kostenstelle_id bigint NOT NULL,
                     budget numeric(12,2) NOT NULL
                 );
-                               
+
                 ALTER TABLE $tableName
-                    ADD CONSTRAINT ${tableName}_geschaeftsjahr_kurzbz_pkey PRIMARY KEY (geschaeftsjahr_kurzbz, kostenstelle_id);    
-                        
-                ALTER TABLE $tableName 
-                    ADD CONSTRAINT ${tableName}_geschaeftsjahr_kurzbz_fkey 
-                    FOREIGN KEY (geschaeftsjahr_kurzbz) 
-                    REFERENCES public.tbl_geschaeftsjahr(geschaeftsjahr_kurzbz) 
+                    ADD CONSTRAINT ${tableName}_geschaeftsjahr_kurzbz_pkey PRIMARY KEY (geschaeftsjahr_kurzbz, kostenstelle_id);
+
+                ALTER TABLE $tableName
+                    ADD CONSTRAINT ${tableName}_geschaeftsjahr_kurzbz_fkey
+                    FOREIGN KEY (geschaeftsjahr_kurzbz)
+                    REFERENCES public.tbl_geschaeftsjahr(geschaeftsjahr_kurzbz)
                     ON UPDATE CASCADE ON DELETE CASCADE;
-                ALTER TABLE $tableName 
-                    ADD CONSTRAINT ${tableName}_kostenstelle_id_fkey 
-                    FOREIGN KEY (kostenstelle_id) 
-                    REFERENCES tbl_kostenstelle(kostenstelle_id) 
+                ALTER TABLE $tableName
+                    ADD CONSTRAINT ${tableName}_kostenstelle_id_fkey
+                    FOREIGN KEY (kostenstelle_id)
+                    REFERENCES tbl_kostenstelle(kostenstelle_id)
                     ON UPDATE CASCADE ON DELETE CASCADE;
 
                 GRANT SELECT ON $tableName TO web;
@@ -1204,7 +1204,7 @@ if(!tableExists($schemaName,$tableName))
 
 	if(!$db->db_query($qry))
 		echo '<strong>$tableName: '.$db->db_last_error().'</strong><br>';
-	else 
+	else
 		echo ' $tableName: Tabelle $tableName hinzugefuegt!<br>';
 
 }
@@ -1219,36 +1219,36 @@ if(!tableExists($schemaName,$tableName))
         $sequenceName = $tableName.'_seq';
 	$qry = "
                 SET search_path = $schemaName, pg_catalog;
-                
+
                 CREATE TABLE $tableName (
                     konto_id bigint NOT NULL,
                     kostenstelle_id bigint NOT NULL,
                     insertamum timestamp without time zone,
                     insertvon character varying(32)
                 );
-                
+
                 ALTER TABLE $tableName
                     ADD CONSTRAINT ${tableName}_konto_id_kostenstelle_id_pkey PRIMARY KEY (konto_id,kostenstelle_id);
-                        
-                ALTER TABLE $tableName 
-                    ADD CONSTRAINT ${tableName}_konto_id_fkey 
-                    FOREIGN KEY (konto_id) 
-                    REFERENCES tbl_konto(konto_id) 
+
+                ALTER TABLE $tableName
+                    ADD CONSTRAINT ${tableName}_konto_id_fkey
+                    FOREIGN KEY (konto_id)
+                    REFERENCES tbl_konto(konto_id)
                     ON UPDATE CASCADE ON DELETE CASCADE;
-                ALTER TABLE $tableName 
-                    ADD CONSTRAINT ${tableName}_kostenstelle_id_fkey 
-                    FOREIGN KEY (kostenstelle_id) 
-                    REFERENCES tbl_kostenstelle(kostenstelle_id) 
+                ALTER TABLE $tableName
+                    ADD CONSTRAINT ${tableName}_kostenstelle_id_fkey
+                    FOREIGN KEY (kostenstelle_id)
+                    REFERENCES tbl_kostenstelle(kostenstelle_id)
                     ON UPDATE CASCADE ON DELETE CASCADE;
-                
+
                 GRANT SELECT ON $tableName TO web;
 		GRANT SELECT, UPDATE, INSERT, DELETE ON $tableName TO vilesci;
-                   
+
                 ";
 
 	if(!$db->db_query($qry))
 		echo '<strong>$tableName: '.$db->db_last_error().'</strong><br>';
-	else 
+	else
 		echo ' $tableName: Tabelle $tableName hinzugefuegt!<br>';
 }
 
@@ -1261,35 +1261,35 @@ if(!tableExists($schemaName,$tableName))
 {
 	$qry = "
                 SET search_path = $schemaName, pg_catalog;
-                
+
                 CREATE TABLE $tableName (
                     projekt_kurzbz character varying(16) NOT NULL,
                     bestellung_id bigint NOT NULL,
                     anteil numeric(5,2)
                 );
-                
+
                 ALTER TABLE $tableName
                     ADD CONSTRAINT ${tableName}_konto_id_kostenstelle_id_pkey PRIMARY KEY (konto_id,kostenstelle_id);
-                        
-                ALTER TABLE $tableName 
-                    ADD CONSTRAINT ${tableName}_bestellung_id_fkey 
-                    FOREIGN KEY (bestellung_id) 
-                    REFERENCES tbl_bestellung(bestellung_id) 
+
+                ALTER TABLE $tableName
+                    ADD CONSTRAINT ${tableName}_bestellung_id_fkey
+                    FOREIGN KEY (bestellung_id)
+                    REFERENCES tbl_bestellung(bestellung_id)
                     ON UPDATE CASCADE ON DELETE CASCADE;
-                ALTER TABLE $tableName 
-                    ADD CONSTRAINT ${tableName}_projekt_kurzbz_fkey 
-                    FOREIGN KEY (projekt_kurzbz) 
-                    REFERENCES fue.tbl_projekt(projekt_kurzbz) 
+                ALTER TABLE $tableName
+                    ADD CONSTRAINT ${tableName}_projekt_kurzbz_fkey
+                    FOREIGN KEY (projekt_kurzbz)
+                    REFERENCES fue.tbl_projekt(projekt_kurzbz)
                     ON UPDATE CASCADE ON DELETE RESTRICT;
-                
+
                 GRANT SELECT ON $tableName TO web;
 		GRANT SELECT, UPDATE, INSERT, DELETE ON $tableName TO vilesci;
-                   
+
                 ";
 
 	if(!$db->db_query($qry))
 		echo '<strong>$tableName: '.$db->db_last_error().'</strong><br>';
-	else 
+	else
 		echo ' $tableName: Tabelle $tableName hinzugefuegt!<br>';
 }
 
@@ -1301,30 +1301,30 @@ if(!tableExists($schemaName,$tableName))
 {
 	$qry = "
                 SET search_path = $schemaName, pg_catalog;
-                
+
                 CREATE TABLE $tableName (
                     rechnungstyp_kurzbz character varying(32) NOT NULL,
                     beschreibung character varying(256),
                     berechtigung_kurzbz character varying(32)
                 );
-                
+
                 ALTER TABLE $tableName
                     ADD CONSTRAINT ${tableName}_rechnungstyp_kurzbz_pkey PRIMARY KEY (rechnungstyp_kurzbz);
-                        
-                ALTER TABLE $tableName 
-                    ADD CONSTRAINT ${tableName}_berechtigung_kurzbz_fkey 
-                    FOREIGN KEY (berechtigung_kurzbz) 
-                    REFERENCES system.tbl_berechtigung(berechtigung_kurzbz) 
+
+                ALTER TABLE $tableName
+                    ADD CONSTRAINT ${tableName}_berechtigung_kurzbz_fkey
+                    FOREIGN KEY (berechtigung_kurzbz)
+                    REFERENCES system.tbl_berechtigung(berechtigung_kurzbz)
                     ON UPDATE CASCADE ON DELETE RESTRICT;
-                
+
                 GRANT SELECT ON $tableName TO web;
 		GRANT SELECT, UPDATE, INSERT, DELETE ON $tableName TO vilesci;
-                   
+
                 ";
 
 	if(!$db->db_query($qry))
 		echo '<strong>$tableName: '.$db->db_last_error().'</strong><br>';
-	else 
+	else
 		echo ' $tableName: Tabelle $tableName hinzugefuegt!<br>';
 }
 
@@ -1335,24 +1335,24 @@ if(!tableExists($schemaName,$tableName))
 {
 	$qry = "
                 SET search_path = $schemaName, pg_catalog;
-                
+
                 CREATE TABLE $tableName (
                     zahlungstyp_kurzbz character varying(32) NOT NULL,
                     bezeichnung character varying(256) NOT NULL,
                     reihenfolge int not null
                 );
-                
+
                 ALTER TABLE $tableName
                     ADD CONSTRAINT ${tableName}_zahlungstyp_kurzbz_pkey PRIMARY KEY (zahlungstyp_kurzbz);
-                        
+
                 GRANT SELECT ON $tableName TO web;
 		GRANT SELECT, UPDATE, INSERT, DELETE ON $tableName TO vilesci;
-                   
+
                 ";
 
 	if(!$db->db_query($qry))
 		echo '<strong>$tableName: '.$db->db_last_error().'</strong><br>';
-	else 
+	else
 		echo ' $tableName: Tabelle $tableName hinzugefuegt!<br>';
 }
 else
@@ -1366,7 +1366,7 @@ else
         {
             echo "<strong>$columnName: ".$db->db_last_error()."</strong><br>";
         }
-        else 
+        else
         {
             echo " $columnName: Attribut $columnName hinzugefuegt!<br>";
             $qry = "
@@ -1402,7 +1402,7 @@ if(!tableExists($schemaName,$tableName))
         $sequenceName = $tableName.'_seq';
 	$qry = "
                 SET search_path = $schemaName, pg_catalog;
-                
+
                 CREATE TABLE $tableName (
                     rechnung_id bigint NOT NULL,
                     bestellung_id integer,
@@ -1420,28 +1420,28 @@ if(!tableExists($schemaName,$tableName))
                     freigegebenamum timestamp without time zone,
                     freigegebenvon character varying(32)
                 );
-                
+
                 CREATE SEQUENCE $sequenceName
                     START WITH 1
                     INCREMENT BY 1
                     NO MINVALUE
                     NO MAXVALUE
                     CACHE 1;
-                 
+
                 ALTER TABLE $tableName
                     ADD CONSTRAINT ${tableName}_rechnung_id_pkey PRIMARY KEY (rechnung_id);
-                ALTER TABLE $tableName 
+                ALTER TABLE $tableName
                     ALTER COLUMN rechnung_id SET DEFAULT nextval('$sequenceName');
-                        
-                ALTER TABLE $tableName 
-                    ADD CONSTRAINT ${tableName}_bestellung_id_fkey 
-                    FOREIGN KEY (bestellung_id) 
-                    REFERENCES tbl_bestellung(bestellung_id) 
+
+                ALTER TABLE $tableName
+                    ADD CONSTRAINT ${tableName}_bestellung_id_fkey
+                    FOREIGN KEY (bestellung_id)
+                    REFERENCES tbl_bestellung(bestellung_id)
                     ON UPDATE CASCADE ON DELETE RESTRICT;
-                ALTER TABLE $tableName 
-                    ADD CONSTRAINT ${tableName}_rechnungstyp_kurzbz_fkey 
-                    FOREIGN KEY (rechnungstyp_kurzbz) 
-                    REFERENCES tbl_rechnungstyp(rechnungstyp_kurzbz) 
+                ALTER TABLE $tableName
+                    ADD CONSTRAINT ${tableName}_rechnungstyp_kurzbz_fkey
+                    FOREIGN KEY (rechnungstyp_kurzbz)
+                    REFERENCES tbl_rechnungstyp(rechnungstyp_kurzbz)
                     ON UPDATE CASCADE ON DELETE RESTRICT;
 
                 GRANT SELECT ON $tableName TO web;
@@ -1452,7 +1452,7 @@ if(!tableExists($schemaName,$tableName))
 
 	if(!$db->db_query($qry))
 		echo '<strong>$tableName: '.$db->db_last_error().'</strong><br>';
-	else 
+	else
 		echo ' $tableName: Tabelle $tableName hinzugefuegt!<br>';
 
 }
@@ -1468,7 +1468,7 @@ if(!tableExists($schemaName,$tableName))
         $sequenceName = $tableName.'_seq';
 	$qry = "
                 SET search_path = $schemaName, pg_catalog;
-                
+
                 CREATE TABLE $tableName (
                     rechnungsbetrag_id bigint  NOT NULL,
                     rechnung_id bigint,
@@ -1477,23 +1477,23 @@ if(!tableExists($schemaName,$tableName))
                     bezeichnung text,
                     ext_id integer
                 );
-                
+
                 CREATE SEQUENCE $sequenceName
                     START WITH 1
                     INCREMENT BY 1
                     NO MINVALUE
                     NO MAXVALUE
                     CACHE 1;
-                 
+
                 ALTER TABLE $tableName
                     ADD CONSTRAINT ${tableName}_rechnungsbetrag_id_pkey PRIMARY KEY (rechnungsbetrag_id);
-                ALTER TABLE $tableName 
+                ALTER TABLE $tableName
                     ALTER COLUMN rechnungsbetrag_id SET DEFAULT nextval('$sequenceName');
-                        
-                ALTER TABLE $tableName 
-                    ADD CONSTRAINT ${tableName}_rechnung_id_fkey 
-                    FOREIGN KEY (rechnung_id) 
-                    REFERENCES tbl_rechnung(rechnung_id) 
+
+                ALTER TABLE $tableName
+                    ADD CONSTRAINT ${tableName}_rechnung_id_fkey
+                    FOREIGN KEY (rechnung_id)
+                    REFERENCES tbl_rechnung(rechnung_id)
                     ON UPDATE CASCADE ON DELETE RESTRICT;
 
                 GRANT SELECT ON $tableName TO web;
@@ -1504,7 +1504,7 @@ if(!tableExists($schemaName,$tableName))
 
 	if(!$db->db_query($qry))
 		echo '<strong>$tableName: '.$db->db_last_error().'</strong><br>';
-	else 
+	else
 		echo ' $tableName: Tabelle $tableName hinzugefuegt!<br>';
 
 }
@@ -1519,7 +1519,7 @@ if (!columnExists($schemaName, $tableName, $columnName))
     $qry = "alter table $schemaName.$tableName add column $columnName varchar(256);";
     if(!$db->db_query($qry))
             echo "<strong>$columnName: '.$db->db_last_error().'</strong><br>";
-    else 
+    else
             echo " $columnName: Attribut $columnName hinzugefuegt!<br>";
 }
 else
@@ -1536,7 +1536,7 @@ if (!columnExists($schemaName, $tableName, $columnName))
     $qry = "alter table $schemaName.$tableName add column $columnName date;";
     if(!$db->db_query($qry))
             echo "<strong>$columnName: '.$db->db_last_error().'</strong><br>";
-    else 
+    else
             echo " $columnName: Attribut $columnName hinzugefuegt!<br>";
 }
 else
@@ -1553,7 +1553,7 @@ if (!columnExists($schemaName, $tableName, $columnName))
     $qry = "alter table $schemaName.$tableName add column $columnName boolean default false;";
     if(!$db->db_query($qry))
             echo "<strong>$columnName: '.$db->db_last_error().'</strong><br>";
-    else 
+    else
             echo " $columnName: Attribut $columnName hinzugefuegt!<br>";
 }
 else
@@ -1570,7 +1570,7 @@ if (!columnExists($schemaName, $tableName, $columnName))
     $qry = "alter table $schemaName.$tableName add column $columnName varchar(50);";
     if(!$db->db_query($qry))
             echo "<strong>$columnName: '.$db->db_last_error().'</strong><br>";
-    else 
+    else
             echo " $columnName: Attribut $columnName hinzugefuegt!<br>";
 }
 else
@@ -1587,7 +1587,7 @@ if (!columnExists($schemaName, $tableName, $columnName))
     $qry = "alter table $schemaName.$tableName add column $columnName boolean default false;";
     if(!$db->db_query($qry))
             echo "<strong>$columnName: '.$db->db_last_error().'</strong><br>";
-    else 
+    else
             echo " $columnName: Attribut $columnName hinzugefuegt!<br>";
 }
 else
@@ -1604,7 +1604,7 @@ if (!columnExists($schemaName, $tableName, $columnName))
     $qry = "alter table $schemaName.$tableName add column $columnName boolean default false;";
     if(!$db->db_query($qry))
             echo "<strong>$columnName: '.$db->db_last_error().'</strong><br>";
-    else 
+    else
             echo " $columnName: Attribut $columnName hinzugefuegt!<br>";
 }
 else
@@ -1621,7 +1621,7 @@ if (!columnExists($schemaName, $tableName, $columnName))
     $qry = "alter table $schemaName.$tableName add column $columnName varchar(256);";
     if(!$db->db_query($qry))
             echo "<strong>$columnName: '.$db->db_last_error().'</strong><br>";
-    else 
+    else
             echo " $columnName: Attribut $columnName hinzugefuegt!<br>";
 }
 else
@@ -1638,7 +1638,7 @@ if (!columnExists($schemaName, $tableName, $columnName))
     $qry = "alter table $schemaName.$tableName add column $columnName boolean default false;";
     if(!$db->db_query($qry))
             echo "<strong>$columnName: '.$db->db_last_error().'</strong><br>";
-    else 
+    else
             echo " $columnName: Attribut $columnName hinzugefuegt!<br>";
 }
 else
@@ -1667,7 +1667,7 @@ $berechtigungenList = array('addon/wawi' => 'Addon WAWI',
                             'wawi/bestellung_advanced' => 'Bestellungen editieren nach dem Abschicken',
                             'wawi/freigabe_advanced' => 'Berechtigung zum Freigeben von ALLEN Bestellungen');
 
-foreach ($berechtigungenList as $key => $value) 
+foreach ($berechtigungenList as $key => $value)
 {
     if ($berechtigung->load($key) === false)
     {
@@ -1680,7 +1680,7 @@ foreach ($berechtigungenList as $key => $value)
         else
         {
             echo '<strong>'.$berechtigung->errormsg."</strong><br/>";
-            
+
         }
     }
     else
@@ -1736,12 +1736,12 @@ if($result = $db->db_query("SELECT * FROM system.tbl_berechtigung WHERE berechti
 {
         if($db->db_num_rows($result)==0)
         {
-                $qry = "INSERT INTO system.tbl_berechtigung(berechtigung_kurzbz, beschreibung) 
+                $qry = "INSERT INTO system.tbl_berechtigung(berechtigung_kurzbz, beschreibung)
                                 VALUES('addon/wawi','Addon WAWI');";
 
                 if(!$db->db_query($qry))
                         echo '<strong>Berechtigung: '.$db->db_last_error().'</strong><br>';
-                else 
+                else
                         echo 'Neue Berechtigung addon/wawi hinzugefuegt!<br>';
         }
 }
@@ -1768,7 +1768,7 @@ foreach ($tabellen AS $attribute)
 }
 
 
-function tableExists($schemaName,$tablename) 
+function tableExists($schemaName,$tablename)
 {
     global $db;
     return @$db->db_query("SELECT 1 FROM ${schemaName}.${tablename}");
@@ -1778,8 +1778,8 @@ function columnExists($schema, $tableName, $columnName)
 {
     global $db;
     $qry="
-SELECT EXISTS (SELECT 1 
-FROM information_schema.columns 
+SELECT EXISTS (SELECT 1
+FROM information_schema.columns
 WHERE table_schema='$schema' AND table_name='$tableName' AND column_name='$columnName');";
     $r=$db->db_query($qry);
     if($row = $db->db_fetch_object($r))
@@ -1787,14 +1787,14 @@ WHERE table_schema='$schema' AND table_name='$tableName' AND column_name='$colum
         if ($row->exists == 't') return true;
     }
     return false;
-}        
+}
 
 function bestellstatusExists($status)
 {
     global $db;
     $qry="
-    SELECT EXISTS (SELECT 1 
-FROM wawi.tbl_bestellstatus 
+    SELECT EXISTS (SELECT 1
+FROM wawi.tbl_bestellstatus
 WHERE  bestellstatus_kurzbz='$status');";
     $r=$db->db_query($qry);
     if($row = $db->db_fetch_object($r))

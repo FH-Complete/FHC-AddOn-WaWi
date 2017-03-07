@@ -21,7 +21,7 @@
  *
  * Installationsscript zur Erstinitialisierung des Addons
  */
-$basepath = dirname(dirname(dirname($_SERVER['SCRIPT_FILENAME']))).DIRECTORY_SEPARATOR;
+$basepath = $_SERVER['DOCUMENT_ROOT'];
 require_once('version.php');
 require_once($basepath.'/version.php');
 require_once($basepath.'/config/system.config.inc.php');
@@ -44,7 +44,7 @@ $uid = get_uid();
 $rechte = new benutzerberechtigung();
 $rechte->getBerechtigungen($uid);
 
-if(!$rechte->isBerechtigt('basis/addon'))
+if(!$rechte->isBerechtigt('basis/addon', null, 'suid'))
 {
 	exit('Sie haben keine Berechtigung für die Verwaltung von Addons');
 }
