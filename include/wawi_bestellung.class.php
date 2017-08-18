@@ -591,6 +591,7 @@ class wawi_bestellung extends basis_db
 			titel = '.$this->db_add_param($this->titel).',
 			bemerkung = '.$this->db_add_param($this->bemerkung).',
 			liefertermin = '.$this->db_add_param($this->liefertermin).',
+			insertamum = '.$this->db_add_param($this->insertamum).',
 			updateamum = '.$this->db_add_param($this->updateamum).',
 			updatevon ='.$this->db_add_param($this->updatevon).',
 			zahlungstyp_kurzbz = '.$this->db_add_param($this->zahlungstyp_kurzbz).',

@@ -64,16 +64,38 @@ $datum_obj = new datum();
 
 </head>
 <body>
-<h1>Bericht - Firmen angelegt innerhalb der letzten 7 Tage</h1>
+
 <?php
 
 	$db = new basis_db();
 
 	$firma = new firma();
-	if($firma->getLatestChanges())
+	$kw = @$_POST['kw'] != null ? $_POST['kw'] : 0;
+	$jahr = @$_POST['jahr'] != null ? $_POST['jahr'] : 0;
+	if ($kw == 0 || $jahr == 0) 
+	{
+		echo "<h1>Bericht - Firmen angelegt innerhalb der letzten 7 Tage</h1>";
+	} else {
+		echo "<h1>Bericht - Firmen angelegt innerhalb KW $kw/$jahr</h1>";
+	}
+	echo "<form action=\"".$_SERVER['PHP_SELF']."\" method=\"post\">";
+	echo "KW <input type=\"text\" name=\"kw\" value=\"".($kw>0?$kw:'')."\" maxlength=\"3\" style=\"width:50px\"/>";
+	echo " Jahr <input type=\"text\" name=\"jahr\" value=\"".($jahr>0?$jahr:'')."\" maxlength=\"4\" style=\"width:50px\"/>";
+	echo "<input type=\"submit\" value=\"Anzeigen\" name=\"anzeigen\">";
+	echo "</form>";
+
+	if ($kw>0 && $jahr>0) 
+	{
+		$changes = $firma->getChangesByKW($kw, $jahr);
+	} else {
+		$changes = $firma->getLatestChanges();
+	}
+	//echo "kw $kw jahr $jahr<br/>";
+
+	if($changes)
 	{
 
-		echo '<br /><br />
+		echo '
 				<script type="text/javascript">
 				$(document).ready(function()
 				{

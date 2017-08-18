@@ -413,6 +413,7 @@ if(isset($_POST['deleteBtnStorno']) && isset($_POST['id']))
 		$( "#datepicker_bbis" ).datepicker($.datepicker.regional['de']);
 		$( "#datepicker_auftragsbestaetigung" ).datepicker($.datepicker.regional['de']);
 		$( "#datepicker_erstelldatum" ).datepicker($.datepicker.regional['de']);
+		$( "#erstelldatum_gj" ).datepicker($.datepicker.regional['de']);
 
 		$('#aufteilung').hide();
 
@@ -1150,10 +1151,35 @@ if($_GET['method']=='update')
 					$bestellung_new->saveProjektToBestellung($bestellung_new->bestellung_id, $_REQUEST['filter_projekt']);
 				}
 
-				// wenn sich kostenstelle geändert hat, neue bestellnummer generieren
-				if($bestellung_new->kostenstelle_id != $bestellung_old->kostenstelle_id)
+				// wenn sich kostenstelle geändert hat und oder das Geschäftsjahr -> neue bestellnummer generieren
+				$geschaeftsjahr_change  = @$_POST['geschaeftsjahr_change'] > 0 ? $_POST['geschaeftsjahr_change'] : 0;
+				if(($bestellung_new->kostenstelle_id != $bestellung_old->kostenstelle_id && !$status->isStatiVorhanden($bestellung_id, 'Bestellung')) || 
+				   ($geschaeftsjahr_change > 0 ))
 				{
+					if ($geschaeftsjahr_change > 0)
+					{				
+						// override datum, damit anderes Geschäftsjahr verwendet wird		
+						$bestellung_new->bestell_nr = 
+							$bestellung_new->createBestellNr($bestellung_new->kostenstelle_id,
+								mktime(0, 0, 0, 12, 1, $geschaeftsjahr_change));
+						// Erstelldatum auch ändern?
+						$erstelldatum_change  = isset($_POST['erstelldatum_change']) ? $_POST['erstelldatum_change'] : '';
+
+						if ($erstelldatum_change != '')
+						{
+							$date = new datum();
+							$erstelldatum_override = $date->formatDatum($_POST['erstelldatum_change']);
+							if ($erstelldatum_override !== false)
+							{
+								$bestellung_new->insertamum = $erstelldatum_override;
+							}
+						}
+						
+					} 
+					else 
+					{
 						$bestellung_new->bestell_nr = $bestellung_new->createBestellNr($bestellung_new->kostenstelle_id);
+					}
 				}
 
 				$tags = explode(";", $_POST['tags']);
@@ -1652,6 +1678,7 @@ $js = <<<EOT
 	{
 		var dialog;
 		var angebotDeleteDialog;
+		var bestellnrDialog;		
 
 		function getExtension(path) {
             var basename = path.split(/[\\/]/).pop(),  
@@ -1800,6 +1827,49 @@ $js = <<<EOT
 				$("#upload-button-ok").button("enable");
 			}
 		});
+		// Bestellnr-dialog
+		bestellnrDialog = $( "#bestellnr-change" ).dialog(
+		{
+			autoOpen: false,
+			height: 200,
+			width: 350,
+			modal: true,
+			buttons:
+			[		        
+		        {
+		            id: "bestellnr-button-ok",
+		            text: "Ok",
+		            click: function() {
+		                doBestellnrChange();
+		            }
+		        },
+		        {
+		            id: "button-cancel",
+		            text: "Cancel",
+		            click: function() {
+		                $(this).dialog("close");
+		            }
+		        }
+		    ],
+			close: function()
+			{
+				//form[ 0 ].reset();
+			}
+		}); // Bestellnr-Dialog
+
+		$( "#bestellnrChangeBtn" ).on( "click", function() {
+			bestellnrDialog.dialog("open");
+		});
+		
+		function doBestellnrChange() 
+		{
+			var gj = $('#geschaeftsjahr','#bestellnrFrm').val();
+			var erstelldatum = $('#erstelldatum_gj','#bestellnrFrm').val();			
+			$('#geschaeftsjahr_change','#editForm').val(gj);
+			$('#erstelldatum_change','#editForm').val(erstelldatum);
+			bestellnrDialog.dialog("close");
+			$("input[name='btn_submit']").click();
+		}
 
 		function doUpload()
 		{
@@ -1908,6 +1978,28 @@ echo $js;
 	</form>
 </div>
 
+<div id="bestellnr-change" title="Neue Bestellnummer erzeugen?">
+	<form method="post" id="bestellnrFrm">
+<?php
+	// Auswahlfeld für Geschäftsjahr erzeugen
+	$akt_jahr = date('Y');
+	echo '<p><label for="geschaeftsjahr">Geschäftsjahr:</label> <select id="geschaeftsjahr" name="geschaeftsjahr">';
+	for ($j=$akt_jahr-1;$j<($akt_jahr+1);$j++)
+	{
+?>	
+		<option value="<?php echo $j ?>"><?php echo $j.'/'.($j+1) ?></option>
+<?php		
+	}
+?>
+		</select></p>
+		<p>
+		<label for="erstelldatum_gj">Erstelldatum:</label> <input type ='text' id='erstelldatum_gj' size ='12' name ='erstelldatum_gj' value=''> 
+		</p>
+	<br>
+		
+	</form>	
+</div>
+
 <?php
 
 
@@ -1920,6 +2012,8 @@ echo $js;
 	echo "<h4>Bestellnummer: ".$bestellung->bestell_nr;
 	echo '	<a href= "bestellung.php?method=copy&amp;id='.$bestellung->bestellung_id.'"> <img src="../../../skin/images/copy.png" title="Bestellung kopieren" class="cursor"></a>';
 	echo '	<a href= "rechnung.php?method=update&amp;bestellung_id='.$bestellung->bestellung_id.'"> <img src="../../../skin/images/Calculator.png" title="Rechnung anlegen" class="cursor"></a>';
+	if($rechte->isBerechtigt('wawi/bestellung_advanced'))
+		echo '	<a href= "#" id="bestellnrChangeBtn" name="bestellnrChangeBtn"> <img src="../skin/images/bnr.png" title="Bestellnummer erzeugen" class="cursor"></a>';
 
 	if($rechte->isBerechtigt('system/developer'))
 		echo '	<a href= "bestellung.php?method=update&amp;id='.$bestellung->bestellung_id.'"> <img src="../../../skin/images/refresh.png" title="Refresh" class="cursor"></a>';
@@ -1930,6 +2024,10 @@ echo $js;
 	}
 
 	echo '</h4>';
+
+	// hidden field für geschäftsjahr; wird in dialog gesetzt
+	echo '<input type="hidden" name="geschaeftsjahr_change" id="geschaeftsjahr_change" value="" />';
+	echo '<input type="hidden" name="erstelldatum_change" id="erstelldatum_change" value="" />';
 
 	//tabelle Bestelldetails
 	echo "<table border = 0 width= '100%' class='dark'>\n";
@@ -2888,6 +2986,8 @@ echo $js;
 
 	if($bestellung->isFreigegeben($bestellung->bestellung_id))
 		echo "<p class='freigegeben'>Die Bestellung wurde vollständig freigegeben</p>";
+
+	echo "</form> <!-- editFrm -->";
 }
 
 /**
