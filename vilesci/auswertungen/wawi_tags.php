@@ -59,9 +59,10 @@ if(count($kst_array)==0)
 	<link rel="stylesheet" href="../../skin/wawi.css" type="text/css">
 	<link rel="stylesheet" href="../../../../skin/tablesort.css" type="text/css">
 
-	<script type="text/javascript" src="../../../../include/js/jquery1.9.min.js"></script>
-	<script type="text/javascript" src="../../../../include/js/jquery.metadata.js"></script>
-	<script type="text/javascript" src="../../../../include/js/jquery.tablesorter.js"></script>
+	<script type="text/javascript" src="../../../../vendor/jquery/jqueryV1/jquery-1.12.4.min.js"></script>
+	<script type="text/javascript" src="../../../../vendor/christianbach/tablesorter/jquery.tablesorter.min.js"></script>
+	<script type="text/javascript" src="../../../../vendor/jquery-archive/jquery-metadata/jquery.metadata.js"></script>
+
 	<script type="text/javascript">
 	function alleMarkieren(checked)
 	{

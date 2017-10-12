@@ -32,19 +32,20 @@ require_once(dirname(__FILE__).'/../../../include/benutzer.class.php');
 "http://www.w3.org/TR/html4/loose.dtd">
 <html>
 <head>
-	<title>WaWi Kostenstellen - Berechtigungen</title>	
+	<title>WaWi Kostenstellen - Berechtigungen</title>
 	<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
 	<link rel="stylesheet" href="../../../skin/tablesort.css" type="text/css"/>
 	<link rel="stylesheet" href="../skin/wawi.css" type="text/css"/>
-
-	<script type="text/javascript" src="../../../include/js/jquery1.9.min.js"></script>	
 	<link rel="stylesheet" type="text/css" href="../../../skin/jquery-ui-1.9.2.custom.min.css"/>
+
+	<script type="text/javascript" src="../../../vendor/jquery/jqueryV1/jquery-1.12.4.min.js"></script>
+	<script type="text/javascript" src="../../../vendor/christianbach/tablesorter/jquery.tablesorter.min.js"></script>
 
 </head>
 <body>
-<?php 
+<?php
 
-$kostenstelle = new wawi_kostenstelle(); 
+$kostenstelle = new wawi_kostenstelle();
 $uid=get_uid();
 
 $rechte = new benutzerberechtigung();
@@ -166,9 +167,9 @@ else
 	$kst_array = array_merge($kst_array, $rechte->getKostenstelle('wawi/rechnung'));
 	$kst_array = array_merge($kst_array, $rechte->getKostenstelle('wawi/bestellung'));
 	$kst_array = array_merge($kst_array, $rechte->getKostenstelle('wawi/freigabe'));
-	
+
 	$kst_array = array_unique($kst_array);
-	
+
 	echo '<h1>Kostenstellen - Berechtigungen</h1>';
 
 	if(count($kst_array)==0)

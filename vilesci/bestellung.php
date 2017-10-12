@@ -353,13 +353,16 @@ if(isset($_POST['deleteBtnStorno']) && isset($_POST['id']))
 	<title>WaWi Bestellung</title>
 	<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
 	<link rel="stylesheet" href="../../../skin/tablesort.css" type="text/css"/>
-	<!--	<link rel="stylesheet" href="../../../skin/jquery.css" type="text/css"/> -->
 	<link rel="stylesheet" href="../skin/jquery-ui.min.css" type="text/css"/>
 	<link rel="stylesheet" href="../../../skin/fhcomplete.css" type="text/css"/>
 	<link rel="stylesheet" href="../skin/wawi.css" type="text/css"/>
-	<!--	<script type="text/javascript" src="../include/js/jquery.js"></script> -->
-	<script type="text/javascript" src="../../../include/js/jquery1.9.min.js"></script>
-	<!--	<link rel="stylesheet" type="text/css" href="../../../skin/jquery-ui-1.9.2.custom.min.css"/>	-->
+
+	<script type="text/javascript" src="../../../vendor/jquery/jqueryV1/jquery-1.12.4.min.js"></script>
+	<script type="text/javascript" src="../../../vendor/christianbach/tablesorter/jquery.tablesorter.min.js"></script>
+	<script type="text/javascript" src="../../../vendor/components/jqueryui/jquery-ui.min.js"></script>
+	<script type="text/javascript" src="../../../include/js/jquery.ui.datepicker.translation.js"></script>
+	<script type="text/javascript" src="../../../vendor/jquery/sizzle/sizzle.js"></script>
+
 	<link rel="stylesheet" type="text/css" href="../skin/jquery-ui.structure.min.css"/>
 	<link rel="stylesheet" type="text/css" href="../skin/jquery-ui.theme.min.css"/>
 
@@ -596,11 +599,11 @@ if($aktion == 'suche')
 		echo "<tr>\n";
 		echo "<td>Bestellposition:</td>\n";
 		echo "<td><input type='text' name='bestellposition' size='32' maxlength='256'></td>";
-		echo "</tr>";		
+		echo "</tr>";
 		echo "<tr>\n";
 		echo "<td>Erstelldatum</td>\n";
 		echo "<td>von <input type ='text' id='datepicker_evon' size ='12' name ='evon' value='$suchdatum'> bis <input type ='text' id='datepicker_ebis' size ='12' name = 'ebis'></td>\n";
-		echo "</tr>\n";		
+		echo "</tr>\n";
 		echo "<tr>\n";
 		echo "<td>Bestelldatum</td>\n";
 		echo "<td>von <input type ='text' id='datepicker_bvon' size ='12' name ='bvon'> bis <input type ='text' id='datepicker_bbis' size ='12' name = 'bbis'></td>\n";
@@ -862,8 +865,8 @@ elseif($aktion == 'new')
 	echo "</td></tr>\n";
 
 	// Bestelldatum Override fuer Leute mit entsprechender Berechtigung
-	if($rechte->isBerechtigt('wawi/bestellung_advanced',null,'sui'))		
-	{		
+	if($rechte->isBerechtigt('wawi/bestellung_advanced',null,'sui'))
+	{
 		$aktuellesdatum=date('d.m.Y');
 		echo "<tr>";
 		echo "<td>Erstelldatum: </td>\n";
@@ -920,9 +923,9 @@ elseif($aktion == 'save')
 		else
 			$newBestellung->konto_id = $_POST['konto'];
 
-		if (isset($_POST['erstelldatum_override']) && 
+		if (isset($_POST['erstelldatum_override']) &&
 			trim($_POST['erstelldatum_override']) != '' &&
-			$rechte->isberechtigt('wawi/bestellung_advanced'))			
+			$rechte->isberechtigt('wawi/bestellung_advanced'))
 		{
 			$date = new datum();
 			$erstelldatum_override = $date->formatDatum($_POST['erstelldatum_override']);
@@ -935,12 +938,12 @@ elseif($aktion == 'save')
 				// Datum Konvertierung fehlgeschlagen -> nimm aktuelles
 				$newBestellung->insertamum = date('Y-m-d H:i:s');
 			}
-		} 
+		}
 		else
 		{
 			$newBestellung->insertamum = date('Y-m-d H:i:s');
-		}		
-		
+		}
+
 		$newBestellung->insertvon = $user;
 		$newBestellung->updateamum = date('Y-m-d H:i:s');
 		$newBestellung->updatevon = $user;
@@ -960,9 +963,9 @@ elseif($aktion == 'save')
 			$newBestellung->lieferadresse = '1';
 			$newBestellung->rechnungsadresse = '1';
 		}
-		$newBestellung->bestell_nr = 
+		$newBestellung->bestell_nr =
 			$newBestellung->createBestellNr(
-				$newBestellung->kostenstelle_id, 
+				$newBestellung->kostenstelle_id,
 				$date->mktime_fromtimestamp($newBestellung->insertamum));
 		if (!$bestell_id = $newBestellung->save())
 		{
@@ -1153,13 +1156,13 @@ if($_GET['method']=='update')
 
 				// wenn sich kostenstelle geändert hat und oder das Geschäftsjahr -> neue bestellnummer generieren
 				$geschaeftsjahr_change  = @$_POST['geschaeftsjahr_change'] > 0 ? $_POST['geschaeftsjahr_change'] : 0;
-				if(($bestellung_new->kostenstelle_id != $bestellung_old->kostenstelle_id && !$status->isStatiVorhanden($bestellung_id, 'Bestellung')) || 
+				if(($bestellung_new->kostenstelle_id != $bestellung_old->kostenstelle_id && !$status->isStatiVorhanden($bestellung_id, 'Bestellung')) ||
 				   ($geschaeftsjahr_change > 0 ))
 				{
 					if ($geschaeftsjahr_change > 0)
-					{				
-						// override datum, damit anderes Geschäftsjahr verwendet wird		
-						$bestellung_new->bestell_nr = 
+					{
+						// override datum, damit anderes Geschäftsjahr verwendet wird
+						$bestellung_new->bestell_nr =
 							$bestellung_new->createBestellNr($bestellung_new->kostenstelle_id,
 								mktime(0, 0, 0, 12, 1, $geschaeftsjahr_change));
 						// Erstelldatum auch ändern?
@@ -1174,9 +1177,9 @@ if($_GET['method']=='update')
 								$bestellung_new->insertamum = $erstelldatum_override;
 							}
 						}
-						
-					} 
-					else 
+
+					}
+					else
 					{
 						$bestellung_new->bestell_nr = $bestellung_new->createBestellNr($bestellung_new->kostenstelle_id);
 					}
@@ -1678,23 +1681,23 @@ $js = <<<EOT
 	{
 		var dialog;
 		var angebotDeleteDialog;
-		var bestellnrDialog;		
+		var bestellnrDialog;
 
 		function getExtension(path) {
-            var basename = path.split(/[\\/]/).pop(),  
-                                                   
-            pos = basename.lastIndexOf(".");       
+            var basename = path.split(/[\\/]/).pop(),
 
-            if (basename === "" || pos < 1)            
-                return "";                             
+            pos = basename.lastIndexOf(".");
 
-            return basename.slice(pos + 1);          
+            if (basename === "" || pos < 1)
+                return "";
+
+            return basename.slice(pos + 1);
         }
- 
+
         function getIcon(filename) {
             var ext = getExtension(filename);
 
-            if (ext == 'pdf' || ext == 'PDF') 
+            if (ext == 'pdf' || ext == 'PDF')
             	return '../../../skin/images/pdf_icon.png';
 
             return '../../../skin/images/ExcelIcon.png'
@@ -1770,7 +1773,7 @@ $js = <<<EOT
 			width: 550,
 			modal: true,
 			buttons:
-			[		        
+			[
 		        {
 		            id: "upload-button-ok",
 		            text: "Ok",
@@ -1835,7 +1838,7 @@ $js = <<<EOT
 			width: 350,
 			modal: true,
 			buttons:
-			[		        
+			[
 		        {
 		            id: "bestellnr-button-ok",
 		            text: "Ok",
@@ -1860,11 +1863,11 @@ $js = <<<EOT
 		$( "#bestellnrChangeBtn" ).on( "click", function() {
 			bestellnrDialog.dialog("open");
 		});
-		
-		function doBestellnrChange() 
+
+		function doBestellnrChange()
 		{
 			var gj = $('#geschaeftsjahr','#bestellnrFrm').val();
-			var erstelldatum = $('#erstelldatum_gj','#bestellnrFrm').val();			
+			var erstelldatum = $('#erstelldatum_gj','#bestellnrFrm').val();
 			$('#geschaeftsjahr_change','#editForm').val(gj);
 			$('#erstelldatum_change','#editForm').val(erstelldatum);
 			bestellnrDialog.dialog("close");
@@ -1986,18 +1989,18 @@ echo $js;
 	echo '<p><label for="geschaeftsjahr">Geschäftsjahr:</label> <select id="geschaeftsjahr" name="geschaeftsjahr">';
 	for ($j=$akt_jahr-1;$j<($akt_jahr+1);$j++)
 	{
-?>	
+?>
 		<option value="<?php echo $j ?>"><?php echo $j.'/'.($j+1) ?></option>
-<?php		
+<?php
 	}
 ?>
 		</select></p>
 		<p>
-		<label for="erstelldatum_gj">Erstelldatum:</label> <input type ='text' id='erstelldatum_gj' size ='12' name ='erstelldatum_gj' value=''> 
+		<label for="erstelldatum_gj">Erstelldatum:</label> <input type ='text' id='erstelldatum_gj' size ='12' name ='erstelldatum_gj' value=''>
 		</p>
 	<br>
-		
-	</form>	
+
+	</form>
 </div>
 
 <?php
@@ -2971,10 +2974,10 @@ echo $js;
 	if($status->isStatiVorhanden($bestellung->bestellung_id, 'Abgeschickt'))
 		echo "Bestellung wurde am ".$date->formatDatum($status->datum,'d.m.Y')." zur Freigabe abgeschickt.";
 
-	
+
 	if ($status->getAllStatiFromBestellung($bestellung->bestellung_id, 'Abgeschickt-Erneut'))
 	{
-		
+
 		foreach ($status->result as $s)
 		{
 			echo "<br>Bestellung wurde am ".$date->formatDatum($s->datum,'d.m.Y')." erneut zur Freigabe abgeschickt.";

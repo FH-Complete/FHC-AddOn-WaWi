@@ -33,29 +33,31 @@ require_once dirname(__FILE__).'/../../../include/sprache.class.php';
 <html>
 <head>
 	<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
-	<title>WaWi Konten</title>	
-	
+	<title>WaWi Konten</title>
+
 	<link rel="stylesheet" href="../../../skin/tablesort.css" type="text/css"/>
 	<link rel="stylesheet" href="../skin/wawi.css" type="text/css"/>
-	<script type="text/javascript" src="../../../include/js/jquery1.9.min.js"></script> 
+
+	<script type="text/javascript" src="../../../vendor/jquery/jqueryV1/jquery-1.12.4.min.js"></script>
+	<script type="text/javascript" src="../../../vendor/christianbach/tablesorter/jquery.tablesorter.min.js"></script>
 
 	<script type="text/javascript">
-	
-		$(document).ready(function() 
+
+		$(document).ready(function()
 			{
 				$("#myTable").tablesorter(
 				{
 					sortList: [[1,0]],
 					widgets: ['zebra']
-				}); 
-			} 
-		); 
+				});
+			}
+		);
 
 		function conf_del()
 		{
 			return confirm('Dieses Konto wirklich löschen?');
 		}
-			
+
 		</script>
 </head>
 <body>
@@ -69,8 +71,8 @@ $user=get_uid();
 $rechte = new benutzerberechtigung();
 $rechte->getBerechtigungen($user);
 
-$sprache = new sprache(); 
-$sprache->getAll(); 
+$sprache = new sprache();
+$sprache->getAll();
 
 if(!$rechte->isBerechtigt('wawi/konto'))
 	die('Keine Berechtigung');
@@ -372,18 +374,18 @@ if(isset($_GET['method']))
 		echo "</form>\n";
 	}
 }
-else 
+else
 {
 	// Anzeige aller Konten
 	if($konto->getAll(null, 'kontonr' ))
-	{	
+	{
 		echo '<h1>Konto - &Uuml;bersicht</h1>';
 		//echo '<a href="kontouebersicht.php?method=update">neues Konto anlegen </a><br>';
 		//echo '<a href="kontouebersicht.php?method=merge">Konten zusammenlegen </a><br><br>';
-		
+
 		echo "<table id='myTable' class='tablesorter'> <thead>\n";
-		
-		
+
+
 		echo "<tr>
 				<th></th>
 				<th>Kontonummer</th>
@@ -401,7 +403,7 @@ else
 
 		echo "<th>aktiv</th>
 			</tr> </thead><tbody>\n";
-	
+
 		foreach($konto->result as $row)
 		{
 			//Zeilen der Tabelle ausgeben
@@ -409,8 +411,8 @@ else
 			echo "<td nowrap> <a href= \"kontouebersicht.php?method=update&amp;id=$row->konto_id\" title='Bearbeiten'> <img src=\"../skin/images/edit_wawi.gif\"> </a><a href=\"kontouebersicht.php?method=delete&amp;id=$row->konto_id\" onclick='return conf_del()' title='Löschen'> <img src=\"../../../skin/images/delete_x.png\"></a></td>\n";
 			echo '<td>'.$row->kontonr."</td>\n";
 			echo '<td>'.$row->kurzbz."</td>\n";
-			
-			$i = 1; 
+
+			$i = 1;
 			foreach($sprache->result as $s)
 			{
 				if($s->content == true)
@@ -418,14 +420,14 @@ else
 					echo '<td>';
 					if(isset($row->beschreibung[$s->sprache]))
 						echo $row->beschreibung[$s->sprache]."\n";
-					echo '</td>'; 
+					echo '</td>';
 				}
 				$i++;
 			}
-				
+
 			echo '<td>'.($row->aktiv?'ja':'nein')."</td>\n";
 			echo "</tr>\n";
-			
+
 		}
 		echo "</tbody></table>\n";
 	}
