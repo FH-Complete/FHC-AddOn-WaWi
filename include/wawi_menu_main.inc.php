@@ -68,7 +68,9 @@ $menu=array
 		),
 		'Berechtigungen'=>array
 		(
+
 			'name'=>'Berechtigungen', 'link'=>'berechtigung.php', 'target'=>'content',
+			'AdminBerechtigungen' => array('name'=>'Verwaltung', 'permissions'=>array('wawi/bestellung_advanced'),'link'=>'benutzeradmin.php', 'target'=>'content'),
 		),
 	),
 	'Berichte'=> 	array

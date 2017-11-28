@@ -2364,7 +2364,9 @@ echo $js;
 	}
 	echo "</td>";
 	echo "<td>Für wen (Person):</td>";
-	echo "<td><input type='text' name='zuordnung_person' id='zuordnung_person' size='30' maxlength='256' value ='".$zuordnung_person_vorname.' '.$zuordnung_person_nachname."'></td>";
+	echo "<td><input type='text' name='zuordnung_person' id='zuordnung_person' size='27' maxlength='256' value ='".$zuordnung_person_vorname.' '.$zuordnung_person_nachname."'>".
+		"<a onClick='resetFuerWen()' title='Zuordnung löschen' id=\"reset_zuordnung_person\" class=\"resetBtn\"> <img src=\"../../../skin/images/delete_round.png\" class='cursor'></a>"
+		."</td>";
 	echo "<td>Wo eingesetzt (Raum): <input name= \"zuordnung_raum\" id=\"zuordnung_raum\" type='text' size='13' maxlength='32' value =\"".$bestellung->zuordnung_raum."\"></td>";
 	echo "</tr>";
 
@@ -2829,6 +2831,11 @@ echo $js;
 					alert(data);
 			});
 			summe();
+		}
+
+		function resetFuerWen() {
+			$("#zuordnung_uid").val(null);
+			$("#zuordnung_person").val("");
 		}
 
 		function conf_del_budget(aktBrutto)
