@@ -59,8 +59,8 @@ $datum_obj = new datum();
 	<link rel="stylesheet" href="../../../../skin/fhcomplete.css" type="text/css">
 	<link rel="stylesheet" href="../../skin/wawi.css" type="text/css">
 
-
-	<script type="text/javascript" src="../../../../include/js/jquery1.9.min.js"></script>
+	<script type="text/javascript" src="../../../../vendor/jquery/jqueryV1/jquery-1.12.4.min.js"></script>
+	<script type="text/javascript" src="../../../../vendor/christianbach/tablesorter/jquery.tablesorter.min.js"></script>
 
 </head>
 <body>
@@ -72,7 +72,7 @@ $datum_obj = new datum();
 	$firma = new firma();
 	$kw = @$_POST['kw'] != null ? $_POST['kw'] : 0;
 	$jahr = @$_POST['jahr'] != null ? $_POST['jahr'] : 0;
-	if ($kw == 0 || $jahr == 0) 
+	if ($kw == 0 || $jahr == 0)
 	{
 		echo "<h1>Bericht - Firmen angelegt innerhalb der letzten 7 Tage</h1>";
 	} else {
@@ -84,7 +84,7 @@ $datum_obj = new datum();
 	echo "<input type=\"submit\" value=\"Anzeigen\" name=\"anzeigen\">";
 	echo "</form>";
 
-	if ($kw>0 && $jahr>0) 
+	if ($kw>0 && $jahr>0)
 	{
 		$changes = $firma->getChangesByKW($kw, $jahr);
 	} else {
@@ -126,7 +126,7 @@ $datum_obj = new datum();
 			echo '<td><a href="../firma.php?method=update&amp;id='.$row->firma_id.'" title="Bearbeiten"> <img src="../../skin/images/edit_wawi.gif"> </a></td>';
 			echo '<td>',$row->firma_id,'</td>';
 			echo '<td>',$row->name,'</td>';
-			echo '<td>',$row->nation,'</td>';			
+			echo '<td>',$row->nation,'</td>';
 			echo '<td>',$row->strasse,' ',$row->plz,' ',$row->ort,'</td>';
 			echo '</tr>';
 		}

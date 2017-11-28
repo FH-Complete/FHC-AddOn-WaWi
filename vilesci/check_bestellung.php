@@ -28,7 +28,7 @@ require_once '../include/wawi_konto.class.php';
 require_once '../include/wawi_bestellung.class.php';
 require_once '../include/wawi_kostenstelle.class.php';
 require_once '../include/wawi_bestelldetail.class.php';
-require_once '../include/wawi_aufteilung.class.php'; 
+require_once '../include/wawi_aufteilung.class.php';
 require_once '../include/wawi_bestellstatus.class.php';
 require_once '../include/wawi_zahlungstyp.class.php';
 require_once dirname(__FILE__).'/../../../include/datum.class.php';
@@ -38,13 +38,16 @@ require_once dirname(__FILE__).'/../../../include/firma.class.php';
 "http://www.w3.org/TR/html4/loose.dtd">
 <html>
 <head>
-	<title>Offene Freigaben/Lieferungen</title>	
+	<title>Offene Freigaben/Lieferungen</title>
 	<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
 	<link rel="stylesheet" href="../../../skin/tablesort.css" type="text/css"/>
 	<link rel="stylesheet" href="../../../skin/jquery.css" type="text/css"/>
 	<link rel="stylesheet" href="../../../skin/fhcomplete.css" type="text/css"/>
 	<link rel="stylesheet" href="../skin/wawi.css" type="text/css"/>
-	<script type="text/javascript" src="../../../include/js/jquery1.9.min.js"></script>	
+
+	<script type="text/javascript" src="../../../vendor/jquery/jqueryV1/jquery-1.12.4.min.js"></script>
+	<script type="text/javascript" src="../../../vendor/christianbach/tablesorter/jquery.tablesorter.min.js"></script>
+
 	<script type="text/javascript">
 	function checkKst()
 	{
@@ -53,22 +56,22 @@ require_once dirname(__FILE__).'/../../../include/firma.class.php';
 			alert("Bitte geben Sie eine Nummer ein.");
 			return false;
 		}
-		return true; 
+		return true;
 	}
 
-	function updateReport() 
-	{	
+	function updateReport()
+	{
 		var report = $('input[name="reportselector"]:checked').val();
 		console.log(report);
 		$('input[name="type"]').val(report);
 		$('form[name="reportForm"]').submit();
 	}
 	</script>
-	
+
 </head>
 <body>
 
-<?php 
+<?php
 $min = (isset($_POST['min'])?$_REQUEST['min']:'1');
 $max = (isset($_POST['max'])?$_REQUEST['max']:'42');
 $type = (isset($_REQUEST['type'])?$_REQUEST['type']:'');
@@ -115,18 +118,18 @@ else
 
 echo '
 	<script type="text/javascript">
-	$(document).ready(function() 
-	{ 
+	$(document).ready(function()
+	{
 		$("#checkTable").tablesorter(
 		{
 			sortList: [[4,1]],
 			widgets: ["zebra"]
-		}); 
-	}); 
+		});
+	});
 	</script>';
 
-	$date = new datum(); 
-	$firma = new firma();	
+	$date = new datum();
+	$firma = new firma();
 	$bestellung = new wawi_bestellung();
 	if($type=='nichtgeliefert')
 		$bestellung->loadBestellungNichtGeliefert();
@@ -138,7 +141,7 @@ echo '
 	}
 	else
 		die('Fehlerhafte Parameter');
-		
+
 
 
 	echo '	<table id="checkTable" class="tablesorter" width ="100%">
@@ -152,12 +155,12 @@ echo '
 				($type!='nichtgeliefert'?
 					'<th>Erstellt</th><th>Geliefert</th>':
 					'<th>Bestellt</th><th>Auftragsbestätigung</th><th>Freigegeben</th><th>Liefertermin</th>').
-				
+
 				'<th>Brutto</th>
 				<th>Titel</th>
 			</tr>
 			</thead>
-			<tbody>';		
+			<tbody>';
 	foreach($bestellung->result as $row)
 	{
 		$firmenname = '';
@@ -165,14 +168,14 @@ echo '
 		$geliefert_datum = null;
 		$bestellt ='nein';
 		$bestellt_datum = null;
-		$status = new wawi_bestellstatus(); 
+		$status = new wawi_bestellstatus();
 		if(is_numeric($row->firma_id))
 		{
 			$firma->load($row->firma_id);
-			$firmenname = $firma->name; 
+			$firmenname = $firma->name;
 		}
 		if($row->freigegeben)
-		{			
+		{
 			$freigegeben = 'ja';
 			if ($type!='nichtgeliefert' && $type!='nichtbestellt') continue;
 		}
@@ -181,20 +184,20 @@ echo '
             if ($type=='nichtbestellt') continue;
         }
 
-		
+
 		if($status->isStatiVorhanden($row->bestellung_id, 'Lieferung'))
 		{
 			$geliefert = 'ja';
 			$geliefert_datum = $status->datum;
 		}
-		
+
 		if($status->isStatiVorhanden($row->bestellung_id, 'Bestellung'))
 		{
 			$bestellt = 'ja';
 			$bestellt_datum = $status->datum;
-		} 
-			
-			
+		}
+
+
 		$brutto = $bestellung->getBrutto($row->bestellung_id);
 		echo '	<tr>
 					<td nowrap><a href="bestellung.php?method=update&id='.$row->bestellung_id.'" title="Bestellung bearbeiten"> <img src="../skin/images/edit_wawi.gif"></a><a href="bestellung.php?method=delete&id='.$row->bestellung_id.'" onclick="return conf_del()" title="Bestellung löschen"> <img src="../../../skin/images/delete_x.png"></a></td>
