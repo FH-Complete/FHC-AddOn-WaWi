@@ -116,17 +116,60 @@ else
 
 <?php
 
-echo '
-	<script type="text/javascript">
-	$(document).ready(function()
-	{
-		$("#checkTable").tablesorter(
+
+if ($type == '' || $type=='offenefreigaben')
+{
+	echo '
+		<script type="text/javascript">
+		$(document).ready(function()
 		{
-			sortList: [[4,1]],
-			widgets: ["zebra"]
+			$("#checkTable").tablesorter(
+			{
+				sortList: [[4,1]],
+				widgets: ["zebra"],
+				headers: {
+                     3: { sorter:"date" }
+             	}
+			});
 		});
-	});
-	</script>';
+		</script>';
+} else if ($type == 'nichtbestellt')
+{
+	echo '
+		<script type="text/javascript">
+		$(document).ready(function()
+		{
+			$("#checkTable").tablesorter(
+			{
+				sortList: [[4,1]],
+				widgets: ["zebra"],
+				headers: {
+                     3: { sorter:"date" }
+             	}
+			});
+		});
+		</script>';
+} else
+{
+	echo '
+		<script type="text/javascript">
+		$(document).ready(function()
+		{
+			$("#checkTable").tablesorter(
+			{
+				sortList: [[4,1]],
+				widgets: ["zebra"],
+				headers: {
+                     3: { sorter:"date" },
+                     4: { sorter:"date" }
+             	}
+			});
+		});
+		</script>';
+}
+
+
+
 
 	$date = new datum();
 	$firma = new firma();
