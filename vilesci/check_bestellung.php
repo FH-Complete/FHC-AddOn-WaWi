@@ -47,6 +47,7 @@ require_once dirname(__FILE__).'/../../../include/firma.class.php';
 
 	<script type="text/javascript" src="../../../vendor/jquery/jqueryV1/jquery-1.12.4.min.js"></script>
 	<script type="text/javascript" src="../../../vendor/christianbach/tablesorter/jquery.tablesorter.min.js"></script>
+	<script type="text/javascript" src="../include/js/tablesorter-setup.js"></script>
 
 	<script type="text/javascript">
 	function checkKst()
@@ -128,7 +129,8 @@ if ($type == '' || $type=='offenefreigaben')
 				sortList: [[4,1]],
 				widgets: ["zebra"],
 				headers: {
-                     3: { sorter:"date" }
+                     3: { sorter:"dedate" },
+                     5: { sorter: "digitmittausenderpunkt"},
              	}
 			});
 		});
@@ -144,7 +146,8 @@ if ($type == '' || $type=='offenefreigaben')
 				sortList: [[4,1]],
 				widgets: ["zebra"],
 				headers: {
-                     3: { sorter:"date" }
+                     3: { sorter:"dedate" },
+                     5: { sorter: "digitmittausenderpunkt"},
              	}
 			});
 		});
@@ -160,8 +163,9 @@ if ($type == '' || $type=='offenefreigaben')
 				sortList: [[4,1]],
 				widgets: ["zebra"],
 				headers: {
-                     3: { sorter:"date" },
-                     4: { sorter:"date" }
+                     3: { sorter:"dedate" },
+                     4: { sorter:"dedate" },
+                     7: { sorter: "digitmittausenderpunkt"},
              	}
 			});
 		});
