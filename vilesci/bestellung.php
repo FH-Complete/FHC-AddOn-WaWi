@@ -362,6 +362,7 @@ if(isset($_POST['deleteBtnStorno']) && isset($_POST['id']))
 	<script type="text/javascript" src="../../../vendor/components/jqueryui/jquery-ui.min.js"></script>
 	<script type="text/javascript" src="../../../include/js/jquery.ui.datepicker.translation.js"></script>
 	<script type="text/javascript" src="../../../vendor/jquery/sizzle/sizzle.js"></script>
+	<script type="text/javascript" src="../include/js/tablesorter-setup.js"></script>
 
 	<link rel="stylesheet" type="text/css" href="../skin/jquery-ui.structure.min.css"/>
 	<link rel="stylesheet" type="text/css" href="../skin/jquery-ui.theme.min.css"/>
@@ -407,7 +408,11 @@ if(isset($_POST['deleteBtnStorno']) && isset($_POST['id']))
 		$("#myTable").tablesorter(
 		{
 			sortList: [[4,1]],
-			widgets: ['zebra']
+			widgets: ['zebra'],
+			headers: {
+                     4: { sorter:"dedate" },
+					 9: { sorter:"dedateMitText" }
+				 }
 		});
 
 		$( "#datepicker_evon" ).datepicker($.datepicker.regional['de']);
