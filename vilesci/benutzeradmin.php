@@ -45,7 +45,7 @@ function printHeader($titel)
     <link rel="stylesheet" href="../skin/jquery-ui.min.css" type="text/css"/>
     <link rel="stylesheet" href="../../../skin/fhcomplete.css" type="text/css"/>
     <link rel="stylesheet" href="../skin/wawi.css" type="text/css"/>
-    <script type="text/javascript" src="../../../vendor/components/jquery/jquery.min.js"></script>
+    <script type="text/javascript" src="../../../vendor/jquery/jqueryV2/jquery-2.2.4.min.js"></script>
 	<script type="text/javascript" src="../../../vendor/components/jqueryui/jquery-ui.min.js"></script>
 	<link rel="stylesheet" type="text/css" href="../../../vendor/FHC-vendor/jquery-tablesorter/css/theme.default.css">
 	<script src="../../../vendor/FHC-vendor/jquery-tablesorter/js/jquery.tablesorter.js"></script>
