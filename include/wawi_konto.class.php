@@ -44,10 +44,10 @@ class wawi_konto extends basis_db
 	public $updateamum;         	//  timestamp
 	public $updatevon;				//  string
 	public $person_id;				//  integer
-	
-	public $sprache; 
-	
-	
+
+	public $sprache;
+
+
 	/**
 	 * Konstruktor
 	 * @param $konto_id ID des Kontos das geladen werden soll (Default=null)
@@ -58,10 +58,10 @@ class wawi_konto extends basis_db
 
 		if(!isset($this->sprache))
 		{
-			$this->sprache = new sprache(); 
+			$this->sprache = new sprache();
 			$this->sprache->getAll();
 		}
-		
+
 		if(!is_null($konto_id))
 			$this->load($konto_id);
 	}
@@ -80,9 +80,9 @@ class wawi_konto extends basis_db
 		}
 		$sprache = new sprache();
 		$beschreibung = $sprache->getSprachQuery('beschreibung');
-		
+
 		$qry = "SELECT *, $beschreibung FROM wawi.tbl_konto WHERE konto_id=".$this->db_add_param($konto_id).';';
-		
+
 		if(!$this->db_query($qry))
 		{
 			$this->errormsg = 'Fehler bei einer Datenbankabfrage';
@@ -100,6 +100,7 @@ class wawi_konto extends basis_db
 			$this->insertvon = $row->insertvon;
 			$this->updateamum = $row->updateamum;
 			$this->updatevon = $row->updatevon;
+			$this->kontotyp_kurzbz = $row->kontotyp_kurzbz;
 		}
 		else
 		{
@@ -120,14 +121,14 @@ class wawi_konto extends basis_db
 	{
 		$sprache = new sprache();
 		$beschreibung = $sprache->getSprachQuery('beschreibung');
-		
+
 		$qry = "SELECT *, $beschreibung FROM wawi.tbl_konto";
 
 		if(!is_null($aktiv))
 		{
 			$qry.=' WHERE aktiv='.$this->db_add_param($aktiv, FHC_BOOLEAN);
 		}
-		
+
 		if($order!='')
 			$qry .= ' ORDER BY '.$order;
 
@@ -140,10 +141,10 @@ class wawi_konto extends basis_db
 		while($row = $this->db_fetch_object())
 		{
 			$obj = new wawi_konto();
-			
+
 			$obj->konto_id = $row->konto_id;
 			$obj->kontonr = $row->kontonr;
-			$obj->beschreibung = $sprache->parseSprachResult('beschreibung', $row);			
+			$obj->beschreibung = $sprache->parseSprachResult('beschreibung', $row);
 			$obj->kurzbz = $row->kurzbz;
 			$obj->hilfe = $row->hilfe;
 			$obj->aktiv = $this->db_parse_bool($row->aktiv);
@@ -151,13 +152,14 @@ class wawi_konto extends basis_db
 			$obj->insertvon = $row->insertvon;
 			$obj->updateamum = $row->updateamum;
 			$obj->updatevon = $row->updatevon;
-			
+			$obj->kontotyp_kurzbz = $row->kontotyp_kurzbz;
+
 			$this->result[] = $obj;
 		}
-		
+
 		return true;
 	}
-	
+
 	/**
 	 * Prueft die Variablen auf Gueltigkeit
 	 * @return true wenn ok, false im Fehlerfall
@@ -168,8 +170,8 @@ class wawi_konto extends basis_db
 		{
 			$this->errormsg = 'Kontonummer darf nicht laenger als 32 Zeichen sein.';
 		}
-		
-		/*$i = 1; 
+
+		/*$i = 1;
 		foreach($this->sprache->result as $s)
 		{
 			if($s->content == true)
@@ -182,7 +184,7 @@ class wawi_konto extends basis_db
 			$i++;
 			}
 		}*/
-		
+
 		if(mb_strlen($this->kurzbz)>32)
 		{
 			$this->errormsg = 'Kurzbezeichnung darf nicht laenger als 32 Zeichen sein.';
@@ -200,16 +202,16 @@ class wawi_konto extends basis_db
 			$this->errormsg = 'Aktiv ist nicht gesetzt.';
 			return false;
 		}
-				
+
 		$this->errormsg = '';
 		return true;
 	}
-	
+
 	/**
 	 * Speichert den aktuellen Datensatz in die Datenbank
 	 * Wenn $neu auf true gesetzt ist wird ein neuer Datensatz angelegt
 	 * andernfalls wird der Datensatz mit der ID in $konto_id aktualisiert
- 	 * @param $new wenn true wird ein Insert durchgefuehrt, wenn false ein Update 
+ 	 * @param $new wenn true wird ein Insert durchgefuehrt, wenn false ein Update
  	 *        und wenn null wird das new-Objekt der Klasse verwendet
 	 * @return true wenn ok, false im Fehlerfall
 	 */
@@ -217,14 +219,14 @@ class wawi_konto extends basis_db
 	{
 		if(is_null($new))
 			$new = $this->new;
-			
+
 		//Variablen pruefen
 		if(!$this->validate())
 			return false;
-			
+
 		$sprache = new sprache();
 		$sprache->loadIndexArray();
-		
+
 		if($this->new)
 		{
 			//Neuen Datensatz einfuegen
@@ -234,14 +236,14 @@ class wawi_konto extends basis_db
 				$idx = sprache::$index_arr[$key];
 				$qry.=" beschreibung[$idx],";
 			}
-			$qry.=' kurzbz, hilfe, aktiv, insertamum, 
-			insertvon, updateamum, updatevon, person_id) VALUES('.
+			$qry.=' kurzbz, hilfe, aktiv, insertamum,
+			insertvon, updateamum, updatevon, person_id, kontotyp_kurzbz) VALUES('.
 			      $this->db_add_param($this->kontonr).', ';
-			      
+
 			reset($this->beschreibung);
 			foreach($this->beschreibung as $key=>$value)
 				$qry.=$this->db_add_param($value).',';
-			
+
 			$qry.=$this->db_add_param($this->kurzbz).', '.
 				  $this->db_add_param($this->hilfe).', '.
 			      $this->db_add_param($this->aktiv, FHC_BOOLEAN).', '.
@@ -249,7 +251,8 @@ class wawi_konto extends basis_db
 			      $this->db_add_param($this->insertvon).', '.
 				  $this->db_add_param($this->updateamum).', '.
 			      $this->db_add_param($this->updatevon).', '.
-				  $this->db_add_param($this->person_id).');';
+				  $this->db_add_param($this->person_id).', '.
+				  $this->db_add_param($this->kontotyp_kurzbz).');';
 		}
 		else
 		{
@@ -258,28 +261,29 @@ class wawi_konto extends basis_db
 			{
 				$this->errormsg = 'konto_id muss eine gültige Zahl sein';
 				return false;
-			}			
-									
+			}
+
 			$qry='UPDATE wawi.tbl_konto SET'.
 				' kontonr='.$this->db_add_param($this->kontonr).', ';
-			
+
 			reset($this->beschreibung);
 			foreach($this->beschreibung as $key=>$value)
 			{
 				$idx = sprache::$index_arr[$key];
 				$qry.=' beschreibung['.$idx.'] = '.$this->db_add_param($value).',';
 			}
-			
+
 			$qry.=' kurzbz='.$this->db_add_param($this->kurzbz).', '.
 			    ' hilfe='.$this->db_add_param($this->hilfe).', '.
 		      	' aktiv='.$this->db_add_param($this->aktiv, FHC_BOOLEAN).', '.
 				' insertamum='.$this->db_add_param($this->insertamum).', '.
 				' insertvon='.$this->db_add_param($this->insertvon).', '.
 				' updateamum='.$this->db_add_param($this->updateamum).', '.
-		      	' updatevon='.$this->db_add_param($this->updatevon).' '.
+		      	' updatevon='.$this->db_add_param($this->updatevon).', '.
+				' kontotyp_kurzbz='.$this->db_add_param($this->kontotyp_kurzbz).' '.
 		      	' WHERE konto_id='.$this->db_add_param($this->konto_id, FHC_INTEGER).';';
 		}
-		
+
 		if($this->db_query($qry))
 		{
 			if($this->new)
@@ -290,7 +294,7 @@ class wawi_konto extends basis_db
 				{
 					if($row = $this->db_fetch_object())
 					{
-						$this->konto_id = $row->id;						
+						$this->konto_id = $row->id;
 						$this->db_query('COMMIT');
 					}
 					else
@@ -342,7 +346,7 @@ class wawi_konto extends basis_db
 			return false;
 		}
 	}
-	
+
 	/**
 	 * Liefert alle Konten die den Suchstring $filter entsprechen
 	 * @param $filter String nach dem gefiltert wird
@@ -353,28 +357,28 @@ class wawi_konto extends basis_db
 	{
 		$sprache = new sprache();
 		$beschreibung = $sprache->getSprachQuery('beschreibung');
-				
-		$sql_query = "SELECT 
+
+		$sql_query = "SELECT
 						*, $beschreibung
-					  FROM 
-					  	wawi.tbl_konto"; 
-		
+					  FROM
+					  	wawi.tbl_konto";
+
 		if($filter!='')
 		{
-			$sql_query.=" WHERE lower(beschreibung[1]) LIKE  lower('%".$this->db_escape($filter)."%') OR 
+			$sql_query.=" WHERE lower(beschreibung[1]) LIKE  lower('%".$this->db_escape($filter)."%') OR
 							lower(kontonr) LIKE lower('%".$this->db_escape($filter)."%') OR
 							lower(kurzbz) LIKE lower('%".$this->db_escape($filter)."%')";
 		}
-			
+
 		$sql_query .= " ORDER BY $order ;";
-		
+
 		if($this->db_query($sql_query))
 		{
 			while($row = $this->db_fetch_object())
 			{
 				$obj = new wawi_konto();
-				
-				$obj->konto_id = $row->konto_id; 
+
+				$obj->konto_id = $row->konto_id;
 				$obj->kontonr = $row->kontonr;
 				$obj->beschreibung = $sprache->parseSprachResult('beschreibung', $row);
 				$obj->kurzbz = $row->kurzbz;
@@ -384,8 +388,8 @@ class wawi_konto extends basis_db
 				$obj->insertvon = $row->insertvon;
 				$obj->updateamum = $row->updateamum;
 				$obj->updatevon = $row->updatevon;
-				
-				$this->result[] = $obj; 
+
+				$this->result[] = $obj;
 
 			}
 		}
@@ -397,9 +401,9 @@ class wawi_konto extends basis_db
 		return true;
 	}
 	/**
-	 * 
+	 *
 	 * loescht konto mit der id1 und legt dessen bestellungen und kostenstellen auf konto mit der id2 um
-	 * @param $id1 konto_id des radiobuttons 
+	 * @param $id1 konto_id des radiobuttons
 	 * @param $id2 konto_id des radiobuttons
 	 * @return true wenn ok, false im Fehlerfall
 	 */
@@ -410,7 +414,7 @@ class wawi_konto extends basis_db
 		$sql_query_upd1.='UPDATE wawi.tbl_konto_kostenstelle SET konto_id='.$this->db_add_param($id2, FHC_INTEGER).' WHERE konto_id='.$this->db_add_param($id1).'; ';
 
 		$sql_query_upd1.='DELETE FROM wawi.tbl_konto WHERE konto_id='.$this->db_add_param($id1).';';
-		
+
 		if($this->db_query($sql_query_upd1))
 		{
 			$this->db_query("COMMIT;");
@@ -422,12 +426,12 @@ class wawi_konto extends basis_db
 			$this->errormsg = "Fehler beim Update aufgetreten";
 			return false;
 		}
-	}		
-	
+	}
+
 	/**
-	 * 
+	 *
 	 * gibt alle Konten die der übergebenen Kostenstelle zugeordnet sind zurück
-	 * @param $kostenstelle_id 
+	 * @param $kostenstelle_id
 	 */
 	public function getKontoFromKostenstelle($kostenstelle_id)
 	{
@@ -435,91 +439,91 @@ class wawi_konto extends basis_db
 		{
 			$sprache = new sprache();
 			$beschreibung = $sprache->getSprachQuery('beschreibung');
-		
-			$qry = 'SELECT konto.*, '.$beschreibung.' 
-					FROM 
-						wawi.tbl_konto konto, wawi.tbl_konto_kostenstelle kst 
-					WHERE 
-						kst.konto_id = konto.konto_id 
-						AND kst.kostenstelle_id ='.$this->db_add_param($kostenstelle_id, FHC_INTEGER).' 
+
+			$qry = 'SELECT konto.*, '.$beschreibung.'
+					FROM
+						wawi.tbl_konto konto, wawi.tbl_konto_kostenstelle kst
+					WHERE
+						kst.konto_id = konto.konto_id
+						AND kst.kostenstelle_id ='.$this->db_add_param($kostenstelle_id, FHC_INTEGER).'
 					ORDER by konto.kontonr ASC;';
-			
+
 			if(!$this->db_query($qry))
 			{
 				$this->errormsg = "Fehler bei der Abfrage aufgetreten.";
-				return false; 
-				
+				return false;
+
 			}
 			while($row = $this->db_fetch_object())
 			{
-				$obj = new wawi_konto(); 
-				
-				$obj->konto_id = $row->konto_id; 
+				$obj = new wawi_konto();
+
+				$obj->konto_id = $row->konto_id;
 				$obj->kontonr = $row->kontonr;
-				$obj->beschreibung = $sprache->parseSprachResult('beschreibung', $row);				
-				$obj->kurzbz = $row->kurzbz; 
+				$obj->beschreibung = $sprache->parseSprachResult('beschreibung', $row);
+				$obj->kurzbz = $row->kurzbz;
 				$obj->hilfe = $row->hilfe;
 				$obj->aktiv = $this->db_parse_bool($row->aktiv);
 				$obj->insertamum = $row->insertamum;
 				$obj->insertvon = $row->insertvon;
-				$obj->updateamum = $row->updateamum; 
-				$obj->updatevon = $row->updatevon; 
-				
-				$this->result[] = $obj; 
+				$obj->updateamum = $row->updateamum;
+				$obj->updatevon = $row->updatevon;
+
+				$this->result[] = $obj;
 			}
-			return true; 
+			return true;
 		}
-		else 
-		return false; 
+		else
+		return false;
 	}
-	
+
 	/**
-	 * 
+	 *
 	 * gibt alle Konten die der übergebenen Organisationseinheit zugeordnet sind zurück
-	 * @param $kostenstelle_id 
+	 * @param $kostenstelle_id
 	 */
 	public function getKontoFromOE($oe_kurzbz)
 	{
 		$sprache = new sprache();
 		$beschreibung = $sprache->getSprachQuery('beschreibung');
-	
-		$qry = 'SELECT distinct konto.*, '.$beschreibung.' 
-				FROM 
-					public.tbl_organisationseinheit as orga, 
-					wawi.tbl_kostenstelle as kst, 
-					wawi.tbl_konto_kostenstelle as kontokst, 
-					wawi.tbl_konto as konto 
+
+		$qry = 'SELECT distinct konto.*, '.$beschreibung.'
+				FROM
+					public.tbl_organisationseinheit as orga,
+					wawi.tbl_kostenstelle as kst,
+					wawi.tbl_konto_kostenstelle as kontokst,
+					wawi.tbl_konto as konto
 				WHERE
-					orga.oe_kurzbz = kst.oe_kurzbz 
-					AND	kst.kostenstelle_id = kontokst.kostenstelle_id 
+					orga.oe_kurzbz = kst.oe_kurzbz
+					AND	kst.kostenstelle_id = kontokst.kostenstelle_id
 					AND kontokst.konto_id = konto.konto_id
-					AND	orga.oe_kurzbz = '.$this->db_add_param($oe_kurzbz).' 
+					AND	orga.oe_kurzbz = '.$this->db_add_param($oe_kurzbz).'
 				ORDER BY konto.beschreibung;';
 
 		if(!$this->db_query($qry))
 		{
 			$this->errormsg = "Fehler bei der Abfrage aufgetreten.";
-			return false; 
-			
+			return false;
+
 		}
 		while($row = $this->db_fetch_object())
 		{
-			$obj = new wawi_konto(); 
-			
-			$obj->konto_id = $row->konto_id; 
+			$obj = new wawi_konto();
+
+			$obj->konto_id = $row->konto_id;
 			$obj->kontonr = $row->kontonr;
 			$obj->beschreibung = $sprache->parseSprachResult('beschreibung', $row);
-			$obj->kurzbz = $row->kurzbz; 
+			$obj->kurzbz = $row->kurzbz;
 			$obj->hilfe = $row->hilfe;
 			$obj->aktiv = $this->db_parse_bool($row->aktiv);
 			$obj->insertamum = $row->insertamum;
 			$obj->insertvon = $row->insertvon;
-			$obj->updateamum = $row->updateamum; 
-			$obj->updatevon = $row->updatevon; 
-			
-			$this->result[] = $obj; 
+			$obj->updateamum = $row->updateamum;
+			$obj->updatevon = $row->updatevon;
+
+			$this->result[] = $obj;
 		}
-		return true; 
+		return true;
 	}
 
 	/**
@@ -531,23 +535,23 @@ class wawi_konto extends basis_db
 	{
 		$sprache = new sprache();
 		$beschreibung = $sprache->getSprachQuery('beschreibung');
-				
-		$sql_query = "SELECT 
+
+		$sql_query = "SELECT
 						*, $beschreibung
-					  FROM 
-					  	wawi.tbl_konto"; 
-		
+					  FROM
+					  	wawi.tbl_konto";
+
 		$sql_query.=" WHERE person_id=".$this->db_add_param($person_id, FHC_INTEGER);
 
 		$sql_query .= " ORDER BY kurzbz;";
-		
+
 		if($this->db_query($sql_query))
 		{
 			while($row = $this->db_fetch_object())
 			{
 				$obj = new wawi_konto();
-				
-				$obj->konto_id = $row->konto_id; 
+
+				$obj->konto_id = $row->konto_id;
 				$obj->kontonr = $row->kontonr;
 				$obj->beschreibung = $sprache->parseSprachResult('beschreibung', $row);
 				$obj->kurzbz = $row->kurzbz;
@@ -557,8 +561,8 @@ class wawi_konto extends basis_db
 				$obj->insertvon = $row->insertvon;
 				$obj->updateamum = $row->updateamum;
 				$obj->updatevon = $row->updatevon;
-				
-				$this->result[] = $obj; 
+
+				$this->result[] = $obj;
 
 			}
 		}

@@ -24,6 +24,7 @@
 require_once(dirname(__FILE__).'/../config.inc.php');
 require_once('auth.php');
 require_once('../include/wawi_konto.class.php');
+require_once('../include/wawi_kontotyp.class.php');
 require_once dirname(__FILE__).'/../../../include/benutzerberechtigung.class.php';
 require_once dirname(__FILE__).'/../../../include/sprache.class.php';
 
@@ -67,6 +68,9 @@ require_once dirname(__FILE__).'/../../../include/sprache.class.php';
 $id = '';
 $konto = new wawi_konto();
 $user=get_uid();
+
+$kontotyp = new wawi_kontotyp();
+$kontotyp->getAll();
 
 $rechte = new benutzerberechtigung();
 $rechte->getBerechtigungen($user);
@@ -123,6 +127,23 @@ if(isset($_GET['method']))
 				echo "<td><textarea rows=\"4\" cols=\"50\" name=\"hilfe\" maxlength=\"256\">".$konto->hilfe."</textarea></td>\n";
 				echo "</tr>\n";
 				echo "<tr>\n";
+				echo "<td>Kontotyp</td>\n";
+				echo "<td>\n";
+				echo "<select name=\"kontotyp\">";
+				echo "<option value=\"\">-</option>";
+				foreach($kontotyp->result as $k)
+				{
+					if ($konto->kontotyp_kurzbz == $k->kontotyp_kurzbz)
+						$sel = ' selected';
+					else
+						$sel = '';
+
+					echo "<option value=\"".$k->kontotyp_kurzbz."\"".$sel.">".$k->bezeichnung."</option>";
+				}
+				echo "</select>";
+				echo "</td>\n";
+				echo "</tr>\n";
+				echo "<tr>\n";
 				echo "<td>Aktiv?</td>\n";
 				echo "<td><input type=\"checkbox\" name=\"aktiv\" value=\"aktiv\" $checked>\n";
 				echo "</tr>\n";
@@ -170,6 +191,18 @@ if(isset($_GET['method']))
 				echo "<td>Hilfetext</td>\n";
 				echo "<td><textarea rows=\"4\" cols=\"50\" name=\"hilfe\" maxlength=\"256\"></textarea></td>\n";
 				echo "</tr>\n";
+				echo "<tr>\n";
+				echo "<td>Kontotyp</td>\n";
+				echo "<td>\n";
+				echo "<select name=\"kontotyp\">";
+				echo "<option value=\"\">-</option>";
+				foreach($kontotyp->result as $k)
+				{
+					echo "<option value=\"".$k->kontotyp_kurzbz."\">".$k->bezeichnung."</option>";
+				}
+				echo "</select>";
+				echo "</td>\n";
+				echo "</tr>\n";
 				echo "<tr><td>&nbsp;</td></tr>\n";
 				echo "<tr>\n";
 				echo "<td><a href=kontouebersicht.php> zurueck </a></td>\n";
@@ -216,6 +249,7 @@ if(isset($_GET['method']))
 		$konto->hilfe = $_POST['hilfe'];
 		$konto->updateamum = date('Y-m-d H:i:s');
 		$konto->updatevon = $user;
+		$konto->kontotyp_kurzbz = $_POST['kontotyp'];
 
 		if(!$konto->save())
 		{
@@ -400,7 +434,7 @@ else
 			}
 			$i++;
 		}
-
+		echo "<th>Kontotyp</th>";
 		echo "<th>aktiv</th>
 			</tr> </thead><tbody>\n";
 
@@ -425,6 +459,7 @@ else
 				$i++;
 			}
 
+			echo "<td>".$row->kontotyp_kurzbz."</td>\n";
 			echo '<td>'.($row->aktiv?'ja':'nein')."</td>\n";
 			echo "</tr>\n";
 

@@ -1646,6 +1646,63 @@ else
     print "<br>Attribut $columnName exitiert bereits";
 }
 
+// TABLE wawi.tbl_kontotyp
+if (!@$db->db_query("SELECT 0 FROM wawi.tbl_kontotyp WHERE 0 = 1"))
+{
+	$qry = '
+		CREATE TABLE wawi.tbl_kontotyp (
+			kontotyp_kurzbz character varying(32) NOT NULL,
+			bezeichnung character varying(256) NOT NULL,
+			description text,
+			sort integer
+		);
+
+		ALTER TABLE wawi.tbl_kontotyp ADD CONSTRAINT pk_kontotyp PRIMARY KEY (kontotyp_kurzbz);
+		';
+
+	if (!$db->db_query($qry))
+		echo '<strong>wawi.tbl_kontotyp '.$db->db_last_error().'</strong><br>';
+	else
+		echo '<br>Created table wawi.tbl_kontotyp';
+
+	// GRANT SELECT ON TABLE system.tbl_filters TO web;
+	$qry = 'GRANT SELECT ON TABLE wawi.tbl_kontotyp TO web;';
+	if (!$db->db_query($qry))
+		echo '<strong>wawi.tbl_kontotyp '.$db->db_last_error().'</strong><br>';
+	else
+		echo '<br>Granted privileges to <strong>web</strong> on wawi.tbl_kontotyp';
+
+	// GRANT SELECT, UPDATE, INSERT, DELETE ON TABLE system.tbl_filters TO vilesci;
+	$qry = 'GRANT SELECT, UPDATE, INSERT, DELETE ON TABLE wawi.tbl_kontotyp TO vilesci;';
+	if (!$db->db_query($qry))
+		echo '<strong>wawi.tbl_kontotyp '.$db->db_last_error().'</strong><br>';
+	else
+		echo '<br>Granted privileges to <strong>vilesci</strong> on wawi.tbl_kontotyp';
+
+	// GRANT SELECT, UPDATE, INSERT, DELETE ON TABLE system.tbl_filters TO vilesci;
+	$qry = 'GRANT SELECT, UPDATE, INSERT, DELETE ON TABLE wawi.tbl_kontotyp TO wawi;';
+	if (!$db->db_query($qry))
+		echo '<strong>wawi.tbl_kontotyp '.$db->db_last_error().'</strong><br>';
+	else
+		echo '<br>Granted privileges to <strong>wawi</strong> on wawi.tbl_kontotyp';
+}
+
+// FOREIGN KEY tbl_filters_oe_kurzbz_fkey
+if ($result = $db->db_query("SELECT conname FROM pg_constraint WHERE conname = 'tbl_konto_kontotyp_kurzbz_fk'"))
+{
+	if ($db->db_num_rows($result) == 0)
+	{
+		$qry = '
+			ALTER TABLE wawi.tbl_konto ADD COLUMN kontotyp_kurzbz varchar(32);
+			ALTER TABLE wawi.tbl_konto ADD CONSTRAINT fk_konto_kontotyp FOREIGN KEY (kontotyp_kurzbz) REFERENCES wawi.tbl_kontotyp(kontotyp_kurzbz) ON UPDATE CASCADE ON DELETE RESTRICT;';
+		if (!$db->db_query($qry))
+			echo '<strong>fk_konto_kontotyp '.$db->db_last_error().'</strong><br>';
+		else
+			echo '<br>Created foreign key fk_konto_kontotyp';
+	}
+}
+
+
 /**
  * Neue Berechtigung für das Addon hinzufügen
  */
