@@ -58,7 +58,7 @@ $user=get_uid();
 $rechte = new benutzerberechtigung();
 $rechte->getBerechtigungen($user);
 
-if(!$rechte->isBerechtigt('wawi/firma'))
+if(!$rechte->isBerechtigt('wawi/firma', null, 's'))
 	die('Sie haben keine Berechtigung für diese Seite');
 
 $method = isset($_GET['method'])?$_GET['method']:'search';
@@ -77,6 +77,8 @@ $id = isset($_GET['id'])?$_GET['id']:'';
 //Speichern der Daten
 if(isset($_POST['save']))
 {
+	if(!$rechte->isBerechtigt('wawi/firma', null, 'ui'))
+		die('Sie haben keine Berechtigung Firmen zu bearbeiten');
 	if(!isset($_POST['strasse']) || !isset($_POST['name']) || !isset($_POST['plz']) || !isset($_POST['ort']) ||
 	   !isset($_POST['telefon']) || !isset($_POST['fax']) || !isset($_POST['email']) || !isset($_POST['anmerkung']) ||
 	   !isset($_POST['homepage']) )
@@ -462,10 +464,22 @@ if($method=='new' || $method=='update')
 	$lieferbedingungen = '';
 
 	if($method=='new')
-		echo '<h1>Neuer Lieferant/Empfänger</h1>';
+	 {
+		if(!$rechte->isBerechtigt('wawi/firma', null, 'ui'))
+		  die('Sie haben keine Berechtigung Firmen anzulegen');
+		else
+		  echo '<h1>Neuer Lieferant/Empfänger</h1>';
+	 }
 	else
 	{
-		echo '<h1>Lieferant/Empfänger Bearbeiten</h1>';
+		if(!$rechte->isBerechtigt('wawi/firma', null, 'ui'))
+	  	  {
+			echo '<h1>Lieferant/Empfänger</h1>';
+	  	  }
+	  	else
+	  	  {
+			echo '<h1>Lieferant/Empfänger Bearbeiten</h1>';
+		  }
 
 		if(!is_numeric($id))
 			die('ID ist ungueltig');
@@ -622,8 +636,13 @@ if($method=='new' || $method=='update')
 	</tr>
 	<tr>
 		<td></td>
-		<td><input type="submit" name="save" value="Speichern" onclick="return validate()"/></td>
-	</tr>
+		<td>';
+	if($rechte->isBerechtigt('wawi/firma', null, 'ui'))
+	  {
+		echo '<input type="submit" name="save" value="Speichern" onclick="return validate()"/>';
+	  }
+	echo '
+	</td></tr>
 	</table>
 	';
 
