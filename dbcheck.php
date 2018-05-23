@@ -1687,8 +1687,8 @@ if (!@$db->db_query("SELECT 0 FROM wawi.tbl_kontotyp WHERE 0 = 1"))
 		echo '<br>Granted privileges to <strong>wawi</strong> on wawi.tbl_kontotyp';
 }
 
-// FOREIGN KEY tbl_filters_oe_kurzbz_fkey
-if ($result = $db->db_query("SELECT conname FROM pg_constraint WHERE conname = 'tbl_konto_kontotyp_kurzbz_fk'"))
+// Spalte Kontotyp_kurzbz in tbl_konto
+if ($result = $db->db_query("SELECT conname FROM pg_constraint WHERE conname = 'fk_konto_kontotyp'"))
 {
 	if ($db->db_num_rows($result) == 0)
 	{
