@@ -44,7 +44,7 @@
 	$rechte = new benutzerberechtigung();
 	if(!$rechte->getBerechtigungen($uid))
 		die('Sie haben keine Berechtigung fuer diese Seite');
-	
+
 // ------------------------------------------------------------------------------------------
 // Initialisierung
 // ------------------------------------------------------------------------------------------
@@ -63,16 +63,16 @@
 //	Datenlesen
 // ------------------------------------------------------------------------------------------
 	switch ($work)
-	{			
+	{
 			// Firmen Search
 		case 'wawi_firma_search':
 		 	$firma_search=trim((isset($_REQUEST['term']) ? $_REQUEST['term']:''));
 			if (is_null($firma_search) ||$firma_search=='')
-				exit();	
+				exit();
 			$sFirma = new firma();
 			if (!$sFirma->getAll($firma_search))
 				exit($sFirma->errormsg."\n");
-			
+
 			$result=array();
 			for ($i=0;$i<count($sFirma->result);$i++)
 			{
@@ -91,17 +91,17 @@
 			}
 			echo json_encode($result);
 			break;
-			
+
 			// Bestellung Tags
 		case 'tags':
 		//	$bestell_id = $_REQUEST['bestell_id'];
 			$tag_search=trim((isset($_REQUEST['term']) ? $_REQUEST['term']:''));
 		//	if (is_null($bestell_id) || $tag_search=='')
-			//	exit();	
-			$tags = new tags(); 
+			//	exit();
+			$tags = new tags();
 			if (!$tags->getAll($tag_search))
 				exit($tags->errormsg."\n");
-			
+
 			$result=array();
 			for ($i=0;$i<count($tags->result);$i++)
 			{
@@ -111,14 +111,14 @@
 			}
 			echo json_encode($result);
 			break;
-			
+
 			// Bestelldetail Tags
 		case 'detail_tags':
 		//	$detail = $_REQUEST['detail_id'];
 			$tag_search=trim((isset($_REQUEST['term']) ? $_REQUEST['term']:''));
 			//if (is_null($detail) || $tag_search=='')
-			//	exit();	
-			$tags = new tags(); 
+			//	exit();
+			$tags = new tags();
 			if (!$tags->getAll())
 				exit($tags->errormsg."\n");
 			$result=array();
@@ -130,14 +130,14 @@
 			}
 			echo json_encode($result);
 			break;
-		
+
 		case 'wawi_mitarbeiter_search':
 		 	$search=trim((isset($_REQUEST['term']) ? $_REQUEST['term']:''));
 			if (is_null($search) ||$search=='')
-				exit();	
+				exit();
 			$ma = new mitarbeiter();
 			$ma->search($search);
-	
+
 			$result=array();
 			foreach($ma->result as $row)
 			{
@@ -150,12 +150,13 @@
 			echo json_encode($result);
 			break;
 		case 'wawi_raum_search':
+			$result = array();
 		 	$ort_kurzbz=trim((isset($_REQUEST['term']) ? $_REQUEST['term']:''));
 			if (is_null($ort_kurzbz) || $ort_kurzbz=='')
 				exit();
 			$sOrt = new ort();
 			if (!$sOrt->filter($ort_kurzbz))
-				exit(' |'.$sOrt->errormsg."\n");			
+				exit(' |'.$sOrt->errormsg."\n");
 
 			$oRresult=$sOrt->result;
 			for ($i=0;$i<count($oRresult);$i++)
@@ -174,28 +175,28 @@
 				exit();
 			$person = new person();
 			if (!$person->getPersonFromBenutzer($uid))
-				exit(' |'.$person->errormsg."\n");	
+				exit(' |'.$person->errormsg."\n");
 			$bv = new bankverbindung();
 			if (!$bv->load_pers($person->person_id))
-				exit(' |'.$bv->errormsg."\n");	
+				exit(' |'.$bv->errormsg."\n");
 			$result = null;
 			foreach ($bv->result as $value) {
-				if ($value->verrechnung) 
+				if ($value->verrechnung)
 					{
 						$result = $value;
 						break;
 					}
-			}			
-			if ($result != null && $result->iban != null) 
+			}
+			if ($result != null && $result->iban != null)
 			{
 				echo json_encode(array('iban' => $result->iban));
 			}
-			else 
+			else
 			{
 				echo json_encode(array('iban' => ''));
-			}			
-			
-			
+			}
+
+
 		break;
 	}
 	exit();
