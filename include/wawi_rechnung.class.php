@@ -43,26 +43,27 @@ class wawi_rechnung extends basis_db
 	public $updatevon; 			// varchar
 	public $insertamum; 		// timestamp
 	public $insertvon; 			// varchar
-		
-	public $result = array(); 
+
+	public $result = array();
 	public $new; 				// bool
-	
+	public $firma_id;			// int
+
 	/**
-	 * 
-	 * Konstruktor 
+	 *
+	 * Konstruktor
 	 * @param rechnung_id der Rechnung die geladen werden soll (Default=null)
 	 */
-	public function __construct($rechnung_id = null) 
+	public function __construct($rechnung_id = null)
 	{
-		parent::__construct(); 
-		
+		parent::__construct();
+
 		if(!is_null($rechnung_id))
-			$this->load($rechnung_id);			
+			$this->load($rechnung_id);
 	}
-	
+
 	/**
-	 * 
-	 * Lädt die Rechnung mit der Übergebenen ID 
+	 *
+	 * Lädt die Rechnung mit der Übergebenen ID
 	 * @param $rechnung_id der zu ladenden Rechnung
 	 */
 	public function load($rechnung_id)
@@ -70,20 +71,20 @@ class wawi_rechnung extends basis_db
 		if(!is_numeric($rechnung_id))
 		{
 			$this->errormsg='ID ist ungueltig';
-			return false; 
+			return false;
 		}
-		
+
 		$qry = "SELECT * FROM wawi.tbl_rechnung WHERE rechnung_id = ".$this->db_add_param($rechnung_id, FHC_INTEGER).';';
-		
+
 		if(!$this->db_query($qry))
 		{
 			$this->errormsg ='Fehler bei der Datenbankabfrage';
-			return false; 
+			return false;
 		}
-		
+
 		if($row = $this->db_fetch_object())
 		{
-			$this->rechnung_id = $row->rechnung_id; 
+			$this->rechnung_id = $row->rechnung_id;
 			$this->bestellung_id = $row->bestellung_id;
 			$this->rechnungstyp_kurzbz = $row->rechnungstyp_kurzbz;
 			$this->buchungsdatum = $row->buchungsdatum;
@@ -102,15 +103,15 @@ class wawi_rechnung extends basis_db
 		else
 		{
 			$this->errormsg ='Fehler bei der Datenbankabfrage';
-			return false; 
+			return false;
 		}
-		return true; 
+		return true;
 	}
-		
+
 	/**
-	 * 
+	 *
 	 * Laedt alle Rechnung anhand von verschiedenen Parametern
-	 * 
+	 *
 	 * @param $rechnungsnr
 	 * @param $rechnungsdatum_von
 	 * @param $rechnungsdatum_bis
@@ -130,39 +131,39 @@ class wawi_rechnung extends basis_db
 	 */
 	public function getAllSearch($rechnungsnr, $rechnungsdatum_von, $rechnungsdatum_bis, $buchungsdatum_von, $buchungsdatum_bis, $erstelldatum_von, $erstelldatum_bis, $bestelldatum_von, $bestelldatum_bis, $bestellnummer, $firma_id, $oe_kurzbz, $konto_id, $kostenstelle_id, $betrag, $zahlungstyp='', $ohneTransferdatum=false, $tag=null)
 	{
-		$first = true; 
+		$first = true;
 		$qry = "
-		SELECT 
-			distinct on (tbl_rechnung.rechnung_id) tbl_rechnung.*, tbl_bestellung.bestell_nr
-		FROM 
+		SELECT
+			distinct on (tbl_rechnung.rechnung_id) tbl_rechnung.*, tbl_bestellung.bestell_nr,tbl_bestellung.firma_id
+		FROM
 			wawi.tbl_rechnung
-			LEFT JOIN wawi.tbl_bestellung USING (bestellung_id) 
+			LEFT JOIN wawi.tbl_bestellung USING (bestellung_id)
 			LEFT JOIN wawi.tbl_kostenstelle USING (kostenstelle_id)
-			LEFT JOIN wawi.tbl_bestellung_bestellstatus status USING(bestellung_id) 
-		WHERE 1=1 
-		"; 
-		
+			LEFT JOIN wawi.tbl_bestellung_bestellstatus status USING(bestellung_id)
+		WHERE 1=1
+		";
+
 		if ($rechnungsnr!='')
-			$qry.= " AND UPPER(tbl_rechnung.rechnungsnr) LIKE UPPER('%".$this->db_escape($rechnungsnr)."%')"; 
-			
+			$qry.= " AND UPPER(tbl_rechnung.rechnungsnr) LIKE UPPER('%".$this->db_escape($rechnungsnr)."%')";
+
 		if ($rechnungsdatum_von != '')
 			$qry.= ' AND tbl_rechnung.rechnungsdatum >= '.$this->db_add_param($rechnungsdatum_von);
-		
+
 		if ($rechnungsdatum_bis != '')
 			$qry.= ' AND tbl_rechnung.rechnungsdatum <= '.$this->db_add_param($rechnungsdatum_bis);
 
 		if ($buchungsdatum_von != '')
 			$qry.= ' AND tbl_rechnung.buchungsdatum >= '.$this->db_add_param($buchungsdatum_von);
-			
+
 		if ($buchungsdatum_bis != '')
 			$qry.= ' AND tbl_rechnung.buchungsdatum <= '.$this->db_add_param($buchungsdatum_bis);
-			
+
 		if ($erstelldatum_von != '')
 			$qry.= ' AND tbl_bestellung.insertamum::date >= '.$this->db_add_param($erstelldatum_von);
-			
+
 		if ($erstelldatum_bis != '')
 			$qry.= ' AND tbl_bestellung.insertamum::date <= '.$this->db_add_param($erstelldatum_bis);
-		
+
 		if ($bestelldatum_von != '')
 			$qry.= " AND status.bestellstatus_kurzbz = 'Bestellung' AND status.datum >= ".$this->db_add_param($bestelldatum_von);
 		if ($bestelldatum_bis != '')
@@ -174,17 +175,17 @@ class wawi_rechnung extends basis_db
 		if ($oe_kurzbz != '')
 			$qry.= ' AND tbl_kostenstelle.oe_kurzbz = '.$this->db_add_param($oe_kurzbz);
 
-		if ($konto_id != '')	
+		if ($konto_id != '')
 			$qry.= ' AND tbl_bestellung.konto_id = '.$this->db_add_param($konto_id);
-		
-		if ($kostenstelle_id != '')	
+
+		if ($kostenstelle_id != '')
 			$qry.= ' AND tbl_bestellung.kostenstelle_id = '.$this->db_add_param($kostenstelle_id);
 
-		if ($bestellnummer != '')	
+		if ($bestellnummer != '')
 //			$qry.= ' AND UPPER(tbl_bestellung.bestell_nr) = UPPER('.$this->db_add_param($bestellnummer).')';
-//			$qry.= " AND (UPPER(bestellung.bestell_nr) LIKE UPPER('%".$this->db_escape($bestellnr)."%') OR UPPER(betriebsmittel.inventarnummer) LIKE UPPER('%".$this->db_escape($bestellnr)."%'))"; 
+//			$qry.= " AND (UPPER(bestellung.bestell_nr) LIKE UPPER('%".$this->db_escape($bestellnr)."%') OR UPPER(betriebsmittel.inventarnummer) LIKE UPPER('%".$this->db_escape($bestellnr)."%'))";
 			$qry.= " AND UPPER(tbl_bestellung.bestell_nr) LIKE UPPER('%".$this->db_escape($bestellnummer)."%')";
-		
+
 		if($tag!='')
 			$qry.= ' AND (EXISTS (SELECT 1 FROM wawi.tbl_bestellungtag WHERE tag='.$this->db_add_param($tag).' AND bestellung_id=wawi.tbl_bestellung.bestellung_id)
 						OR EXISTS (SELECT 1 FROM wawi.tbl_bestelldetailtag JOIN wawi.tbl_bestelldetail USING(bestelldetail_id) WHERE tag='.$this->db_add_param($tag).' AND bestellung_id=wawi.tbl_bestellung.bestellung_id)
@@ -193,24 +194,24 @@ class wawi_rechnung extends basis_db
 		if ($betrag != '')
 			$qry.= ' AND ('.$this->db_add_param($betrag).' = (SELECT sum(betrag) FROM wawi.tbl_rechnungsbetrag WHERE rechnung_id=tbl_rechnung.rechnung_id)
 					   OR '.$this->db_add_param($betrag).' = (SELECT sum((betrag*(mwst+100)/100)) FROM wawi.tbl_rechnungsbetrag WHERE rechnung_id=tbl_rechnung.rechnung_id))';
-			
+
 		if($zahlungstyp!='')
 			$qry.= ' AND tbl_bestellung.zahlungstyp_kurzbz = '.$this->db_add_param($zahlungstyp);
-			
+
 		if($ohneTransferdatum)
 			$qry.= ' AND tbl_rechnung.transfer_datum IS NULL';
-			
+
 		if(!$this->db_query($qry))
 		{
 			$this->errormsg = "Fehler bei der Datenbankabfrage.";
-			return false; 
+			return false;
 		}
 
 		while($row = $this->db_fetch_object())
 		{
-			$obj = new wawi_rechnung(); 
-			
-			$obj->rechnung_id = $row->rechnung_id; 
+			$obj = new wawi_rechnung();
+
+			$obj->rechnung_id = $row->rechnung_id;
 			$obj->bestellung_id = $row->bestellung_id;
 			$obj->rechnungstyp_kurzbz = $row->rechnungstyp_kurzbz;
 			$obj->buchungsdatum = $row->buchungsdatum;
@@ -225,16 +226,17 @@ class wawi_rechnung extends basis_db
 			$obj->updatevon = $row->updatevon;
 			$obj->insertamum = $row->insertamum;
 			$obj->insertvon = $row->insertvon;
-			
+			$obj->firma_id = $row->firma_id;
+
 			$obj->bestell_nr = $row->bestell_nr;
-			
-			$this->result[] = $obj; 
+
+			$this->result[] = $obj;
 		}
-		return true; 
+		return true;
 	}
-	
+
 	/**
-	 * 
+	 *
 	 * Löscht die Rechnung mit der Übergebenen ID
 	 * @param $rechnung_id Rechnung die gelöscht werden soll
 	 */
@@ -243,26 +245,26 @@ class wawi_rechnung extends basis_db
 		if(!is_numeric($rechnung_id))
 		{
 			$this->errormsg = "Keine gültige ID";
-			return false; 
-		}		
-		
+			return false;
+		}
+
 		$qry ="DELETE FROM wawi.tbl_rechnung WHERE rechnung_id = ".$this->db_add_param($rechnung_id, FHC_INTEGER).';';
-		
+
 		if(!$this->db_query($qry))
 		{
 			$this->errormsg ="Fehler beim Löschen der Rechnung";
-			return false; 
+			return false;
 		}
-		return true; 
+		return true;
 	}
-	
+
 	/**
-	 * 
+	 *
 	 * Prüft ob Richtige Daten eingegeben/vorhanden sind
 	 */
 	public function validate()
 	{
-		
+
 		if(!is_numeric($this->bestellung_id))
 		{
 			$this->errormsg = "Bestellung_id fehlerhaft.";
@@ -271,12 +273,12 @@ class wawi_rechnung extends basis_db
 		if(mb_strlen($this->rechnungstyp_kurzbz)>32)
 		{
 			$this->errormsg ="Rechnungstyp fehlerhaft.";
-			return false; 
+			return false;
 		}
 		if(mb_strlen($this->rechnungsnr)>32)
 		{
 			$this->errormsg ="Rechnungsnr fehlerhaft.";
-			return false; 
+			return false;
 		}
 		if(!is_bool($this->freigegeben))
 		{
@@ -286,33 +288,33 @@ class wawi_rechnung extends basis_db
 		if(mb_strlen($this->freigegebenvon)>32)
 		{
 			$this->errormsg ="freigegebenvon zu lang.";
-			return false; 
-		}	
+			return false;
+		}
 		if(mb_strlen($this->insertvon)>32)
 		{
 			$this->errormsg ="insertvon zu lang.";
-			return false; 
-		}	
+			return false;
+		}
 		if(mb_strlen($this->updatevon)>32)
 		{
 			$this->errormsg ="updatevon zu lang.";
-			return false; 
-		}			
-		return true; 		
+			return false;
+		}
+		return true;
 	}
-	
+
 	/**
-	 * 
+	 *
 	 * Speichert eine neue Rechnung in die Datenbank oder Updated eine bestehende
 	 */
 	public function save()
 	{
 		if(!$this->validate())
 			return false;
-		
+
 		if($this->new)
 		{
-			$qry = 'BEGIN; INSERT INTO wawi.tbl_rechnung (bestellung_id,rechnungstyp_kurzbz, buchungsdatum, 
+			$qry = 'BEGIN; INSERT INTO wawi.tbl_rechnung (bestellung_id,rechnungstyp_kurzbz, buchungsdatum,
 			rechnungsnr, rechnungsdatum, transfer_datum, buchungstext, freigegeben, freigegebenvon, freigegebenamum,
 			updateamum, updatevon, insertamum, insertvon) VALUES ('.
 			$this->db_add_param($this->bestellung_id, FHC_INTEGER).', '.
@@ -333,9 +335,9 @@ class wawi_rechnung extends basis_db
 		else
 		{
 			//UPDATE
-			$qry = 'UPDATE wawi.tbl_rechnung SET 
-			bestellung_id = '.$this->db_add_param($this->bestellung_id).', 
-			rechnungstyp_kurzbz = '.$this->db_add_param($this->rechnungstyp_kurzbz).', 
+			$qry = 'UPDATE wawi.tbl_rechnung SET
+			bestellung_id = '.$this->db_add_param($this->bestellung_id).',
+			rechnungstyp_kurzbz = '.$this->db_add_param($this->rechnungstyp_kurzbz).',
 			buchungsdatum = '.$this->db_add_param($this->buchungsdatum).',
 			rechnungsnr = '.$this->db_add_param($this->rechnungsnr).',
 			rechnungsdatum = '.$this->db_add_param($this->rechnungsdatum).',
@@ -346,9 +348,9 @@ class wawi_rechnung extends basis_db
 			freigegebenamum = '.$this->db_add_param($this->freigegebenamum).',
 			updateamum = '.$this->db_add_param($this->updateamum).',
 			updatevon = '.$this->db_add_param($this->updatevon).
-			' WHERE rechnung_id = '.$this->db_add_param($this->rechnung_id, FHC_INTEGER).';'; 
+			' WHERE rechnung_id = '.$this->db_add_param($this->rechnung_id, FHC_INTEGER).';';
 		}
-		
+
 		if($this->db_query($qry))
 		{
 			if($this->new)
@@ -361,7 +363,7 @@ class wawi_rechnung extends basis_db
 					{
 						$this->rechnung_id = $row->id;
 						if($this->rechnungsnr=='')
-							$this->rechnungsnr = $row->id;						
+							$this->rechnungsnr = $row->id;
 						$this->db_query('COMMIT;');
 					}
 					else
@@ -385,10 +387,10 @@ class wawi_rechnung extends basis_db
 		}
 		return $this->rechnung_id;
 	}
-	
+
 	/**
 	 * Laedt die Betraege zu einer Rechnung
-	 * 
+	 *
 	 * @param $rechnung_id ID der Rechnung
 	 */
 	public function loadBetraege($rechnung_id)
@@ -398,21 +400,21 @@ class wawi_rechnung extends basis_db
 			$this->errormsg='Ungueltige ID';
 			return false;
 		}
-		
+
 		$qry = "SELECT * FROM wawi.tbl_rechnungsbetrag WHERE rechnung_id=".$this->db_add_param($rechnung_id, FHC_INTEGER)." ORDER BY rechnungsbetrag_id;";
-		
+
 		if($result = $this->db_query($qry))
 		{
 			while($row = $this->db_fetch_object($result))
 			{
 				$obj = new wawi_rechnung();
-				
+
 				$obj->rechnungsbetrag_id=$row->rechnungsbetrag_id;
 				$obj->rechnung_id = $row->rechnung_id;
 				$obj->betrag = $row->betrag;
 				$obj->mwst = $row->mwst;
 				$obj->bezeichnung = $row->bezeichnung;
-				
+
 				$this->result[] = $obj;
 			}
 			return true;
@@ -423,9 +425,9 @@ class wawi_rechnung extends basis_db
 			return false;
 		}
 	}
-	
+
 	/**
-	 * 
+	 *
 	 * Speichert einen Rechnungsbetrag
 	 */
 	public function save_betrag()
@@ -433,15 +435,15 @@ class wawi_rechnung extends basis_db
 		if(!is_numeric($this->betrag))
 		{
 			$this->errormsg = "Ungültiger Betrag.";
-			return false; 
+			return false;
 		}
-		
+
 		if(!is_numeric($this->mwst))
 		{
-			$this->errormsg = "Ungültiger Betrag."; 
-			return false; 
+			$this->errormsg = "Ungültiger Betrag.";
+			return false;
 		}
-		
+
 		if($this->new)
 		{
 			$qry = 'BEGIN;INSERT INTO wawi.tbl_rechnungsbetrag(rechnung_id, mwst, betrag, bezeichnung) VALUES('.
@@ -459,20 +461,20 @@ class wawi_rechnung extends basis_db
 					' bezeichnung='.$this->db_add_param($this->bezeichnung).
 					" WHERE rechnungsbetrag_id=".$this->db_add_param($this->rechnungsbetrag_id, FHC_INTEGER).';';
 		}
-		
+
 		if($this->db_query($qry))
 		{
 			if($this->new)
 			{
 				$qry = "SELECT currval('wawi.seq_rechnungsbetrag_rechnungsbetrag_id') as id;";
-				
+
 				if($result = $this->db_query($qry))
 				{
 					if($row = $this->db_fetch_object($result))
 					{
 						$this->rechnugnsbetrag_id=$row->id;
 						$this->db_query('COMMIT;');
-						return true; 
+						return true;
 					}
 					else
 					{
@@ -488,13 +490,13 @@ class wawi_rechnung extends basis_db
 				}
 			}
 		}
-		else 
+		else
 		{
 			$this->errormsg = 'Fehler beim Speichern der Daten';
 			return false;
 		}
 	}
-	
+
 	/**
 	 * Loescht einen Eintrag aus der Tabelle rechnungsbetrag
 	 *
@@ -507,7 +509,7 @@ class wawi_rechnung extends basis_db
 			$this->errormsg = 'ungueltige ID';
 			return false;
 		}
-		
+
 		$qry = "DELETE FROM wawi.tbl_rechnungsbetrag WHERE rechnungsbetrag_id=".$this->db_add_param($rechnungsbetrag_id, FHC_INTEGER).';';
 		if($this->db_query($qry))
 		{
@@ -519,7 +521,7 @@ class wawi_rechnung extends basis_db
 			return false;
 		}
 	}
-	
+
 	/**
 	 * Laedt alle Rechnungstypen
 	 */
@@ -541,9 +543,9 @@ class wawi_rechnung extends basis_db
 		{
 			$this->errormsg = 'Fehler beim Laden der Daten';
 			return false;
-		}	
+		}
 	}
-	
+
 	/**
 	 * Liefert die Anzahl der Rechnungen zu einer Bestellung
 	 *
@@ -552,9 +554,9 @@ class wawi_rechnung extends basis_db
 	 */
 	public function count($bestellung_id)
 	{
-		$qry = "SELECT count(*) as anzahl FROM wawi.tbl_rechnung 
+		$qry = "SELECT count(*) as anzahl FROM wawi.tbl_rechnung
 		WHERE bestellung_id=".$this->db_add_param($bestellung_id, FHC_INTEGER).';';
-		
+
 		if($result = $this->db_query($qry))
 		{
 			if($row = $this->db_fetch_object($result))
@@ -573,10 +575,10 @@ class wawi_rechnung extends basis_db
 			return false;
 		}
 	}
-	
+
 	/**
 	 * Liefert den gesamten Bruttobetrag von einer Rechnung
-	 * 
+	 *
 	 * @param $rechnung_id
 	 */
 	public function getBrutto($rechnung_id)
@@ -589,7 +591,7 @@ class wawi_rechnung extends basis_db
 		}
 		return $brutto;
 	}
-	
+
 	/**
 	 * Liefert die Summe der Brutto Rechnungsbeträge einer Kostenstelle in einem Geschäftsjahr
 	 *
@@ -603,21 +605,21 @@ class wawi_rechnung extends basis_db
 			$this->errormsg = 'KostenstelleID ist ungueltig';
 			return false;
 		}
-		
+
 		$gj = new geschaeftsjahr();
 		if(!$gj->load($geschaeftsjahr_kurzbz))
 		{
 			$this->errormsg = 'Fehler beim Laden des Geschaeftsjahres';
 			return false;
 		}
-		
+
 		$qry = "SELECT sum(brutto) as gesamt
-				FROM 
+				FROM
 				(
-				SELECT 
+				SELECT
 					(tbl_rechnungsbetrag.betrag*(tbl_rechnungsbetrag.mwst+100)/100) as brutto
-				FROM 
-					wawi.tbl_rechnung 
+				FROM
+					wawi.tbl_rechnung
 					JOIN wawi.tbl_bestellung USING(bestellung_id)
 					JOIN wawi.tbl_rechnungsbetrag USING(rechnung_id)
 				WHERE
@@ -625,7 +627,7 @@ class wawi_rechnung extends basis_db
 					AND tbl_bestellung.insertamum>=".$this->db_add_param($gj->start)."
 					AND tbl_bestellung.insertamum<=".$this->db_add_param($gj->ende)."
 				) as a;";
-		
+
 		if($result = $this->db_query($qry))
 		{
 			if($row = $this->db_fetch_object($result))

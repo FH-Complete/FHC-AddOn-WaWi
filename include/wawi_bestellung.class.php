@@ -28,13 +28,14 @@ require_once(dirname(__FILE__).'/wawi_bestelldetail.class.php');
 require_once(dirname(__FILE__).'/wawi_aufteilung.class.php');
 require_once(dirname(__FILE__).'/../../../include/organisationseinheit.class.php');
 require_once(dirname(__FILE__).'/wawi_kostenstelle.class.php');
+require_once(dirname(__FILE__).'/wawi_konto.class.php');
 require_once(dirname(__FILE__).'/../../../include/geschaeftsjahr.class.php');
 
 class wawi_bestellung extends basis_db
 {
 	public $bestellung_id; 		// serial
 	public $besteller_uid;		// char
-    public $zuordnung_uid;          // char [WM] 6.1.2016: auf Wunsch von Zentraleinkauf; 
+    public $zuordnung_uid;          // char [WM] 6.1.2016: auf Wunsch von Zentraleinkauf;
                                     // Person wo etwaiges Gerät zu finden ist
     public $zuordnung_raum;         // char [WM] 6.1.2015: s.o.
 	public $kostenstelle_id;	// int
@@ -65,6 +66,7 @@ class wawi_bestellung extends basis_db
 	public $result = array();
 	public $user;
 	public $new; 				// bool
+	public $rechnung_brutto;		// float, read only
 
 	/**
 	 *
@@ -79,7 +81,7 @@ class wawi_bestellung extends basis_db
 			$this->load($bestellung_id);
 
 	}
-	
+
 	/**
 	 *
 	 * Lädt die Bestellung mit der Übergebenen ID
@@ -126,7 +128,7 @@ class wawi_bestellung extends basis_db
 			$this->ext_id = $row->ext_id;
 			$this->zahlungstyp_kurzbz = $row->zahlungstyp_kurzbz;
                         $this->auftragsbestaetigung = $row->auftragsbestaetigung;
-                        $this->auslagenersatz = $this->db_parse_bool($row->auslagenersatz); 
+                        $this->auslagenersatz = $this->db_parse_bool($row->auslagenersatz);
                         $this->iban = $row->iban;
 			$this->wird_geleast = $this->db_parse_bool($row->wird_geleast);
 			$this->nicht_bestellen = $this->db_parse_bool($row->nicht_bestellen);
@@ -181,11 +183,11 @@ class wawi_bestellung extends basis_db
 			$bestellung->ext_id = $row->ext_id;
 			$bestellung->zahlungstyp_kurzbz = $row->zahlungstyp_kurzbz;
             $bestellung->auftragsbestaetigung = $row->auftragsbestaetigung;
-            $bestellung->auslagenersatz = $this->db_parse_bool($row->auslagenersatz); 
+            $bestellung->auslagenersatz = $this->db_parse_bool($row->auslagenersatz);
             $bestellung->iban = $row->iban;
 			$bestellung->wird_geleast = $this->db_parse_bool($row->wird_geleast);
-			$bestellung->empfehlung_leasing = $this->db_parse_bool($row->empfehlung_leasing);    
-			$bestellung->nicht_bestellen = $this->db_parse_bool($row->nicht_bestellen);             
+			$bestellung->empfehlung_leasing = $this->db_parse_bool($row->empfehlung_leasing);
+			$bestellung->nicht_bestellen = $this->db_parse_bool($row->nicht_bestellen);
 			$bestellung->result[] = $bestellung;
 		}
 		return true;
@@ -224,6 +226,7 @@ class wawi_bestellung extends basis_db
 		LEFT JOIN wawi.tbl_bestelldetail detail USING (bestellung_id)
 		LEFT JOIN wawi.tbl_betriebsmittel betriebsmittel USING(bestellung_id)
 		LEFT JOIN public.tbl_organisationseinheit orgaeinheit ON (orgaeinheit.oe_kurzbz = kostenstelle.oe_kurzbz)
+		LEFT JOIN (select sum(rbetrag.betrag) rnetto,sum(rbetrag.betrag*(100.00+coalesce(rbetrag.mwst,0))/100.00) rbrutto,r.bestellung_id from wawi.tbl_rechnung r left join wawi.tbl_rechnungsbetrag rbetrag using(rechnung_id) group by r.bestellung_id) rechnung using (bestellung_id)
 		WHERE 1=1 ";
 
 		// Bestellnummer und Inventarnummer werden durchsucht
@@ -241,10 +244,10 @@ class wawi_bestellung extends basis_db
 				$qry.= ' AND bestellung.insertamum::date <= '.$this->db_add_param($ebis);
 
 			if ($bvon != '')
-				$qry.= " AND status.bestellstatus_kurzbz = 'Bestellung' and status.datum > ".$this->db_add_param($bvon);
+				$qry.= " AND status.bestellstatus_kurzbz = 'Bestellung' and status.datum >= ".$this->db_add_param($bvon);
 
 			if ($bbis != '')
-				$qry.= " AND status.bestellstatus_kurzbz = 'Bestellung' and status.datum < ".$this->db_add_param($bbis);
+				$qry.= " AND status.bestellstatus_kurzbz = 'Bestellung' and status.datum <= ".$this->db_add_param($bbis);
 
 			if ($firma_id != '')
 				$qry.= ' AND bestellung.firma_id = '.$this->db_add_param($firma_id, FHC_INTEGER);
@@ -285,13 +288,13 @@ class wawi_bestellung extends basis_db
 			if($ohneFreigabe)
 				$qry.=" AND bestellung.freigegeben = 'false'";
 		}
-
+		//echo $qry;exit();
 		if(!$this->db_query($qry))
 		{
 			$this->errormsg = "Fehler bei der Datenbankabfrage.";
 			return false;
 		}
-
+		//var_dump($this->result);exit();
 		while($row = $this->db_fetch_object())
 		{
 			$bestellung = new wawi_bestellung();
@@ -318,11 +321,12 @@ class wawi_bestellung extends basis_db
 			$bestellung->ext_id = $row->ext_id;
 			$bestellung->zahlungstyp_kurzbz = $row->zahlungstyp_kurzbz;
             $bestellung->auftragsbestaetigung = $row->auftragsbestaetigung;
-            $bestellung->auslagenersatz = $this->db_parse_bool($row->auslagenersatz); 
+            $bestellung->auslagenersatz = $this->db_parse_bool($row->auslagenersatz);
             $bestellung->iban = $row->iban;
 			$bestellung->wird_geleast = $this->db_parse_bool($row->wird_geleast);
 			$bestellung->empfehlung_leasing = $this->db_parse_bool($row->empfehlung_leasing);
-			$bestellung->nicht_bestellen = $this->db_parse_bool($row->nicht_bestellen); 
+			$bestellung->nicht_bestellen = $this->db_parse_bool($row->nicht_bestellen);
+			$bestellung->rechnung_brutto = $row->rbrutto;
 			$this->result[] = $bestellung;
 		}
 		return true;
@@ -371,11 +375,11 @@ class wawi_bestellung extends basis_db
 				$bestellung->ext_id = $row->ext_id;
 				$bestellung->zahlungstyp_kurzbz = $row->zahlungstyp_kurzbz;
                                 $bestellung->auftragsbestaetigung = $row->auftragsbestaetigung;
-                                $bestellung->auslagenersatz = $this->db_parse_bool($row->auslagenersatz); 
+                                $bestellung->auslagenersatz = $this->db_parse_bool($row->auslagenersatz);
                                 $bestellung->iban = $row->iban;
 				$bestellung->wird_geleast = $this->db_parse_bool($row->wird_geleast);
 				$bestellung->empfehlung_leasing = $this->db_parse_bool($row->empfehlung_leasing);
-				$bestellung->nicht_bestellen = $this->db_parse_bool($row->nicht_bestellen); 
+				$bestellung->nicht_bestellen = $this->db_parse_bool($row->nicht_bestellen);
 				$this->result[] = $bestellung;
 			}
 			return true;
@@ -430,11 +434,11 @@ class wawi_bestellung extends basis_db
 				$bestellung->ext_id = $row->ext_id;
 				$bestellung->zahlungstyp_kurzbz = $row->zahlungstyp_kurzbz;
                                 $bestellung->auftragsbestaetigung = $row->auftragsbestaetigung;
-                                $bestellung->auslagenersatz = $this->db_parse_bool($row->auslagenersatz); 
+                                $bestellung->auslagenersatz = $this->db_parse_bool($row->auslagenersatz);
                                 $bestellung->iban = $row->iban;
 				$bestellung->wird_geleast = $this->db_parse_bool($row->wird_geleast);
-				$bestellung->empfehlung_leasing = $this->db_parse_bool($row->empfehlung_leasing);                                                 
-				$bestellung->nicht_bestellen = $this->db_parse_bool($row->nicht_bestellen); 
+				$bestellung->empfehlung_leasing = $this->db_parse_bool($row->empfehlung_leasing);
+				$bestellung->nicht_bestellen = $this->db_parse_bool($row->nicht_bestellen);
 				$this->result[] = $bestellung;
 			}
 			return true;
@@ -525,7 +529,7 @@ class wawi_bestellung extends basis_db
 			$this->errormsg ="Titel zu lang.";
 			return false;
 		}
-		if(mb_strlen($this->bemerkung)>256)
+		if(mb_strlen($this->bemerkung)>400)
 		{
 			$this->errormsg ="Bemerkung zu lang.";
 			return false;
@@ -580,7 +584,7 @@ class wawi_bestellung extends basis_db
 			besteller_uid = '.$this->db_add_param($this->besteller_uid).',
                         zuordnung_uid = '.$this->db_add_param($this->zuordnung_uid).',
                         zuordnung_raum = '.$this->db_add_param($this->zuordnung_raum).',
-                        zuordnung = '.$this->db_add_param($this->zuordnung).',            
+                        zuordnung = '.$this->db_add_param($this->zuordnung).',
 			kostenstelle_id = '.$this->db_add_param($this->kostenstelle_id, FHC_INTEGER).',
 			konto_id = '.$this->db_add_param($this->konto_id, FHC_INTEGER).',
 			firma_id = '.$this->db_add_param($this->firma_id, FHC_INTEGER).',
@@ -739,11 +743,21 @@ class wawi_bestellung extends basis_db
 		$bestellung->load($bestellung_id);
 		$newBestellNummer = $bestellung->createBestellNr($bestellung->kostenstelle_id);
 
+		// Konto checken
+		$konto = new wawi_konto($bestellung->konto_id);
+
+		if (!$konto->aktiv)
+  		  {
+  		  	$this->errormsg = "Konto ist nicht mehr aktiv.";
+  		  	return false;
+		  }
+
+
 		if(!is_numeric($bestellung_id))
-		{
+		  {
 			$this->errormsg = "Keine gültige Bestell ID";
 			return false;
-		}
+		  }
 
 		$error = false;
 		$this->db_query('BEGIN;');
@@ -1364,13 +1378,13 @@ class wawi_bestellung extends basis_db
 		}
 		$kurzzeichen = mb_strtoupper($kurzzeichen);
 		if ($datum != null)
-		{			
-			$akt_timestamp=$datum;			
+		{
+			$akt_timestamp=$datum;
 		}
-		else 
+		else
 		{
 			$akt_timestamp=time();
-		}				
+		}
 		$akt_datum=getdate($akt_timestamp);
 		$akt_mon=$akt_datum['mon'];
 		$akt_year=$akt_datum['year'];

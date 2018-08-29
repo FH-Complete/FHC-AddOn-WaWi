@@ -32,6 +32,11 @@ require_once('../include/wawi_kostenstelle.class.php');
 require_once('../include/wawi_bestellung.class.php');
 require_once('../include/wawi_zahlungstyp.class.php');
 require_once('../include/wawi_benutzerberechtigung.class.php');
+require_once '../../../vendor/autoload.php';
+
+use PhpOffice\PhpSpreadsheet\Spreadsheet;
+use PhpOffice\PhpSpreadsheet\Writer\Xlsx;
+use PhpOffice\PhpSpreadsheet\Style;
 
 $aktion ='';
 if (isset($_GET['method']))
@@ -54,6 +59,10 @@ if(isset($_POST['getBetragRow']) && isset($_POST['id']))
 	}
 }
 
+$export = (string)filter_input(INPUT_GET, 'export');
+
+if ($export == '' || $export == 'html')
+  {
 ?><!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
    "http://www.w3.org/TR/html4/loose.dtd">
 <html>
@@ -68,7 +77,8 @@ if(isset($_POST['getBetragRow']) && isset($_POST['id']))
 	<script type="text/javascript" src="../../../vendor/jquery/jqueryV1/jquery-1.12.4.min.js"></script>
 	<script type="text/javascript" src="../../../vendor/christianbach/tablesorter/jquery.tablesorter.min.js"></script>
 	<script type="text/javascript" src="../../../vendor/components/jqueryui/jquery-ui.min.js"></script>
-	<script type="text/javascript" src="../../../include/js/jquery.ui.datepicker.translation.js"></script>
+	<!--script type="text/javascript" src="../../../include/js/jquery.ui.datepicker.translation.js"></script-->
+	<script type="text/javascript" src="../../../vendor/components/jqueryui/ui/i18n/datepicker-de.js"></script>
 	<script type="text/javascript" src="../../../vendor/jquery/sizzle/sizzle.js"></script>
 
 	<link rel="stylesheet" type="text/css" href="../../../skin/jquery-ui-1.9.2.custom.min.css"/>
@@ -145,6 +155,8 @@ if(isset($_POST['getBetragRow']) && isset($_POST['id']))
 <body>
 
 <?php
+  }
+
 $date = new datum();
 $user=get_uid();
 
@@ -173,7 +185,7 @@ if($aktion == 'suche')
 		$zahlungstyp->getAll();
 
 		echo "<h2>Rechnung suchen</h2>\n";
-		echo "<form action ='rechnung.php?method=suche' method='post' name='sucheForm'>\n";
+		echo "<form action ='rechnung.php?method=suche' method='get' name='sucheForm'>\n";
 		echo "<table border =0>\n";
 		echo "<tr>\n";
 		echo "<td><b>Rechnungsdaten</b></td>\n";
@@ -331,47 +343,145 @@ if($aktion == 'suche')
 			{
 				$date = new datum();
 
-				echo "<table id='myTable' class='tablesorter' width ='100%'> <thead>\n";
-				echo "<tr>
-						<th></th>
-						<th>Rechnungsnr.</th>
-						<th>Bestell_Nr</th>
-						<th>Rechnungsdatum</th>
-						<th>Buchungstext</th>
-						<th>Brutto</th>
-						<th>Letzte Änderung</th>
-						</tr></thead><tbody>\n";
-				$brutto_gesamt=0;
-				foreach($rechnung->result as $row)
-				{
-					$obj = new wawi_rechnung();
-					$brutto = $obj->getBrutto($row->rechnung_id);
-					$brutto = round($brutto,2);
-					$brutto_gesamt +=$brutto;
-					//Zeilen der Tabelle ausgeben
-					echo "<tr>\n";
-					echo "<td nowrap>
-							<a href= \"rechnung.php?method=update&id=$row->rechnung_id\" title=\"Bearbeiten\"> <img src=\"../skin/images/edit_wawi.gif\"> </a>
-							<a href=\"rechnung.php?method=delete&id=$row->rechnung_id\" onclick='return conf_del()' title='Löschen'> <img src=\"../../../skin/images/delete_x.png\"></a>";
-					echo '<td>'.$row->rechnungsnr."</td>\n";
-					echo '<td>'.$row->bestell_nr."</td>\n";
-					echo '<td>'.$date->formatDatum($row->rechnungsdatum, 'd.m.Y')."</td>\n";
-					echo '<td>'.$row->buchungstext."</td>\n";
-					echo '<td class="number">'.number_format($brutto,2,",",".")."</td>\n";
-					echo '<td>'.$date->formatDatum($row->updateamum,'d.m.Y H:i:s').' '.$row->updatevon ."</td>\n";
-					echo "</tr>\n";
-				}
-				echo '</tbody>
-					<tfoot>
-						<th></th>
-						<th></th>
-						<th></th>
-						<th></th>
-						<th>Summe</th>
-						<th class="number">'.number_format($brutto_gesamt,2,",",".").'</th>
-						<th></th>
-						<th></th>
-					</table>';
+				if ($export == '' || $export == 'html')
+				  {
+
+				  	// HTML
+					echo "<p style=\"text-align:right;\">";
+					echo "<a href=\"".htmlspecialchars($_SERVER['REQUEST_URI'])."&export=xlsx\"><IMG src=\"../../../skin/images/ExcelIcon.png\" > XLSX</a></p>";
+
+					echo "<table id='myTable' class='tablesorter' width ='100%'> <thead>\n";
+					echo "<tr>
+							<th></th>
+							<th>Rechnungsnr.</th>
+							<th>Bestell_Nr</th>
+							<th>Rechnungsdatum</th>
+							<th>Buchungstext</th>
+							<th>Brutto</th>
+							<th>Letzte Änderung</th>
+							</tr></thead><tbody>\n";
+					$brutto_gesamt=0;
+					foreach($rechnung->result as $row)
+					{
+						$obj = new wawi_rechnung();
+						$brutto = $obj->getBrutto($row->rechnung_id);
+						$brutto = round($brutto,2);
+						$brutto_gesamt +=$brutto;
+						//Zeilen der Tabelle ausgeben
+						echo "<tr>\n";
+						echo "<td nowrap>
+								<a href= \"rechnung.php?method=update&id=$row->rechnung_id\" title=\"Bearbeiten\"> <img src=\"../skin/images/edit_wawi.gif\"> </a>
+								<a href=\"rechnung.php?method=delete&id=$row->rechnung_id\" onclick='return conf_del()' title='Löschen'> <img src=\"../../../skin/images/delete_x.png\"></a>";
+						echo '<td>'.$row->rechnungsnr."</td>\n";
+						echo '<td>'.$row->bestell_nr."</td>\n";
+						echo '<td>'.$date->formatDatum($row->rechnungsdatum, 'd.m.Y')."</td>\n";
+						echo '<td>'.$row->buchungstext."</td>\n";
+						echo '<td class="number">'.number_format($brutto,2,",",".")."</td>\n";
+						echo '<td>'.$date->formatDatum($row->updateamum,'d.m.Y H:i:s').' '.$row->updatevon ."</td>\n";
+						echo "</tr>\n";
+					}
+					echo '</tbody>
+						<tfoot>
+							<th></th>
+							<th></th>
+							<th></th>
+							<th></th>
+							<th>Summe</th>
+							<th class="number">'.number_format($brutto_gesamt,2,",",".").'</th>
+							<th></th>
+							<th></th>
+						</table>';
+				  }
+				else if ($export == 'xlsx')
+				  {
+
+				  	// EXCEL
+
+					header('Content-Type: application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
+					header('Content-Disposition: attachment;filename="rechnungen.xlsx"');
+					header('Cache-Control: max-age=0');
+
+
+					$spreadsheet = new Spreadsheet();  // \PhpOffice\PhpSpreadsheet\Spreadsheet();
+					$sheet = $spreadsheet->getActiveSheet();
+					$sheet->setTitle('Rechnungen');
+
+
+					$styleArray =[
+					 'font' =>['bold' => true],
+					 'fill' => ['fillType' => \PhpOffice\PhpSpreadsheet\Style\Fill::FILL_SOLID,'color' => ['argb' => 'FFCCFFCC']],
+					 'alignment' =>['horizontal' => \PhpOffice\PhpSpreadsheet\Style\Alignment::HORIZONTAL_CENTER],
+					 'borders'=>['bottom' =>['borderStyle'=> \PhpOffice\PhpSpreadsheet\Style\Border::BORDER_MEDIUM]]
+					];
+
+					$spreadsheet->getActiveSheet()->getStyle('A1:G1')->applyFromArray($styleArray);
+
+
+					$sheet->setCellValue('A1','Rechnungsnr.');
+					$sheet->setCellValue('B1','Bestellnr.');
+					$sheet->setCellValue('C1','Lieferant/Empfänger');
+					$sheet->setCellValue('D1','Rechnungsdatum');
+					$sheet->setCellValue('E1','Buchungstext');
+					$sheet->setCellValue('F1','Brutto');
+					$sheet->setCellValue('G1','Letzte Änderung');
+
+					$rownum = 2;
+					$brutto_gesamt=0;
+					$firma = new firma();
+
+					foreach($rechnung->result as $row)
+					{
+						$obj = new wawi_rechnung();
+						$brutto = $obj->getBrutto($row->rechnung_id);
+						$brutto = round($brutto,2);
+						$brutto_gesamt +=$brutto;
+						$firmenname = '';
+						if(is_numeric($row->firma_id))
+						{
+							$firma->load($row->firma_id);
+							$firmenname = $firma->name;
+						}
+
+						//Zeilen der Tabelle ausgeben
+						if ($row->rechnungsnr != null)
+						  {
+							$sheet->setCellValueExplicit("A$rownum",$row->rechnungsnr,
+								\PhpOffice\PhpSpreadsheet\Cell\DataType::TYPE_STRING);
+						  }
+						$sheet->setCellValue("B$rownum",$row->bestell_nr);
+						$sheet->setCellValue("C$rownum",$firmenname);
+						//$sheet->setCellValue("D$rownum",$row->insertamum);
+						//$sheet->setCellValue("D$rownum",$date->formatDatum($row->insertamum, 'd/m/Y'));
+						if ($row->rechnungsdatum != null)
+						  {
+							$sheet->setCellValue("D$rownum",\PhpOffice\PhpSpreadsheet\Shared\Date::PHPToExcel($date->formatDatum($row->rechnungsdatum, 'd/m/Y')));
+						  }
+						$sheet->getStyle("D$rownum")
+						    ->getNumberFormat()
+						    ->setFormatCode('d/m/yy');
+						$sheet->setCellValue("E$rownum",$row->buchungstext);
+						$sheet->setCellValue("F$rownum",number_format($brutto, 2, ".",""));
+						$sheet->setCellValue("G$rownum",$date->formatDatum($row->updateamum,'d.m.Y').' '.$row->updatevon);
+
+						$rownum++;
+
+					}
+
+					$sheet->setCellValue("F$rownum",'=SUM(F2:F'.($rownum-1).')');
+					$sheet->getStyle("F$rownum")->getFont()->setBold(true);
+
+					$sheet->getColumnDimension('A')->setAutoSize(true);
+					$sheet->getColumnDimension('B')->setAutoSize(true);
+					$sheet->getColumnDimension('C')->setWidth(40);
+					$sheet->getColumnDimension('D')->setAutoSize(true);
+					$sheet->getColumnDimension('E')->setWidth(40);
+					$sheet->getColumnDimension('F')->setAutoSize(true);
+					$sheet->getColumnDimension('G')->setAutoSize(true);
+
+					$writer = new Xlsx($spreadsheet);
+					$writer->save('php://output');
+					exit;
+				  }
 			}
 			else
 				echo "Fehler bei der Abfrage!";
@@ -982,6 +1092,11 @@ function getBetragRow($i, $rechnungsbetrag_id='', $bezeichnung='', $betrag='', $
 				</td>
 			</tr>';
 }
+
+if ($export == '' || $export == 'html')
+  {
 ?>
 </body>
 </html>
+<?php
+  }

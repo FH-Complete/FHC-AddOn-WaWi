@@ -262,7 +262,7 @@ if(!tableExists($schemaName,$tableName))
                     bestellung_id bigint NOT NULL,
                     bestell_nr character varying(16),
                     titel character varying(256),
-                    bemerkung character varying(256),
+                    bemerkung character varying(400),
                     liefertermin character varying(16),
                     besteller_uid character varying(32),
                     lieferadresse bigint,

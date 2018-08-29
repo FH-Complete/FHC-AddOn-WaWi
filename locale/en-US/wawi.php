@@ -1,14 +1,14 @@
 <?php
 $this->phrasen['wawi/bestellung/bestellschein_no']='ORDER TICKET - No.:';
 $this->phrasen['wawi/bestellung/angabe_bestellnummer']='Please quote our order code on invoice and delivery ticket!';
-$this->phrasen['wawi/bestellung/lieferant']='Supplier';
+$this->phrasen['wawi/bestellung/lieferant']='Supplier:';
 $this->phrasen['wawi/bestellung/bestellerIn']='Orderer';
 $this->phrasen['wawi/bestellung/kontakt']='Contact';
-$this->phrasen['wawi/bestellung/firma_rechnungsanschrift']='Company/Invoice address';
-$this->phrasen['wawi/bestellung/lieferanschrift']='Delivery address';
+$this->phrasen['wawi/bestellung/firma_rechnungsanschrift']='Company/Invoice address:';
+$this->phrasen['wawi/bestellung/lieferanschrift']='Delivery address:';
 $this->phrasen['wawi/bestellung/kundennummer']='Customer ID';
 $this->phrasen['wawi/bestellung/uid_nummer']='VAT Reg. No.';
-$this->phrasen['wawi/bestellung/beschreibung']='Description';
+$this->phrasen['wawi/bestellung/beschreibung']='Description:';
 $this->phrasen['wawi/bestellung/konto']='Account';
 $this->phrasen['wawi/bestellung/kostenstelle']='Cost center';
 $this->phrasen['wawi/bestellung/zuordnung']='Allocation';

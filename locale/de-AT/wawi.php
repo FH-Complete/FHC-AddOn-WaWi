@@ -1,14 +1,14 @@
 <?php
 $this->phrasen['wawi/bestellung/bestellschein_no']='BESTELLSCHEIN - Nr.:';
 $this->phrasen['wawi/bestellung/angabe_bestellnummer']='Wir bitten um Angabe der Bestellnummer auf Rechnung und Lieferschein!';
-$this->phrasen['wawi/bestellung/lieferant']='Lieferant/Empfänger';
+$this->phrasen['wawi/bestellung/lieferant']='Lieferant/Empfänger:';
 $this->phrasen['wawi/bestellung/kontakt']='Kontakt';
 $this->phrasen['wawi/bestellung/bestellerIn']='BestellerIn';
-$this->phrasen['wawi/bestellung/firma_rechnungsanschrift']='Firma/Rechnungsanschrift';
-$this->phrasen['wawi/bestellung/lieferanschrift']='Lieferanschrift';
+$this->phrasen['wawi/bestellung/firma_rechnungsanschrift']='Firma/Rechnungsanschrift:';
+$this->phrasen['wawi/bestellung/lieferanschrift']='Lieferanschrift:';
 $this->phrasen['wawi/bestellung/kundennummer']='Kundennummer';
 $this->phrasen['wawi/bestellung/uid_nummer']='UID-Nummer';
-$this->phrasen['wawi/bestellung/beschreibung']='Beschreibung';
+$this->phrasen['wawi/bestellung/beschreibung']='Beschreibung:';
 $this->phrasen['wawi/bestellung/konto']='Konto';
 $this->phrasen['wawi/bestellung/kostenstelle']='Kostenstelle';
 $this->phrasen['wawi/bestellung/zuordnung']='Zuordnung';

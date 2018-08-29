@@ -26,7 +26,7 @@ $menu=array
 (
 	'Administration'=> 		array
 	(
-		'name'=>'Administration', 'opener'=>'true', 'hide'=>'false', 'permissions'=>array('wawi/kostenstelle','wawi/konto','wawi/budget'), 
+		'name'=>'Administration', 'opener'=>'true', 'hide'=>'false', 'permissions'=>array('wawi/kostenstelle','wawi/konto','wawi/budget'),
 
 		'Konto'=>array
 		(
@@ -58,7 +58,7 @@ $menu=array
 			'name'=>'Rechnung', 'permissions'=>array('wawi/rechnung'),'link'=>'rechnung.php?method=suche', 'target'=>'content',
 			'RechnungNeu'=>array('name'=>'Neu', 'link'=>'rechnung.php?method=new', 'target'=>'content'),
 			'RechnungSuchen'=>array('name'=>'Suchen', 'link'=>'rechnung.php?method=suche', 'target'=>'content'),
-		),		
+		),
 		'Firma'=>array
 		(
 			'name'=>'Lieferanten/Empfänger', 'link'=>'firma.php', 'target'=>'content','permissions'=>array('wawi/firma'),
@@ -83,9 +83,12 @@ $menu=array
 			'Tags'=>array ('name'=>'Tags', 'permissions'=>array('wawi/bestellung'),'link'=>'auswertungen/wawi_tags.php', 'target'=>'content'),
 			'Konto'=>array ('name'=>'Konto', 'permissions'=>array('wawi/bestellung'),'link'=>'auswertungen/konto.php', 'target'=>'content'),
 			//'Aufteilung'=>array ('name'=>'Aufteilung', 'permissions'=>array('wawi/bestellung'),'link'=>'auswertungenaufteilung.php', 'target'=>'content'),
-			'Firmen angelegt'=>array ('name'=>'Firmen angelegt', 'permissions'=>array('basis/firma'),'link'=>'auswertungen/firmen_angelegt.php', 'target'=>'content')
+			'Firmen angelegt'=>array ('name'=>'Firmen angelegt', 'permissions'=>array('basis/firma'),'link'=>'auswertungen/firmen_angelegt.php', 'target'=>'content'),
+			'Lieferanten Ranking'=>array ('name'=>'Lieferanten Ranking', 'permissions'=>array('basis/firma'),'link'=>'auswertungen/lieferanten_ranking.php', 'target'=>'content'),
+			'Bestellungen'=>array ('name'=>'Bestellungen', 'permissions'=>array('wawi/bestellung'),'link'=>'auswertungen/bestellungen.php', 'target'=>'content'),
+			'Buchhaltung'=>array ('name'=>'Buchhaltung', 'permissions'=>array('wawi/bestellung_advanced'),'link'=>'auswertungen/buchhaltung.php', 'target'=>'content')
 		)
 	)
-	
+
 );
 ?>

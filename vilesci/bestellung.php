@@ -45,7 +45,12 @@ require_once '../include/wawi_zahlungstyp.class.php';
 require_once '../include/wawi_angebot.class.php';
 require_once dirname(__FILE__).'/../../../include/tags.class.php';
 require_once dirname(__FILE__).'/../../../include/projekt.class.php';
-require_once('../include/functions.inc.php');
+require_once '../include/functions.inc.php';
+require_once '../../../vendor/autoload.php';
+
+use PhpOffice\PhpSpreadsheet\Spreadsheet;
+use PhpOffice\PhpSpreadsheet\Writer\Xlsx;
+use PhpOffice\PhpSpreadsheet\Style;
 
 $aktion ='';
 $test = 0;			// Bestelldetail Anzahl
@@ -62,6 +67,8 @@ $kst->loadArray($rechte->getKostenstelle($berechtigung_kurzbz),'bezeichnung');
 $projekt = new projekt();
 $projekt->getProjekteMitarbeiter($user);
 $projektZugeordnet = false;
+
+$export = (string)filter_input(INPUT_GET, 'export');
 
 // Abfrage ob dem user ein oder mehrere Projekte zugeordnet sind
 if(count($projekt->result) > 0)
@@ -345,6 +352,9 @@ if(isset($_POST['deleteBtnStorno']) && isset($_POST['id']))
 		echo $bestellstatus->errormsg;
 	exit;
 }
+
+if ($export == '' || $export == 'html')
+  {
 ?>
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
 "http://www.w3.org/TR/html4/loose.dtd">
@@ -359,8 +369,10 @@ if(isset($_POST['deleteBtnStorno']) && isset($_POST['id']))
 
 	<script type="text/javascript" src="../../../vendor/jquery/jqueryV1/jquery-1.12.4.min.js"></script>
 	<script type="text/javascript" src="../../../vendor/christianbach/tablesorter/jquery.tablesorter.min.js"></script>
+	<script type="text/javascript" src="../include/js/tablesorter-setup.js"></script>
 	<script type="text/javascript" src="../../../vendor/components/jqueryui/jquery-ui.min.js"></script>
-	<script type="text/javascript" src="../../../include/js/jquery.ui.datepicker.translation.js"></script>
+	<!--script type="text/javascript" src="../../../include/js/jquery.ui.datepicker.translation.js"></script-->
+	<script type="text/javascript" src="../../../vendor/components/jqueryui/ui/i18n/datepicker-de.js"></script>
 	<script type="text/javascript" src="../../../vendor/jquery/sizzle/sizzle.js"></script>
 
 	<link rel="stylesheet" type="text/css" href="../skin/jquery-ui.structure.min.css"/>
@@ -407,7 +419,12 @@ if(isset($_POST['deleteBtnStorno']) && isset($_POST['id']))
 		$("#myTable").tablesorter(
 		{
 			sortList: [[4,1]],
-			widgets: ['zebra']
+			widgets: ['zebra'],
+			headers: {
+                     4: { sorter:"dedate" },
+                     7: { sorter: "digitmittausenderpunkt"},
+                     8: { sorter: "digitmittausenderpunkt"},
+             	}
 		});
 
 		$( "#datepicker_evon" ).datepicker($.datepicker.regional['de']);
@@ -555,11 +572,14 @@ if(isset($_POST['deleteBtnStorno']) && isset($_POST['id']))
 <body>
 
 <?php
+  } // if $export
+
+
 if (isset($_GET['method']))
 	$aktion = $_GET['method'];
 
 if($aktion == 'suche')
-{
+  {
 	if(!isset($_REQUEST['submit']))
 	{
 		if(!$rechte->isberechtigt('wawi/bestellung',null, 's'))
@@ -747,57 +767,167 @@ if($aktion == 'suche')
 				{
 					$brutto = 0;
 					$gesamtpreis =0;
+					$gesamtpreis_rechnung=0;
 					$firma = new firma();
 					$date = new datum();
 
-					echo "<table id='myTable' class='tablesorter' width ='100%'> <thead>\n";
-					echo "<tr>
-							<th></th>
-							<th>Bestellnr.</th>
-							<th>Bestell_ID</th>
-							<th>Lieferant/Empfänger</th>
-							<th>Erstellung</th>
-							<th>Freigegeben</th>
-							<th>Geliefert</th>
-							<th>Brutto</th>
-							<th>Beschreibung</th>
-							<th>Letzte Änderung</th>
-							</tr></thead><tbody>\n";
+					if ($export == '' || $export == 'html')
+					  {
 
-					foreach($bestellung->result as $row)
-					{
-						$geliefert = 'nein';
-						$brutto = $bestellung->getBrutto($row->bestellung_id);
-						$gesamtpreis +=$brutto;
-						if($status->isStatiVorhanden($row->bestellung_id, 'Lieferung'))
-							$geliefert = 'ja';
-						$firmenname = '';
-						if(is_numeric($row->firma_id))
+						// HTML
+						echo "<p style=\"text-align:right;\">";
+						echo "<a href=\"".htmlspecialchars($_SERVER['REQUEST_URI'])."&export=xlsx\"><IMG src=\"../../../skin/images/ExcelIcon.png\" > XLSX</a></p>";
+
+						echo "<table id='myTable' class='tablesorter' width ='100%'> <thead>\n";
+						echo "<tr>
+								<th></th>
+								<th>Bestellnr.</th>
+								<th>Bestell_ID</th>
+								<th>Lieferant/Empfänger</th>
+								<th>Erstellung</th>
+								<th>Freigegeben</th>
+								<th>Geliefert</th>
+								<th>Brutto</th>
+								<th>Rechnung Brutto</th>
+								<th>Beschreibung</th>
+								<th>Letzte Änderung</th>
+								</tr></thead><tbody>\n";
+
+						foreach($bestellung->result as $row)
 						{
-							$firma->load($row->firma_id);
-							$firmenname = $firma->name;
+							$geliefert = 'nein';
+							$brutto = $bestellung->getBrutto($row->bestellung_id);
+							$gesamtpreis +=$brutto;
+							$gesamtpreis_rechnung+=$row->rechnung_brutto;
+							if($status->isStatiVorhanden($row->bestellung_id, 'Lieferung'))
+								$geliefert = 'ja';
+							$firmenname = '';
+							if(is_numeric($row->firma_id))
+							{
+								$firma->load($row->firma_id);
+								$firmenname = $firma->name;
+							}
+
+							// freigegebene oder bestellte Bestellungen können nur vom Zentraleinkauf gelöscht werden
+							$bestellung_status_help = new wawi_bestellstatus();
+
+							//Zeilen der Tabelle ausgeben
+							echo "<tr>\n";
+							echo "<td nowrap> <a href= \"bestellung.php?method=update&id=$row->bestellung_id\" title=\"Bestellung bearbeiten\"> <img src=\"../skin/images/edit_wawi.gif\"> </a><a href=\"bestellung.php?method=delete&id=$row->bestellung_id\" onclick='return conf_del()' title='Bestellung löschen' > <img src=\"../../../skin/images/delete_x.png\" ></a><a href= \"rechnung.php?method=update&bestellung_id=$row->bestellung_id\" title=\"Neue Rechnung anlegen\"> <img src=\"../../../skin/images/Calculator.png\"> </a><a href= \"bestellung.php?method=copy&id=$row->bestellung_id\" title=\"Bestellung kopieren\"> <img src=\"../../../skin/images/copy.png\"> </a></td>";
+							echo '<td>'.$row->bestell_nr."</td>\n";
+							echo '<td>'.$row->bestellung_id."</td>\n";
+							echo '<td>'.$firmenname."</td>\n";
+							echo '<td>'.$date->formatDatum($row->insertamum, 'd.m.Y')."</td>\n";
+							echo '<td>'.($row->freigegeben?'ja':'nein')."</td>\n";
+							echo '<td>'.$geliefert.'</td>';
+							echo '<td class="number">'.number_format($brutto, 2, ",",".")."</td>\n";
+							echo '<td class="number"><a href="./rechnung.php?method=suche&bestellnummer='.$row->bestell_nr.'&submit=true">'.number_format($row->rechnung_brutto, 2, ",",".")."</a></td>\n";
+							echo '<td>'.$row->titel."</td>\n";
+							echo '<td>'.$date->formatDatum($row->updateamum,'d.m.Y').' '.$row->updatevon ."</td>\n";
+
+							echo "</tr>\n";
+						}
+						echo "</tbody>\n";
+						echo "<tfoot><tr><td></td><td></td><td></td><td></td><td></td><td><td>Summe:</td><td class=\"number\">".number_format($gesamtpreis,2, ",",".")."</td><td class=\"number\">".number_format($gesamtpreis_rechnung,2, ",",".")."</td></tr></tfoot></table>\n";
+
+					  }
+					else if ($export == 'xlsx')
+					  {
+
+						// EXCEL
+
+						header('Content-Type: application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
+						header('Content-Disposition: attachment;filename="bestellungen.xlsx"');
+						header('Cache-Control: max-age=0');
+
+
+						$spreadsheet = new Spreadsheet();  // \PhpOffice\PhpSpreadsheet\Spreadsheet();
+						$sheet = $spreadsheet->getActiveSheet();
+						$sheet->setTitle('Bestellungen');
+
+
+						$styleArray =[
+						 'font' =>['bold' => true],
+						 'fill' => ['fillType' => \PhpOffice\PhpSpreadsheet\Style\Fill::FILL_SOLID,'color' => ['argb' => 'FFCCFFCC']],
+						 'alignment' =>['horizontal' => \PhpOffice\PhpSpreadsheet\Style\Alignment::HORIZONTAL_CENTER],
+						 'borders'=>['bottom' =>['borderStyle'=> \PhpOffice\PhpSpreadsheet\Style\Border::BORDER_MEDIUM]]
+						];
+
+						$spreadsheet->getActiveSheet()->getStyle('A1:J1')->applyFromArray($styleArray);
+
+
+						$sheet->setCellValue('A1','Bestellnr.');
+						$sheet->setCellValue('B1','Bestell_ID');
+						$sheet->setCellValue('C1','Lieferant/Empfänger');
+						$sheet->setCellValue('D1','Erstellung');
+						$sheet->setCellValue('E1','Freigegeben');
+						$sheet->setCellValue('F1','Geliefert');
+						$sheet->setCellValue('G1','Bestellung Brutto');
+						$sheet->setCellValue('H1','Rechnung Brutto');
+						$sheet->setCellValue('I1','Beschreibung');
+						$sheet->setCellValue('J1','Letzte Änderung');
+
+						$rownum = 2;
+
+						foreach($bestellung->result as $row)
+						{
+							$geliefert = 'nein';
+							$brutto = $bestellung->getBrutto($row->bestellung_id);
+							$gesamtpreis +=$brutto;
+							if($status->isStatiVorhanden($row->bestellung_id, 'Lieferung'))
+								$geliefert = 'ja';
+							$firmenname = '';
+							if(is_numeric($row->firma_id))
+							{
+								$firma->load($row->firma_id);
+								$firmenname = $firma->name;
+							}
+
+							// freigegebene oder bestellte Bestellungen können nur vom Zentraleinkauf gelöscht werden
+							$bestellung_status_help = new wawi_bestellstatus();
+
+							//Zeilen der Tabelle ausgeben
+							$sheet->setCellValue("A$rownum",$row->bestell_nr);
+							$sheet->setCellValue("B$rownum",$row->bestellung_id);
+							$sheet->setCellValue("C$rownum",$firmenname);
+							//$sheet->setCellValue("D$rownum",$row->insertamum);
+							//$sheet->setCellValue("D$rownum",$date->formatDatum($row->insertamum, 'd/m/Y'));
+							$sheet->setCellValue("D$rownum",\PhpOffice\PhpSpreadsheet\Shared\Date::PHPToExcel($date->formatDatum($row->insertamum, 'd/m/Y')));
+							$sheet->getStyle("D$rownum")
+							    ->getNumberFormat()
+							    ->setFormatCode('d/m/yy');
+							$sheet->setCellValue("E$rownum",($row->freigegeben?'ja':'nein'));
+							$sheet->setCellValue("F$rownum",$geliefert);
+							$sheet->setCellValue("G$rownum",number_format($brutto, 2, ".",""));
+							$sheet->setCellValue("H$rownum",number_format($row->rechnung_brutto, 2, ".",""));
+							$sheet->setCellValue("I$rownum",$row->titel);
+							$sheet->setCellValue("J$rownum",$date->formatDatum($row->updateamum,'d.m.Y').' '.$row->updatevon);
+
+							$rownum++;
+
 						}
 
-						// freigegebene oder bestellte Bestellungen können nur vom Zentraleinkauf gelöscht werden
-						$bestellung_status_help = new wawi_bestellstatus();
+						$sheet->setCellValue("G$rownum",'=SUM(G2:G'.($rownum-1).')');
+						$sheet->getStyle("G$rownum")->getFont()->setBold(true);
+						$sheet->setCellValue("H$rownum",'=SUM(H2:H'.($rownum-1).')');
+						$sheet->getStyle("H$rownum")->getFont()->setBold(true);
 
-						//Zeilen der Tabelle ausgeben
-						echo "<tr>\n";
-						echo "<td nowrap> <a href= \"bestellung.php?method=update&id=$row->bestellung_id\" title=\"Bestellung bearbeiten\"> <img src=\"../skin/images/edit_wawi.gif\"> </a><a href=\"bestellung.php?method=delete&id=$row->bestellung_id\" onclick='return conf_del()' title='Bestellung löschen' > <img src=\"../../../skin/images/delete_x.png\" ></a><a href= \"rechnung.php?method=update&bestellung_id=$row->bestellung_id\" title=\"Neue Rechnung anlegen\"> <img src=\"../../../skin/images/Calculator.png\"> </a><a href= \"bestellung.php?method=copy&id=$row->bestellung_id\" title=\"Bestellung kopieren\"> <img src=\"../../../skin/images/copy.png\"> </a></td>";
-						echo '<td>'.$row->bestell_nr."</td>\n";
-						echo '<td>'.$row->bestellung_id."</td>\n";
-						echo '<td>'.$firmenname."</td>\n";
-						echo '<td>'.$date->formatDatum($row->insertamum, 'd.m.Y')."</td>\n";
-						echo '<td>'.($row->freigegeben?'ja':'nein')."</td>\n";
-						echo '<td>'.$geliefert.'</td>';
-						echo '<td class="number">'.number_format($brutto, 2, ",",".")."</td>\n";
-						echo '<td>'.$row->titel."</td>\n";
-						echo '<td>'.$date->formatDatum($row->updateamum,'d.m.Y').' '.$row->updatevon ."</td>\n";
+						$sheet->getColumnDimension('A')->setAutoSize(true);
+						$sheet->getColumnDimension('B')->setAutoSize(true);
+						$sheet->getColumnDimension('C')->setWidth(40);
+						$sheet->getColumnDimension('D')->setAutoSize(true);
+						$sheet->getColumnDimension('E')->setAutoSize(true);
+						$sheet->getColumnDimension('F')->setAutoSize(true);
+						$sheet->getColumnDimension('G')->setAutoSize(true);
+						$sheet->getColumnDimension('I')->setWidth(40);
+						$sheet->getColumnDimension('H')->setAutoSize(true);
+						$sheet->getColumnDimension('J')->setAutoSize(true);
 
-						echo "</tr>\n";
-					}
-					echo "</tbody>\n";
-					echo "<tfoot><tr><td></td><td></td><td></td><td></td><td></td><td><td>Summe:</td><td colspan=\"2\">".number_format($gesamtpreis,2, ",",".")." €</td></tr></tfoot></table>\n";
+
+						$writer = new Xlsx($spreadsheet);
+						$writer->save('php://output');
+						exit;
+					  }
 				}
 				else
 					echo $bestellung->errormsg;
@@ -806,9 +936,9 @@ if($aktion == 'suche')
 		else
 		echo "ungültiges Datumsformat";
 	}
-}
+  }
 elseif($aktion == 'new')
-{
+  {
 	// Maske für neue Bestellung anzeigen
 	if(!$rechte->isberechtigt('wawi/bestellung',null, 'sui'))
 		die('Sie haben keine Berechtigung zum Anlegen von Bestellungen');
@@ -894,9 +1024,9 @@ elseif($aktion == 'new')
 			return true;
 		}
 		</script>';
-}
+  }
 elseif($aktion == 'save')
-{
+  {
 	if(isset($_POST))
 	{
 		// Die Bestellung wird gespeichert und die neue id zurückgegeben
@@ -1026,11 +1156,22 @@ elseif($_GET['method']=='copy')
 		die('Sie haben keine Berechtigung zum Kopieren dieser Bestellung.');
 
 	if ($bestellung_neu = $bestellung->copyBestellung($bestellung_id, $user))
-	{
-		$_GET['method']='update';
-		$_GET['id']=$bestellung_neu;
-		$ausgabemsg.='<span class="ok">Bestellung wurde erfolgreich kopiert.</span><br>';
-	}
+	  {
+	     $_GET['method']='update';
+	     $_GET['id']=$bestellung_neu;
+	     $ausgabemsg.='<span class="ok">Bestellung wurde erfolgreich kopiert.</span><br>';
+	  }
+	else
+	  {
+	  	$_GET['method']='update';
+	  	$_GET['id']=$bestellung_id;
+	  	$errormsg = $bestellung->errormsg;
+	  	$bestellung->load($bestellung_id);
+		$ausgabemsg.='<span class="error">'.$errormsg.'</span><br>';
+	  }
+
+
+
 
 }
 if($_GET['method']=='update')
@@ -1864,6 +2005,8 @@ $js = <<<EOT
 			bestellnrDialog.dialog("open");
 		});
 
+
+
 		function doBestellnrChange()
 		{
 			var gj = $('#geschaeftsjahr','#bestellnrFrm').val();
@@ -2535,6 +2678,30 @@ echo $js;
 		// Status bestellt wird gesetzt
 		function deleteBtnBestellt(bestellung_id)
 		{
+			bestellenConfirmDialog = $( "#dialog-confirm-bestellen" ).dialog({
+		      autoOpen: true,
+		      resizable: false,
+		      height: "auto",
+		      width: 400,
+		      modal: true,
+		      closeOnEscape: true,
+    		  closeText: "",
+		      buttons: {
+		        "OK": function() {
+		          doBestellt(bestellung_id);
+		          $( this ).dialog( "close" );
+		        },
+		        Cancel: function() {
+		          $( this ).dialog( "close" );
+		        }
+		      }
+		    });
+
+
+		}
+
+		function doBestellt(bestellung_id)
+		{
 			$("#btn_bestellt").html();
 			$("btn_bestellt").empty();
 			$("#btn_erstellt").empty();
@@ -2563,6 +2730,27 @@ echo $js;
 		// Status geliefert wird gesetzt
 		function deleteBtnGeliefert(bestellung_id)
 		{
+			geliefertConfirmDialog = $( "#dialog-confirm-geliefert" ).dialog({
+		      autoOpen: true,
+		      resizable: false,
+		      height: "auto",
+		      width: 400,
+		      modal: true,
+		      closeOnEscape: true,
+    		  closeText: "",
+		      buttons: {
+		        "OK": function() {
+		          doGeliefert(bestellung_id);
+		          $( this ).dialog( "close" );
+		        },
+		        Cancel: function() {
+		          $( this ).dialog( "close" );
+		        }
+		      }
+		    });
+		}
+		function doGeliefert(bestellung_id)
+		{
 			$("#btn_geliefert").html();
 			$("#btn_erstellt").empty();
 			$.post("bestellung.php", {id: bestellung_id, user_id: uid, deleteBtnGeliefert: "true"},
@@ -2581,6 +2769,27 @@ echo $js;
 
 		// Status storno wird gesetzt
 		function deleteBtnStorno(bestellung_id)
+		{
+			storniertConfirmDialog = $( "#dialog-confirm-stornieren" ).dialog({
+		      autoOpen: true,
+		      resizable: false,
+		      height: "auto",
+		      width: 400,
+		      modal: true,
+		      closeOnEscape: true,
+    		  closeText: "",
+		      buttons: {
+		        "OK": function() {
+		          doStorno(bestellung_id);
+		          $( this ).dialog( "close" );
+		        },
+		        Cancel: function() {
+		          $( this ).dialog( "close" );
+		        }
+		      }
+		    });
+		}
+		function doStorno(bestellung_id)
 		{
 			$("#btn_storniert").html();
 			$("#btn_erstellt").empty();
@@ -2998,6 +3207,18 @@ echo $js;
 		echo "<p class='freigegeben'>Die Bestellung wurde vollständig freigegeben</p>";
 
 	echo "</form> <!-- editFrm -->";
+?>
+	<!-- confirm dialog -->
+	<div id="dialog-confirm-bestellen" title="Bestellung bestätigen" style="display:none">
+	  <p><span class="ui-icon ui-icon-alert" style="float:left; margin:12px 12px 20px 0;"></span>Bestellung wirklich durchführen?</p>
+	</div>
+	<div id="dialog-confirm-geliefert" title="Lieferung bestätigen" style="display:none">
+	  <p><span class="ui-icon ui-icon-alert" style="float:left; margin:12px 12px 20px 0;"></span>Bestellung als geliefert eintragen?</p>
+	</div>
+	<div id="dialog-confirm-stornieren" title="Stornierung bestätigen" style="display:none">
+	  <p><span class="ui-icon ui-icon-alert" style="float:left; margin:12px 12px 20px 0;"></span>Bestellung wirklich stornieren?</p>
+	</div>
+<?php
 }
 
 /**
@@ -3247,6 +3468,11 @@ function sendBestellerMail($bestellung, $status)
 
 	return $msg;
 }
+
+if ($export == '' || $export == 'html')
+  {
 ?>
 </body>
 </html>
+<?php
+  }
