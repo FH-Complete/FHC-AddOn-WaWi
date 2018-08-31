@@ -136,9 +136,13 @@ if ($land != "")
 
 
 $qry="
-select distinct b.bestell_nr,f.name as firma, r.rechnungsnr,r.rechnungsdatum,r.buchungsdatum,r.buchungstext,
-(SELECT sum(case when mwst is not null then (rb.betrag*(rb.mwst+100)/100) else (rb.betrag) end) FROM wawi.tbl_rechnungsbetrag rb WHERE rb.rechnung_id=r.rechnung_id) betrag, k.kurzbz konto
+select distinct b.bestell_nr,f.name as firma, f.nation, r.rechnungsnr,r.rechnungsdatum,r.buchungsdatum,r.buchungstext,
+(SELECT sum(case when mwst is not null then (rb.betrag*(rb.mwst+100)/100) else (rb.betrag) end) FROM wawi.tbl_rechnungsbetrag rb WHERE rb.rechnung_id=r.rechnung_id) betrag,
+(SELECT sum(rb.betrag) FROM wawi.tbl_rechnungsbetrag rb WHERE rb.rechnung_id=r.rechnung_id) betrag_netto,
+  k.kurzbz konto,
+  case when eulaender.nation_code is not null then true else false end as ige
 from wawi.tbl_bestellung b left join wawi.tbl_rechnung r using(bestellung_id) left join (select distinct a.nation,firma.firma_id,firma.name from tbl_firma firma join tbl_standort using(firma_id) join tbl_adresse a using(adresse_id)) f using(firma_id) left join wawi.tbl_konto  k using(konto_id)
+  left join (select nation_code from bis.tbl_nation where eu=true) as eulaender on (f.nation=eulaender.nation_code)
 where
     r.buchungsdatum between '".date("Y-m-d", $kwZeitraum['start'])."' and '".date("Y-m-d", $kwZeitraum['ende'])."'
 
@@ -338,12 +342,14 @@ echo '<span style="font-size: small">Zeitraum: ',$datum_obj->formatDatum($vondat
                 <tr>
                     <th>WAWI-Bestellnr</th>
                     <th>Firma</th>
+                    <th>Land</th>
                     <th>Rechnungsnr</th>
                     <th>Rechnungsdatum</th>
                     <th>Text/Zweck</th>
                     <th>Konto</th>
-                    <th>Betrag in €</th>
-
+                    <th>Brutto-Betrag in €</th>
+                    <th>Netto-Betrag in €</th>
+                    <th>IGE</th>
                     ';
 
         echo '
@@ -355,11 +361,14 @@ echo '<span style="font-size: small">Zeitraum: ',$datum_obj->formatDatum($vondat
             echo '<tr>';
             echo '<td><a href= "../bestellung.php?method=suche&submit=true&bestellnr='.$row->bestell_nr.'" >'.$row->bestell_nr.'</a></td>';
             echo '<td>'.$row->firma.'</td>';
+            echo '<td>'.$row->nation.'</td>';
             echo '<td>'.$row->rechnungsnr.'</td>';
             echo '<td>'.$datum_obj->formatDatum($row->rechnungsdatum,'d.m.Y').'</td>';
             echo '<td>'.$row->buchungstext.'</td>';
             echo '<td>'.$row->konto.'</td>';
             echo '<td class="number">'.number_format($row->betrag,2,',','.').'</td>';
+            echo '<td class="number">'.number_format($row->betrag_netto,2,',','.').'</td>';
+            echo '<td>'.($row->ige=='t'?'IGE':'').'</td>';
             echo '</tr>';
           }
           echo '
@@ -395,8 +404,8 @@ else if ($export == 'xlsx')
          'borders'=>['bottom' =>['borderStyle'=> \PhpOffice\PhpSpreadsheet\Style\Border::BORDER_MEDIUM]]
         ];
 
-        $spalten = ['A','B','C','D','E','F','G'];
-        $spalten_bezeichnung = ['WAWI-Bestellnr','Firma','Rechnungsnr','Rechnungsdatum','Text/Zweck','Konto','Betrag in €'];
+        $spalten = ['A','B','C','D','E','F','G','H','I','J'];
+        $spalten_bezeichnung = ['WAWI-Bestellnr','Firma','Land','Rechnungsnr','Rechnungsdatum','Text/Zweck','Konto','Brutto-Betrag in €','Netto-Betrag in €','IGE'];
 
         $spalten_anzahl = 0;
         for ($i=0; $i < count($spalten); $i++) {
@@ -414,6 +423,7 @@ else if ($export == 'xlsx')
                 $spaltenindex = 0;
                 $sheet->setCellValue($spalten[$spaltenindex++]."$rownum",$row->bestell_nr);
                 $sheet->setCellValue($spalten[$spaltenindex++]."$rownum",$row->firma);
+                $sheet->setCellValue($spalten[$spaltenindex++]."$rownum",$row->nation);
                 //$sheet->setCellValue($spalten[$spaltenindex++]."$rownum",$row->rechnungsnr);
                 $spreadsheet->getActiveSheet()->getCell($spalten[$spaltenindex++]."$rownum")
                   ->setValueExplicit(
@@ -434,6 +444,8 @@ else if ($export == 'xlsx')
                 $sheet->setCellValue($spalten[$spaltenindex++]."$rownum",$row->buchungstext);
                 $sheet->setCellValue($spalten[$spaltenindex++]."$rownum",$row->konto);
                 $sheet->setCellValue($spalten[$spaltenindex++]."$rownum",number_format($row->betrag,2,'.',''));
+                $sheet->setCellValue($spalten[$spaltenindex++]."$rownum",number_format($row->betrag_netto,2,'.',''));
+                $sheet->setCellValue($spalten[$spaltenindex++]."$rownum",($row->ige=='t'?'IGE':''));
                 $rownum++;
               }
           }

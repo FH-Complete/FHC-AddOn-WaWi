@@ -29,7 +29,7 @@ $this->phrasen['wawi/bestellung/nicht_bestellen']='Bitte nicht bestellen!';
 $this->phrasen['wawi/bestellung/erstellt_am']='Erstellt am';
 $this->phrasen['wawi/bestellung/wien_am']='Wien am';
 
-$this->phrasen['wawi/bestellung/zentraleinkauf']='Zentraleinkauf';
+$this->phrasen['wawi/bestellung/zentraleinkauf']='Beschaffung';
 $this->phrasen['wawi/bestellung/gesamt_netto']='Gesamt € netto';
 $this->phrasen['wawi/bestellung/gesamt_brutto']='Gesamt € brutto';
 $this->phrasen['wawi/bestellung/warnung_innergemeinschaftl_lieferung']='Achtung! steuerfreie innergemeinschaftliche Lieferung!';

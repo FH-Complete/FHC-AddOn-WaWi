@@ -101,13 +101,13 @@ $qry="select monatlich.*,rank() OVER (PARTITION BY ".(!$ohne_monat?"concat(monat
 		from
 		(
 
-		select sub.firma_id,sub.lieferant,".(!$ohne_monat?"EXTRACT(month from sub.datum) as mm,":"").
+		select sub.firma_id,sub.lieferant,sub.homepage,".(!$ohne_monat?"EXTRACT(month from sub.datum) as mm,":"").
 			$gj_target.",
 			sub.firma_id,sum(sub.rbrutto) as brutto_mm
 		 from
 
 		(
-		select f.name as lieferant, bestellung.*,bdetail.netto,bdetail.brutto,rechnung.rnetto,rechnung.rbrutto from (select b.bestellung_id,b.firma_id,s.datum,b.bestell_nr,b.titel from wawi.tbl_bestellung b join wawi.tbl_bestellung_bestellstatus s using(bestellung_id) where s.bestellstatus_kurzbz='Bestellung' and (s.datum>='".addslashes($vondatum)."' and s.datum<='".addslashes($endedatum)."')) as bestellung left join
+		select f.name as lieferant, firma_hp.homepage, bestellung.*,bdetail.netto,bdetail.brutto,rechnung.rnetto,rechnung.rbrutto from (select b.bestellung_id,b.firma_id,s.datum,b.bestell_nr,b.titel from wawi.tbl_bestellung b join wawi.tbl_bestellung_bestellstatus s using(bestellung_id) where s.bestellstatus_kurzbz='Bestellung' and (s.datum>='".addslashes($vondatum)."' and s.datum<='".addslashes($endedatum)."')) as bestellung left join
 		(select distinct r.bestellung_id, sum(rb.betrag) as rnetto, sum(rb.betrag*(100.0+coalesce(rb.mwst))/100.0) as rbrutto from wawi.tbl_rechnung as r left join wawi.tbl_rechnungsbetrag rb using(rechnung_id) group by r.bestellung_id) as rechnung using(bestellung_id)
 		LEFT JOIN (SELECT
 		                    detail.bestellung_id,
@@ -118,9 +118,15 @@ $qry="select monatlich.*,rank() OVER (PARTITION BY ".(!$ohne_monat?"concat(monat
 
 		                GROUP BY detail.bestellung_id) as bdetail using(bestellung_id)
 		left join tbl_firma f using (firma_id)
+		left join
+			(
+				select distinct f.firma_id,k.kontakt as homepage
+				from tbl_firma as f join  tbl_standort using(firma_id) join tbl_kontakt k using(standort_id)
+				where k.kontakttyp='homepage'
+			) as firma_hp using(firma_id)
 		order by brutto desc
 		) as sub
-		group by sub.lieferant,sub.firma_id,".(!$ohne_monat?"mm,":"")."yyyy
+		group by sub.lieferant,sub.firma_id, sub.homepage, ".(!$ohne_monat?"mm,":"")."yyyy
 
 		) as monatlich order by yyyy asc,".(!$ohne_monat?" mm asc,":"")." rank asc";
 
@@ -245,7 +251,8 @@ if ($export == '' || $export == 'html')
 					(!$ohne_monat?'<th>Monat</th>':'').
 					'<th>Jahr</th>
 					<th>Brutto</th>
-					<th>Rang</th>';
+					<th>Rang</th>
+					<th>Homepage</th>';
 
 	echo '
 				</tr>
@@ -283,6 +290,7 @@ if ($export == '' || $export == 'html')
 			echo '<td>'.$row->yyyy.'</td>';
 			echo '<td class="number"><a href="../bestellung.php?method=suche&bvon='.$evon.'&bbis='.$ebis.'&firmenname='.urlencode($row->lieferant).'&firma_id='.$row->firma_id.'&submit=true">',number_format($row->brutto_mm,2,',','.'),'</a></td>';
 			echo '<td class="number">'.$row->rank.'</td>';
+			echo '<td>'.$row->homepage.'</td>';
 			echo '</tr>';
 
 			$gesamt_bestellung += $row->brutto_mm;

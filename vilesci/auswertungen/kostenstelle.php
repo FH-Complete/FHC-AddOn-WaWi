@@ -90,6 +90,11 @@ $datum_obj = new datum();
 	if (!isset($_REQUEST['nuraktive'])) {
 		$filter_aktive = false;
 	}
+	if(!isset($_REQUEST['kalenderjahr']) && !isset($_REQUEST['show_kalenderjahr']))
+	{
+		// default Wert für Filter setzen
+		$filter_aktive = true;
+	}
 	echo '<form action="'.$_SERVER['PHP_SELF'].'" method="GET">';
 	echo '<table><tr><td>';
 	//Geschaeftsjahr

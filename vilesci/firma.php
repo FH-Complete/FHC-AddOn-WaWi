@@ -77,7 +77,7 @@ $id = isset($_GET['id'])?$_GET['id']:'';
 //Speichern der Daten
 if(isset($_POST['save']))
 {
-	if(!$rechte->isBerechtigt('wawi/firma', null, 'iu'))
+	if(!$rechte->isBerechtigt('wawi/firma', null, 'ui'))
 		die('Sie haben keine Berechtigung Firmen zu bearbeiten');
 	if(!isset($_POST['strasse']) || !isset($_POST['name']) || !isset($_POST['plz']) || !isset($_POST['ort']) ||
 	   !isset($_POST['telefon']) || !isset($_POST['fax']) || !isset($_POST['email']) || !isset($_POST['anmerkung']) ||

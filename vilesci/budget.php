@@ -69,6 +69,15 @@ if(!$rechte->isBerechtigt('wawi/budget'))
 	die('Sie haben keine Berechtigung für diese Seite');
 
 $geschaeftsjahr_kurzbz=(isset($_GET['geschaeftsjahr_kurzbz'])?$_GET['geschaeftsjahr_kurzbz']:'');
+$filter_aktive = true;
+if (!isset($_REQUEST['nuraktive'])) {
+	$filter_aktive = false;
+}
+if(!isset($_GET['geschaeftsjahr_kurzbz']))
+{
+	// default Wert für Filter setzen
+	$filter_aktive = true;
+}
 
 if(isset($_POST['save']))
 {
@@ -108,6 +117,7 @@ foreach($gj->result as $row)
 }
 echo '</SELECT>';
 echo ' <input type="submit" value="Anzeigen">';
+echo '<label style="margin-left:50px"><input type="checkbox" name="nuraktive" value="1" '.($filter_aktive?'checked':'').'/> nur aktive Konten</label>';
 echo '</form>';
 
 $kst = new wawi_kostenstelle();
@@ -125,15 +135,18 @@ echo '<table id="myTable" class="tablesorter" style="width: auto;">
 	<tbody>';
 foreach($kst->result as $row)
 {
-	$budget = $kst->getBudget($row->kostenstelle_id, $geschaeftsjahr_kurzbz);
-	echo '<tr>';
-	echo '<td>',$row->kostenstelle_id,'</th>';
-	if($row->aktiv)
-		echo '<td>',$row->bezeichnung,'</th>';
-	else
-		echo '<td><strike>',$row->bezeichnung,'</strike></th>';
-	echo '<td><input type="text" size="13" maxlenght="13" name="budget_'.$row->kostenstelle_id.'" value="'.$budget.'" class="number"></td>';
-	echo '</tr>';
+	if (!$filter_aktive || ($filter_aktive && $row->aktiv))
+	{
+		$budget = $kst->getBudget($row->kostenstelle_id, $geschaeftsjahr_kurzbz);
+		echo '<tr>';
+		echo '<td>',$row->kostenstelle_id,'</th>';
+		if($row->aktiv)
+			echo '<td>',$row->bezeichnung,'</th>';
+		else
+			echo '<td><strike>',$row->bezeichnung,'</strike></th>';
+		echo '<td><input type="text" size="13" maxlenght="13" name="budget_'.$row->kostenstelle_id.'" value="'.$budget.'" class="number"></td>';
+		echo '</tr>';
+	}
 }
 echo '</tbody>
 	</table>';

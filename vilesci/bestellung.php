@@ -2552,7 +2552,16 @@ echo $js;
 		$i++;
 	}
 	if(!$bestellung->freigegeben)
-		getDetailRow($i,null,$i,1,null,null,null,null,null,null,$bestellung->bestellung_id,$i);
+	{
+		// Wenn neue Bestellung -> erste Detailzeile mit 'Was wird bestellt' (Titel der Bestellung) befüllen
+		// (ist angeblich in 90% der Fälle sinnvoll)
+		$default_beschreibung = null;
+		if (isset($_REQUEST['new']) && $_REQUEST['new'] == true)
+		{
+			$default_beschreibung = $bestellung->titel;
+		}
+		getDetailRow($i,null,$i,1,null,$default_beschreibung,null,null,null,null,$bestellung->bestellung_id,$i);
+	}
 
 	$test = $i;
 	echo "</tbody>";
@@ -2678,6 +2687,8 @@ echo $js;
 		// Status bestellt wird gesetzt
 		function deleteBtnBestellt(bestellung_id)
 		{
+			doBestellt(bestellung_id);
+			/* Bestätigung temporär deaktiviert
 			bestellenConfirmDialog = $( "#dialog-confirm-bestellen" ).dialog({
 		      autoOpen: true,
 		      resizable: false,
@@ -2695,7 +2706,7 @@ echo $js;
 		          $( this ).dialog( "close" );
 		        }
 		      }
-		    });
+		    });*/
 
 
 		}
@@ -2730,6 +2741,8 @@ echo $js;
 		// Status geliefert wird gesetzt
 		function deleteBtnGeliefert(bestellung_id)
 		{
+			doGeliefert(bestellung_id);
+			/* Bestätigung temporär deaktiviert
 			geliefertConfirmDialog = $( "#dialog-confirm-geliefert" ).dialog({
 		      autoOpen: true,
 		      resizable: false,
@@ -2748,6 +2761,7 @@ echo $js;
 		        }
 		      }
 		    });
+		    */
 		}
 		function doGeliefert(bestellung_id)
 		{
@@ -2770,6 +2784,8 @@ echo $js;
 		// Status storno wird gesetzt
 		function deleteBtnStorno(bestellung_id)
 		{
+			doStorno(bestellung_id);
+			/* Bestätigung temporär deaktiviert
 			storniertConfirmDialog = $( "#dialog-confirm-stornieren" ).dialog({
 		      autoOpen: true,
 		      resizable: false,
@@ -2787,7 +2803,7 @@ echo $js;
 		          $( this ).dialog( "close" );
 		        }
 		      }
-		    });
+		    }); */
 		}
 		function doStorno(bestellung_id)
 		{
