@@ -15,7 +15,7 @@ setlocale (LC_ALL, 'de_DE.UTF8','de_DE@euro', 'de_DE', 'de','DE', 'ge','German')
 
 // Zeitzone
 date_default_timezone_set('Europe/Vienna');
-	
+
 // Connection Strings zur Datenbank
 define("DB_SYSTEM","pgsql");
 define("DB_HOST","localhost");
@@ -25,24 +25,24 @@ define("DB_USER","user");
 define("DB_PASSWORD","password");
 define("DB_CONNECT_PERSISTENT",TRUE);
 define('CONN_CLIENT_ENCODING','UTF-8' );
-	
+
 define('SERVER_ROOT','http://www.technikum-wien.at/');
 define('APP_ROOT','http://www.technikum-wien.at/wawi/');
-	
+
 // Externe Funktionen - Unterordner im Include-Verzeichnis
 define('EXT_FKT_PATH','tw');
-	
+
 // Fuer Mails etc
 define('DOMAIN','technikum-wien.at');
 
-// Authentifizierungsmethode 
-// Moegliche Werte: 
+// Authentifizierungsmethode
+// Moegliche Werte:
 // auth_mixed    - htaccess mit LDAP (Default)
 // auth_session  - Sessions mit LDAP (Testbetrieb)
 define("AUTH_SYSTEM", "auth_mixed");
 // Gibt den Namen fuer die htaccess Authentifizierung an (muss mit dem Attribut AuthName im htaccess uebereinstimmen)
 define("AUTH_NAME","FHComplete");
-	
+
 /*
  * LDAP Einstellungen
  *
@@ -94,10 +94,6 @@ define('MAIL_SUPPORT','invalid@technikum-wien.at');
 // Zentraleinkauf
 define('MAIL_ZENTRALEINKAUF','info@technikum-wien.at');
 
-//Gibt an welche Funktion zur generierung des PDF Files herangezogen wird
-//moegliche Werte: FOP | XSLFO2PDF
-define ('PDF_CREATE_FUNCTION','XSLFO2PDF');
-
-// Ordner für DMS Dokumente 
+// Ordner für DMS Dokumente
 define('DMS_PATH','/var/www/fhcomplete/dms/');
 ?>

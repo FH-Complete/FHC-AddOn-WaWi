@@ -6,7 +6,19 @@ $(document).ready(function(){
                 return /^\d{1,2}[.]\d{1,2}[.]\d{2,4}$/.test(s);
             },
             format: function(s) {
-                s = s.replace(/(\d{1,2}).(\d{1,2}).(\d{2,4})/, "$2/$1/$3");
+                s = s.replace(/(\d{1,2}).(\d{1,2}).(\d{2,4})/, "$3/$2/$1");
+                return $.tablesorter.formatFloat(new Date(s).getTime());
+            },
+          type: "numeric"
+    });
+
+	$.tablesorter.addParser({
+            id: "dedateMitText",
+            is: function(s) {
+                return /^\d{1,2}[.]\d{1,2}[.]\d{2,4} \w*$/.test(s);
+            },
+            format: function(s) {
+                s = s.replace(/(\d{1,2}).(\d{1,2}).(\d{2,4}) \w*/, "$3/$2/$1");
                 return $.tablesorter.formatFloat(new Date(s).getTime());
             },
           type: "numeric"

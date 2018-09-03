@@ -982,7 +982,7 @@ class benutzerberechtigung extends basis_db
 			$where.=" oe_kurzbz=".$this->db_add_param($oe_kurzbz);
 		$where .=" AND berechtigung_kurzbz='wawi/freigabe'";
 		$where .=" AND (start<=now() OR start is null) AND (ende>=now() OR ende is null)";
-
+		$where .=" AND EXISTS(SELECT 1 FROM public.tbl_benutzer WHERE uid=tbl_benutzerrolle.uid AND aktiv)";
 
 		$qry = "SELECT uid, negativ FROM system.tbl_benutzerrolle WHERE ".$where;
 		$qry .= " UNION

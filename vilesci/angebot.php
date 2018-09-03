@@ -110,6 +110,8 @@ if (isset($_POST['method']) && $_POST['method'] == 'upload')
 		echo $_FILES['file']['name']. " OK";
 
 		$dms = new dms();
+		if(!$dms->setPermission($uploadfile))
+			echo $dms->errormsg;
 
 		$dms->version='0';
 		$dms->kategorie_kurzbz=$kategorie_kurzbz;
