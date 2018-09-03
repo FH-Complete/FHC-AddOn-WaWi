@@ -34,7 +34,7 @@ require_once(dirname(__FILE__).'/../../../../include/studiensemester.class.php')
 require_once(dirname(__FILE__).'/../../../../include/tags.class.php');
 require_once(dirname(__FILE__).'/../../../../include/geschaeftsjahr.class.php');
 require_once(dirname(__FILE__).'/../../../../include/datum.class.php');
-require_once '../../../../vendor/autoload.php';
+require_once '../../vendor/autoload.php';
 
 use PhpOffice\PhpSpreadsheet\Spreadsheet;
 use PhpOffice\PhpSpreadsheet\Writer\Xlsx;
@@ -460,5 +460,3 @@ else if ($export == 'xlsx')
         $writer->save('php://output');
 
   }
-
-

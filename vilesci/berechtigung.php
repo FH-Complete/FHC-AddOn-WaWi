@@ -65,6 +65,7 @@ if(isset($_GET['kostenstelle_id']))
 
 		echo '<h1>Berechtigungen - Kostenstelle '.$kst->bezeichnung.'</h1>';
 		echo '<a href="berechtigung.php">Zurück</a>';
+		$rechte = new benutzerberechtigung();
 		$rechte->getKostenstelleUser($kostenstelle_id);
 
 		$rights = array();

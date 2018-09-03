@@ -6,3 +6,4 @@ system/vorlage_zip/Bestellschein.content.php
 system/vorlage_zip/Bestellschein.styles.php
 system/vorlage_zip/Logo_GMBH.png
 config.inc.php
+vendor/

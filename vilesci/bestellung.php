@@ -46,7 +46,7 @@ require_once '../include/wawi_angebot.class.php';
 require_once dirname(__FILE__).'/../../../include/tags.class.php';
 require_once dirname(__FILE__).'/../../../include/projekt.class.php';
 require_once '../include/functions.inc.php';
-require_once '../../../vendor/autoload.php';
+require_once '../vendor/autoload.php';
 
 use PhpOffice\PhpSpreadsheet\Spreadsheet;
 use PhpOffice\PhpSpreadsheet\Writer\Xlsx;
