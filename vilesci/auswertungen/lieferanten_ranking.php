@@ -120,7 +120,7 @@ $qry="select monatlich.*,rank() OVER (PARTITION BY ".(!$ohne_monat?"concat(monat
 		left join tbl_firma f using (firma_id)
 		left join
 			(
-				select distinct f.firma_id,k.kontakt as homepage
+				select distinct on (f.firma_id) f.firma_id,k.kontakt as homepage
 				from tbl_firma as f join  tbl_standort using(firma_id) join tbl_kontakt k using(standort_id)
 				where k.kontakttyp='homepage'
 			) as firma_hp using(firma_id)
@@ -341,8 +341,8 @@ if ($export == '' || $export == 'html')
 		 'borders'=>['bottom' =>['borderStyle'=> \PhpOffice\PhpSpreadsheet\Style\Border::BORDER_MEDIUM]]
 		];
 
-		$spalten = ['A','B','C','D','E'];
-		$spalten_bezeichnung = ['Lieferant','Monat','Jahr','Brutto','Rang'];
+		$spalten = ['A','B','C','D','E','F'];
+		$spalten_bezeichnung = ['Lieferant','Monat','Jahr','Brutto','Rang','Homepage'];
 
 		$spalten_anzahl = 0;
 		for ($i=0; $i < count($spalten); $i++) {
@@ -366,6 +366,7 @@ if ($export == '' || $export == 'html')
 				$sheet->setCellValue($spalten[$spaltenindex++]."$rownum",$row->yyyy);
 				$sheet->setCellValue($spalten[$spaltenindex++]."$rownum",number_format($row->brutto_mm,2,'.',''));
 				$sheet->setCellValue($spalten[$spaltenindex++]."$rownum",$row->rank);
+				$sheet->setCellValue($spalten[$spaltenindex++]."$rownum",$row->homepage);
 				$rownum++;
 			  }
 		  }
