@@ -140,7 +140,7 @@ select distinct b.bestell_nr,f.name as firma, f.nation, r.rechnungsnr,r.rechnung
 (SELECT sum(case when mwst is not null then (rb.betrag*(rb.mwst+100)/100) else (rb.betrag) end) FROM wawi.tbl_rechnungsbetrag rb WHERE rb.rechnung_id=r.rechnung_id) betrag,
 (SELECT sum(rb.betrag) FROM wawi.tbl_rechnungsbetrag rb WHERE rb.rechnung_id=r.rechnung_id) betrag_netto,
   k.kurzbz konto,
-  case when eulaender.nation_code is not null then true else false end as ige
+  case when eulaender.nation_code is not null and eulaender.nation_code<>'A' then true else false end as ige
 from wawi.tbl_bestellung b left join wawi.tbl_rechnung r using(bestellung_id) left join (select distinct a.nation,firma.firma_id,firma.name from tbl_firma firma join tbl_standort using(firma_id) join tbl_adresse a using(adresse_id)) f using(firma_id) left join wawi.tbl_konto  k using(konto_id)
   left join (select nation_code from bis.tbl_nation where eu=true) as eulaender on (f.nation=eulaender.nation_code)
 where
@@ -433,7 +433,7 @@ else if ($export == 'xlsx')
                 if ($row->rechnungsdatum != null)
                   {
                     $sheet->setCellValue($spalten[$spaltenindex++]."$rownum",\PhpOffice\PhpSpreadsheet\Shared\Date::PHPToExcel($datum_obj->formatDatum($row->rechnungsdatum,'d/m/Y')));
-                    $sheet->getStyle("D$rownum")
+                    $sheet->getStyle("E$rownum")
                                 ->getNumberFormat()
                                 ->setFormatCode('d/m/yy');
                   }
