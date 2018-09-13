@@ -419,13 +419,13 @@ if ($export == '' || $export == 'html')
 	{
 		$("#myTable").tablesorter(
 		{
-			sortList: [[4,1]],
+			sortList: [[3,1]],
 			widgets: ['zebra'],
 			headers: {
-                     4: { sorter:"dedate" },
+                     3: { sorter:"dedate" },
+                     6: { sorter: "digitmittausenderpunkt"},
                      7: { sorter: "digitmittausenderpunkt"},
-                     8: { sorter: "digitmittausenderpunkt"},
-					 9: { sorter:"dedateMitText" }
+					 10: { sorter:"dedateMitText" }
 				 }
 		});
 
@@ -784,7 +784,6 @@ if($aktion == 'suche')
 						echo "<tr>
 								<th></th>
 								<th>Bestellnr.</th>
-								<th>Bestell_ID</th>
 								<th>Lieferant/Empfänger</th>
 								<th>Erstellung</th>
 								<th>Freigegeben</th>
@@ -792,6 +791,7 @@ if($aktion == 'suche')
 								<th>Brutto</th>
 								<th>Rechnung Brutto</th>
 								<th>Beschreibung</th>
+								<th>Interne Bem.</th>
 								<th>Letzte Änderung</th>
 								</tr></thead><tbody>\n";
 
@@ -817,7 +817,7 @@ if($aktion == 'suche')
 							echo "<tr>\n";
 							echo "<td nowrap> <a href= \"bestellung.php?method=update&id=$row->bestellung_id\" title=\"Bestellung bearbeiten\"> <img src=\"../skin/images/edit_wawi.gif\"> </a><a href=\"bestellung.php?method=delete&id=$row->bestellung_id\" onclick='return conf_del()' title='Bestellung löschen' > <img src=\"../../../skin/images/delete_x.png\" ></a><a href= \"rechnung.php?method=update&bestellung_id=$row->bestellung_id\" title=\"Neue Rechnung anlegen\"> <img src=\"../../../skin/images/Calculator.png\"> </a><a href= \"bestellung.php?method=copy&id=$row->bestellung_id\" title=\"Bestellung kopieren\"> <img src=\"../../../skin/images/copy.png\"> </a></td>";
 							echo '<td>'.$row->bestell_nr."</td>\n";
-							echo '<td>'.$row->bestellung_id."</td>\n";
+							//echo '<td>'.$row->bestellung_id."</td>\n";
 							echo '<td>'.$firmenname."</td>\n";
 							echo '<td>'.$date->formatDatum($row->insertamum, 'd.m.Y')."</td>\n";
 							echo '<td>'.($row->freigegeben?'ja':'nein')."</td>\n";
@@ -825,12 +825,13 @@ if($aktion == 'suche')
 							echo '<td class="number">'.number_format($brutto, 2, ",",".")."</td>\n";
 							echo '<td class="number"><a href="./rechnung.php?method=suche&bestellnummer='.$row->bestell_nr.'&submit=true">'.number_format($row->rechnung_brutto, 2, ",",".")."</a></td>\n";
 							echo '<td>'.$row->titel."</td>\n";
+							echo '<td>'.$row->bemerkung."</td>\n";
 							echo '<td>'.$date->formatDatum($row->updateamum,'d.m.Y').' '.$row->updatevon ."</td>\n";
 
 							echo "</tr>\n";
 						}
 						echo "</tbody>\n";
-						echo "<tfoot><tr><td></td><td></td><td></td><td></td><td></td><td><td>Summe:</td><td class=\"number\">".number_format($gesamtpreis,2, ",",".")."</td><td class=\"number\">".number_format($gesamtpreis_rechnung,2, ",",".")."</td></tr></tfoot></table>\n";
+						echo "<tfoot><tr><td></td><td></td><td></td><td></td><td></td><td>Summe:</td><td class=\"number\">".number_format($gesamtpreis,2, ",",".")."</td><td class=\"number\">".number_format($gesamtpreis_rechnung,2, ",",".")."</td><td></td></tr></tfoot></table>\n";
 
 					  }
 					else if ($export == 'xlsx')
@@ -859,14 +860,15 @@ if($aktion == 'suche')
 
 
 						$sheet->setCellValue('A1','Bestellnr.');
-						$sheet->setCellValue('B1','Bestell_ID');
-						$sheet->setCellValue('C1','Lieferant/Empfänger');
-						$sheet->setCellValue('D1','Erstellung');
-						$sheet->setCellValue('E1','Freigegeben');
-						$sheet->setCellValue('F1','Geliefert');
-						$sheet->setCellValue('G1','Bestellung Brutto');
-						$sheet->setCellValue('H1','Rechnung Brutto');
-						$sheet->setCellValue('I1','Beschreibung');
+						//$sheet->setCellValue('B1','Bestell_ID');
+						$sheet->setCellValue('B1','Lieferant/Empfänger');
+						$sheet->setCellValue('C1','Erstellung');
+						$sheet->setCellValue('D1','Freigegeben');
+						$sheet->setCellValue('E1','Geliefert');
+						$sheet->setCellValue('F1','Bestellung Brutto');
+						$sheet->setCellValue('G1','Rechnung Brutto');
+						$sheet->setCellValue('H1','Beschreibung');
+						$sheet->setCellValue('I1','Interne Bem.');
 						$sheet->setCellValue('J1','Letzte Änderung');
 
 						$rownum = 2;
@@ -890,33 +892,34 @@ if($aktion == 'suche')
 
 							//Zeilen der Tabelle ausgeben
 							$sheet->setCellValue("A$rownum",$row->bestell_nr);
-							$sheet->setCellValue("B$rownum",$row->bestellung_id);
-							$sheet->setCellValue("C$rownum",$firmenname);
+							//$sheet->setCellValue("B$rownum",$row->bestellung_id);
+							$sheet->setCellValue("B$rownum",$firmenname);
 							//$sheet->setCellValue("D$rownum",$row->insertamum);
 							//$sheet->setCellValue("D$rownum",$date->formatDatum($row->insertamum, 'd/m/Y'));
-							$sheet->setCellValue("D$rownum",\PhpOffice\PhpSpreadsheet\Shared\Date::PHPToExcel($date->formatDatum($row->insertamum, 'd/m/Y')));
-							$sheet->getStyle("D$rownum")
+							$sheet->setCellValue("C$rownum",\PhpOffice\PhpSpreadsheet\Shared\Date::PHPToExcel($date->formatDatum($row->insertamum, 'd/m/Y')));
+							$sheet->getStyle("C$rownum")
 							    ->getNumberFormat()
 							    ->setFormatCode('d/m/yy');
-							$sheet->setCellValue("E$rownum",($row->freigegeben?'ja':'nein'));
-							$sheet->setCellValue("F$rownum",$geliefert);
-							$sheet->setCellValue("G$rownum",number_format($brutto, 2, ".",""));
-							$sheet->setCellValue("H$rownum",number_format($row->rechnung_brutto, 2, ".",""));
-							$sheet->setCellValue("I$rownum",$row->titel);
+							$sheet->setCellValue("D$rownum",($row->freigegeben?'ja':'nein'));
+							$sheet->setCellValue("E$rownum",$geliefert);
+							$sheet->setCellValue("F$rownum",number_format($brutto, 2, ".",""));
+							$sheet->setCellValue("G$rownum",number_format($row->rechnung_brutto, 2, ".",""));
+							$sheet->setCellValue("H$rownum",$row->titel);
+							$sheet->setCellValue("I$rownum",$row->bemerkung);
 							$sheet->setCellValue("J$rownum",$date->formatDatum($row->updateamum,'d.m.Y').' '.$row->updatevon);
 
 							$rownum++;
 
 						}
 
+						$sheet->setCellValue("F$rownum",'=SUM(F2:F'.($rownum-1).')');
+						$sheet->getStyle("F$rownum")->getFont()->setBold(true);
 						$sheet->setCellValue("G$rownum",'=SUM(G2:G'.($rownum-1).')');
 						$sheet->getStyle("G$rownum")->getFont()->setBold(true);
-						$sheet->setCellValue("H$rownum",'=SUM(H2:H'.($rownum-1).')');
-						$sheet->getStyle("H$rownum")->getFont()->setBold(true);
 
 						$sheet->getColumnDimension('A')->setAutoSize(true);
 						$sheet->getColumnDimension('B')->setAutoSize(true);
-						$sheet->getColumnDimension('C')->setWidth(40);
+						$sheet->getColumnDimension('C')->setAutoSize(true);
 						$sheet->getColumnDimension('D')->setAutoSize(true);
 						$sheet->getColumnDimension('E')->setAutoSize(true);
 						$sheet->getColumnDimension('F')->setAutoSize(true);
