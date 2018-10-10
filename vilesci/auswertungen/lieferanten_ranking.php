@@ -236,10 +236,10 @@ if ($export == '' || $export == 'html')
 		{
 			$("#myTable").tablesorter(
 			{
-				sortList: [[2,0],[1,0],[4,0]],
+				sortList: [[3,0],[2,0],[5,0]],
 				widgets: ["zebra"],
 				headers: {
-                     '.(3+$sort_offset).': { sorter: "digitmittausenderpunkt"},
+                     '.(4+$sort_offset).': { sorter: "digitmittausenderpunkt"},
              	}
 			});
 		});
@@ -247,6 +247,7 @@ if ($export == '' || $export == 'html')
 	echo '<table id="myTable" class="tablesorter" style="width: auto;">
 			<thead>
 				<tr>
+				    <th>Lieferant-ID</th>
 					<th>Lieferant</th>'.
 					(!$ohne_monat?'<th>Monat</th>':'').
 					'<th>Jahr</th>
@@ -284,6 +285,7 @@ if ($export == '' || $export == 'html')
 			  }
 
 			echo '<tr>';
+			echo '<td>'.$row->firma_id.'</td>';
 			echo '<td>'.$row->lieferant.'</td>';
 			if (!$ohne_monat)
 				echo '<td>'.$row->mm.'</td>';
@@ -341,8 +343,8 @@ if ($export == '' || $export == 'html')
 		 'borders'=>['bottom' =>['borderStyle'=> \PhpOffice\PhpSpreadsheet\Style\Border::BORDER_MEDIUM]]
 		];
 
-		$spalten = ['A','B','C','D','E','F'];
-		$spalten_bezeichnung = ['Lieferant','Monat','Jahr','Brutto','Rang','Homepage'];
+		$spalten = ['A','B','C','D','E','F','G'];
+		$spalten_bezeichnung = ['Lieferant-ID','Lieferant','Monat','Jahr','Brutto','Rang','Homepage'];
 
 		$spalten_anzahl = 0;
 		for ($i=0; $i < count($spalten); $i++) {
@@ -360,6 +362,7 @@ if ($export == '' || $export == 'html')
 			while($row = $db->db_fetch_object($result))
 			  {
 			  	$spaltenindex = 0;
+			  	$sheet->setCellValue($spalten[$spaltenindex++]."$rownum",$row->firma_id);
 				$sheet->setCellValue($spalten[$spaltenindex++]."$rownum",$row->lieferant);
 				if (!$ohne_monat)
 					$sheet->setCellValue($spalten[$spaltenindex++]."$rownum",$row->mm);
