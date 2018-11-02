@@ -441,7 +441,7 @@ else if ($export == 'xlsx')
                 if ($row->rechnungsdatum != null)
                   {
                     $sheet->setCellValue($spalten[$spaltenindex++]."$rownum",\PhpOffice\PhpSpreadsheet\Shared\Date::PHPToExcel($datum_obj->formatDatum($row->rechnungsdatum,'d/m/Y')));
-                    $sheet->getStyle("E$rownum")
+                    $sheet->getStyle("F$rownum")
                                 ->getNumberFormat()
                                 ->setFormatCode('d/m/yy');
                   }
