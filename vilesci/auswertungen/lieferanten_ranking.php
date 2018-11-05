@@ -101,13 +101,13 @@ $qry="select monatlich.*,rank() OVER (PARTITION BY ".(!$ohne_monat?"concat(monat
 		from
 		(
 
-		select sub.firma_id,sub.lieferant,sub.homepage,".(!$ohne_monat?"EXTRACT(month from sub.datum) as mm,":"").
+		select sub.firma_id,sub.lieferant,sub.is_lieferant,sub.homepage,".(!$ohne_monat?"EXTRACT(month from sub.datum) as mm,":"").
 			$gj_target.",
 			sub.firma_id,sum(sub.rbrutto) as brutto_mm
 		 from
 
 		(
-		select f.name as lieferant, firma_hp.homepage, bestellung.*,bdetail.netto,bdetail.brutto,rechnung.rnetto,rechnung.rbrutto from (select b.bestellung_id,b.firma_id,s.datum,b.bestell_nr,b.titel from wawi.tbl_bestellung b join wawi.tbl_bestellung_bestellstatus s using(bestellung_id) where s.bestellstatus_kurzbz='Bestellung' and (s.datum>='".addslashes($vondatum)."' and s.datum<='".addslashes($endedatum)."')) as bestellung left join
+		select f.name as lieferant, f.lieferant as is_lieferant, firma_hp.homepage, bestellung.*,bdetail.netto,bdetail.brutto,rechnung.rnetto,rechnung.rbrutto from (select b.bestellung_id,b.firma_id,s.datum,b.bestell_nr,b.titel from wawi.tbl_bestellung b join wawi.tbl_bestellung_bestellstatus s using(bestellung_id) where s.bestellstatus_kurzbz='Bestellung' and (s.datum>='".addslashes($vondatum)."' and s.datum<='".addslashes($endedatum)."')) as bestellung left join
 		(select distinct r.bestellung_id, sum(rb.betrag) as rnetto, sum(rb.betrag*(100.0+coalesce(rb.mwst))/100.0) as rbrutto from wawi.tbl_rechnung as r left join wawi.tbl_rechnungsbetrag rb using(rechnung_id) group by r.bestellung_id) as rechnung using(bestellung_id)
 		LEFT JOIN (SELECT
 		                    detail.bestellung_id,
@@ -126,7 +126,7 @@ $qry="select monatlich.*,rank() OVER (PARTITION BY ".(!$ohne_monat?"concat(monat
 			) as firma_hp using(firma_id)
 		order by brutto desc
 		) as sub
-		group by sub.lieferant,sub.firma_id, sub.homepage, ".(!$ohne_monat?"mm,":"")."yyyy
+		group by sub.lieferant,sub.firma_id, sub.homepage,sub.is_lieferant, ".(!$ohne_monat?"mm,":"")."yyyy
 
 		) as monatlich order by yyyy asc,".(!$ohne_monat?" mm asc,":"")." rank asc";
 
@@ -253,6 +253,7 @@ if ($export == '' || $export == 'html')
 					'<th>Jahr</th>
 					<th>Brutto</th>
 					<th>Rang</th>
+					<th>Lieferant</th>
 					<th>Homepage</th>';
 
 	echo '
@@ -292,6 +293,7 @@ if ($export == '' || $export == 'html')
 			echo '<td>'.$row->yyyy.'</td>';
 			echo '<td class="number"><a href="../bestellung.php?method=suche&bvon='.$evon.'&bbis='.$ebis.'&firmenname='.urlencode($row->lieferant).'&firma_id='.$row->firma_id.'&submit=true">',number_format($row->brutto_mm,2,',','.'),'</a></td>';
 			echo '<td class="number">'.$row->rank.'</td>';
+			echo '<td style="text-align:center">'.($row->is_lieferant=='t'?'X':'').'</td>';
 			echo '<td>'.$row->homepage.'</td>';
 			echo '</tr>';
 
@@ -343,8 +345,8 @@ if ($export == '' || $export == 'html')
 		 'borders'=>['bottom' =>['borderStyle'=> \PhpOffice\PhpSpreadsheet\Style\Border::BORDER_MEDIUM]]
 		];
 
-		$spalten = ['A','B','C','D','E','F','G'];
-		$spalten_bezeichnung = ['Lieferant-ID','Lieferant','Monat','Jahr','Brutto','Rang','Homepage'];
+		$spalten = ['A','B','C','D','E','F','G','H'];
+		$spalten_bezeichnung = ['Lieferant-ID','Lieferant','Monat','Jahr','Brutto','Rang','Lieferant','Homepage'];
 
 		$spalten_anzahl = 0;
 		for ($i=0; $i < count($spalten); $i++) {
@@ -369,6 +371,7 @@ if ($export == '' || $export == 'html')
 				$sheet->setCellValue($spalten[$spaltenindex++]."$rownum",$row->yyyy);
 				$sheet->setCellValue($spalten[$spaltenindex++]."$rownum",number_format($row->brutto_mm,2,'.',''));
 				$sheet->setCellValue($spalten[$spaltenindex++]."$rownum",$row->rank);
+				$sheet->setCellValue($spalten[$spaltenindex++]."$rownum",$row->is_lieferant=='t'?'X':'');
 				$sheet->setCellValue($spalten[$spaltenindex++]."$rownum",$row->homepage);
 				$rownum++;
 			  }

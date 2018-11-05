@@ -85,6 +85,11 @@ if(isset($_POST['save']))
 		die('Ungueltige Parameteruebergabe');
 
 	$error = false;
+	$lieferant = false;
+	if (isset($_POST['lieferant']))
+	{
+		$lieferant = true;
+	}
 	$strasse = $_POST['strasse'];
 	$name = $_POST['name'];
 	$plz = $_POST['plz'];
@@ -150,6 +155,7 @@ if(isset($_POST['save']))
 			$firma->firmentyp_kurzbz='Firma';
 		}
 
+		$firma->lieferant=$lieferant;
 		$firma->name=$name;
 		$firma->anmerkung=$anmerkung;
 		$firma->lieferbedingungen=$lieferbedingungen;
@@ -489,6 +495,7 @@ if($method=='new' || $method=='update')
 		if(!$firma->load($id))
 			die('Lieferant/Empfänger konnte nicht geladen werden');
 
+		$lieferant = $firma->lieferant;
 		$name = $firma->name;
 		$anmerkung = $firma->anmerkung;
 		$lieferbedingungen = $firma->lieferbedingungen;
@@ -568,6 +575,10 @@ if($method=='new' || $method=='update')
 	<input type="hidden" name="kundennummer_erhalter_id" value="'.$kundennummer_erhalter_id.'">
 	<input type="hidden" name="kundennummer_gmbh_id" value="'.$kundennummer_gmbh_id.'">
 	<table>
+	<tr>
+		<td><label for="lieferant" >Lieferant:</label></td>
+		<td><input type="checkbox" id="lieferant" name="lieferant" value="1" '.($lieferant != null && $lieferant === true?'checked':'').'/></td>
+	</tr>
 	<tr>
 		<td>Name:</td>
 		<td><input type="text" name="name" maxlength="128" size="80" value="'.$name.'"/></td>
