@@ -1412,6 +1412,7 @@ if(!tableExists($schemaName,$tableName))
                     rechnungsdatum date,
                     transfer_datum date,
                     buchungstext text,
+                    dms_id bigint,
                     insertamum timestamp without time zone,
                     insertvon character varying(32),
                     updateamum timestamp without time zone,
@@ -1443,6 +1444,9 @@ if(!tableExists($schemaName,$tableName))
                     FOREIGN KEY (rechnungstyp_kurzbz)
                     REFERENCES tbl_rechnungstyp(rechnungstyp_kurzbz)
                     ON UPDATE CASCADE ON DELETE RESTRICT;
+                ALTER TABLE $tableName
+                    ADD CONSTRAINT ${tableName}_dms_id_fkey FOREIGN KEY (dms_id) REFERENCES campus.tbl_dms(dms_id) ON UPDATE CASCADE ON DELETE CASCADE;
+
 
                 GRANT SELECT ON $tableName TO web;
 		GRANT SELECT, UPDATE, INSERT, DELETE ON $tableName TO vilesci;
@@ -1746,6 +1750,24 @@ foreach ($berechtigungenList as $key => $value)
     }
 }
 
+$schemaName = "wawi";
+$tableName = "tbl_rechnung";
+$columnName = 'dms_id';
+print "Erstelle Attribute für Tabelle $tableName:";
+if (!columnExists($schemaName, $tableName, $columnName))
+{
+    $qry = "alter table $schemaName.$tableName add column $columnName bigint;";
+    if(!$db->db_query($qry))
+            echo "<strong>$columnName: '.$db->db_last_error().'</strong><br>";
+    else
+            echo " $columnName: Attribut $columnName hinzugefuegt!<br>";
+}
+else
+{
+    print "<br>Attribut $columnName exitiert bereits";
+}
+
+
 // Kategorie für DMS anlegen
 $dms = new dms();
 $wawiKategorie = $dms->loadKategorie('wawi');
@@ -1768,8 +1790,8 @@ else
 {
     echo 'DMS Kategorie WAWI existiert bereits<br>';
 }
-$angeboteKategorie = $dms->loadKategorie('angebot');
-if ($wawiKategorie === false)
+$angeboteKategorie = $dms->loadKategorie('angebote');
+if ($angeboteKategorie === false)
 {
     $dms->kategorie_kurzbz = 'angebote';
     $dms->bezeichnung = 'Angebote';
@@ -1787,6 +1809,26 @@ if ($wawiKategorie === false)
 else
 {
     echo 'DMS Kategorie WAWI-Angebote existiert bereits<br>';
+}
+$rechnungKategorie = $dms->loadKategorie('rechnungen');
+if ($rechnungKategorie === false)
+{
+    $dms->kategorie_kurzbz = 'rechnungen';
+    $dms->bezeichnung = 'Rechnungen';
+    $dms->beschreibung = 'Rechnungen für WAWI';
+    $dms->parent_kategorie_kurzbz = 'wawi';
+    if ($dms->saveKategorie(true))
+    {
+        echo "DMS Kategorie WAWI-Rechnungen erstellt<br>";
+    }
+    else
+    {
+        echo '<strong>'.$dms->errormsg.'</strong>';
+    }
+}
+else
+{
+    echo 'DMS Kategorie WAWI-Rechnungen existiert bereits<br>';
 }
 /*
 if($result = $db->db_query("SELECT * FROM system.tbl_berechtigung WHERE berechtigung_kurzbz='addon/wawi'"))

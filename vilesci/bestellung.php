@@ -971,8 +971,8 @@ elseif($aktion == 'new')
 	echo "<tr>\n";
 	echo "<td>Zuordnung:</td><td>";
 	$index = 0;
-	$zuordnungListe = wawi_zuordnung::getAll();
-	while (list($key, $val) = each($zuordnungListe))
+	$zuordnungListe = wawi_zuordnung::getAll();		
+	foreach ($zuordnungListe as $key => $val)
 	{
 		echo '<input type="radio" id="zuordnung_'.$key.'" name="zuordnung" value="'.$key.'" '.($index==0?'checked="1"':'').'\"><label for="zuordnung_'.$key.'"> '.$val.'</label> ';
 		$index++;
@@ -2506,7 +2506,7 @@ echo $js;
 	echo "<td>Zuordnung:</td><td>";
 	$zuordnungListe = wawi_zuordnung::getAll();
 
-	while (list($key, $val) = each($zuordnungListe))
+	foreach ($zuordnungListe as $key => $val)
 	{
 		$selected = false;
 		if (isset($bestellung->zuordnung) && $bestellung->zuordnung == $key)
@@ -3480,7 +3480,15 @@ function sendBestellerMail($bestellung, $status)
 
 	$email.="Link: <a href='".APP_ROOT."vilesci/indexFrameset.php?content=bestellung.php&method=update&id=$bestellung->bestellung_id'>zur Bestellung </a>";
 
-	$mail = new mail($bestellung->besteller_uid.'@'.DOMAIN, 'no-reply', 'Bestellung '.$bestellung->bestell_nr, 'Bitte sehen Sie sich die Nachricht in HTML Sicht an, um den Link vollständig darzustellen.');
+	$to_address = $bestellung->besteller_uid.'@'.DOMAIN;
+	
+	// [WM] 3.12.18: Mail auch an zugeordnete Person schicken
+	if (isset($bestellung->zuordnung_uid) && $bestellung->zuordnung_uid != '')
+	{
+		$to_address = $to_address.','.$bestellung->zuordnung_uid.'@'.DOMAIN;		
+	}	
+
+	$mail = new mail($to_address, 'no-reply', 'Bestellung '.$bestellung->bestell_nr, 'Bitte sehen Sie sich die Nachricht in HTML Sicht an, um den Link vollständig darzustellen.');	
 	$mail->setHTMLContent($email);
 	if(!$mail->send())
 		$msg.= '<span class="error">Fehler beim Senden des Mails</span><br />';

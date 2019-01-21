@@ -25,6 +25,7 @@
 
 require_once(dirname(__FILE__).'/../../../include/basis_db.class.php');
 require_once(dirname(__FILE__).'/../../../include/sprache.class.php');
+require_once(dirname(__FILE__).'/../../../include/dms.class.php');
 
 class wawi_rechnung extends basis_db
 {
@@ -43,6 +44,9 @@ class wawi_rechnung extends basis_db
 	public $updatevon; 			// varchar
 	public $insertamum; 		// timestamp
 	public $insertvon; 			// varchar
+
+	public $dms_id;				// integer
+	public $filename;  			// string (read only)
 
 	public $result = array();
 	public $new; 				// bool
@@ -74,7 +78,9 @@ class wawi_rechnung extends basis_db
 			return false;
 		}
 
-		$qry = "SELECT * FROM wawi.tbl_rechnung WHERE rechnung_id = ".$this->db_add_param($rechnung_id, FHC_INTEGER).';';
+		$qry = "SELECT r.*,dok.name as realname FROM wawi.tbl_rechnung as r left join campus.tbl_dms as dms using(dms_id) left join ".
+		  "campus.tbl_dms_version as dok using(dms_id) ".
+		  "WHERE rechnung_id = ".$this->db_add_param($rechnung_id, FHC_INTEGER).';';
 
 		if(!$this->db_query($qry))
 		{
@@ -92,6 +98,8 @@ class wawi_rechnung extends basis_db
 			$this->rechnungsdatum = $row->rechnungsdatum;
 			$this->transfer_datum = $row->transfer_datum;
 			$this->buchungstext = $row->buchungstext;
+			$this->dms_id = $row->dms_id;
+			$this->filename = $row->realname;
 			$this->freigegeben = $this->db_parse_bool($row->freigegeben);
 			$this->freigegebenamum = $row->freigegebenamum;
 			$this->freigegebenvon = $row->freigegebenvon;
@@ -248,6 +256,16 @@ class wawi_rechnung extends basis_db
 			return false;
 		}
 
+		//
+		$this->load($rechnung_id);
+
+		if ($this->dms_id != null && $this->dms_id > 0)
+		{
+			// vorhandenes Dokument löschen
+			$dms = new dms();
+			$dms->deleteDMS($this->dms_id);
+		}
+
 		$qry ="DELETE FROM wawi.tbl_rechnung WHERE rechnung_id = ".$this->db_add_param($rechnung_id, FHC_INTEGER).';';
 
 		if(!$this->db_query($qry))
@@ -255,6 +273,22 @@ class wawi_rechnung extends basis_db
 			$this->errormsg ="Fehler beim Löschen der Rechnung";
 			return false;
 		}
+		return true;
+	}
+
+	// wrapper damit kompatibel zu Angebot
+	public function getAll($rechnung_id)
+	{		
+		$this->load($rechnung_id);
+
+		if ($this->dms_id != null)
+		{
+			$this->result[] = $this;
+		} else
+		{
+			$this->result = [];
+		}
+
 		return true;
 	}
 
@@ -315,7 +349,7 @@ class wawi_rechnung extends basis_db
 		if($this->new)
 		{
 			$qry = 'BEGIN; INSERT INTO wawi.tbl_rechnung (bestellung_id,rechnungstyp_kurzbz, buchungsdatum,
-			rechnungsnr, rechnungsdatum, transfer_datum, buchungstext, freigegeben, freigegebenvon, freigegebenamum,
+			rechnungsnr, rechnungsdatum, transfer_datum, buchungstext, dms_id, freigegeben, freigegebenvon, freigegebenamum,
 			updateamum, updatevon, insertamum, insertvon) VALUES ('.
 			$this->db_add_param($this->bestellung_id, FHC_INTEGER).', '.
 			$this->db_add_param($this->rechnungstyp_kurzbz).', '.
@@ -324,6 +358,7 @@ class wawi_rechnung extends basis_db
 			$this->db_add_param($this->rechnungsdatum).', '.
 			$this->db_add_param($this->transfer_datum).', '.
 			$this->db_add_param($this->buchungstext).', '.
+			$this->db_add_param($this->dms_id).', '.
 			$this->db_add_param($this->freigegeben, FHC_BOOLEAN).','.
 			$this->db_add_param($this->freigegebenvon).', '.
 			$this->db_add_param($this->freigegebenamum).', '.
@@ -343,6 +378,7 @@ class wawi_rechnung extends basis_db
 			rechnungsdatum = '.$this->db_add_param($this->rechnungsdatum).',
 			transfer_datum = '.$this->db_add_param($this->transfer_datum).',
 			buchungstext = '.$this->db_add_param($this->buchungstext).',
+			dms_id = '.$this->db_add_param($this->dms_id).',
 			freigegeben = '.$this->db_add_param($this->freigegeben, FHC_BOOLEAN).',
 			freigegebenvon = '.$this->db_add_param($this->freigegebenvon).',
 			freigegebenamum = '.$this->db_add_param($this->freigegebenamum).',

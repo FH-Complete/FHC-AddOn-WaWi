@@ -73,6 +73,7 @@ $homepage = '';
 $nation = 'A';
 $lieferbedingungen = '';
 $id = isset($_GET['id'])?$_GET['id']:'';
+$lieferant = null;
 
 //Speichern der Daten
 if(isset($_POST['save']))

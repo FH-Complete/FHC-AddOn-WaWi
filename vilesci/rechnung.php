@@ -44,6 +44,14 @@ if (isset($_GET['method']))
 else
 	$aktion = 'suche';
 
+$next_aktion = '';
+
+if (isset($_POST['weitere']))
+{
+	// speichern & weitere Rechnung zur Bestellung anlegen
+	$next_aktion = 'new';
+}
+
 $ausgabemsg='';
 
 if(isset($_POST['getBetragRow']) && isset($_POST['id']))
@@ -81,73 +89,336 @@ if ($export == '' || $export == 'html')
 	<script type="text/javascript" src="../../../vendor/components/jqueryui/ui/i18n/datepicker-de.js"></script>
 	<script type="text/javascript" src="../../../vendor/jquery/sizzle/sizzle.js"></script>
 
-	<link rel="stylesheet" type="text/css" href="../../../skin/jquery-ui-1.9.2.custom.min.css"/>
+	<link rel="stylesheet" href="../skin/jquery-ui.min.css" type="text/css"/>
+	<link rel="stylesheet" type="text/css" href="../skin/jquery-ui.structure.min.css"/>
+	<link rel="stylesheet" type="text/css" href="../skin/jquery-ui.theme.min.css"/>
 
 	<script type="text/javascript">
-	function loadFirma(id)
-	{
-		$.post("bestellung.php", {id: id, getFirma: 'true'},
-		function(data){
-			$('#firma').html(data);
-		});
-	}
 
-	function conf_del()
-	{
-		return confirm('Wollen Sie diese Rechnung wirklich löschen?');
-	}
-
-	function formatItem(row)
-	{
-		return row[0] + " <br>" + row[1];
-	}
-
-
-		$(document).ready(function()
+		function conf_del()
 		{
+			return confirm('Wollen Sie diese Rechnung wirklich löschen?');
+		}
+
+		$(function()
+		{
+			var dialog;
+			var rechnungDeleteDialog;
+
+			// -----------------------------------------------------
 			<?php
-			if($aktion=='suche' && !isset($_POST['submit']))
-			{
-				echo "
-				$('#firmenname').autocomplete(
+				if (isset($_REQUEST['id']))
 				{
-					source: \"wawi_autocomplete.php?work=wawi_firma_search\",
-					minLength:2,
-					response: function(event, ui)
+			?>
+				var rechnung_id =<?php echo $_REQUEST['id']; ?>;
+			<?php
+				}
+			?>
+				function loadFirma(id)
+				{
+					$.post("bestellung.php", {id: id, getFirma: 'true'},
+					function(data){
+						$('#firma').html(data);
+					});
+				}
+
+				
+
+				function formatItem(row)
+				{
+					return row[0] + " <br>" + row[1];
+				}
+
+
+				$(document).ready(function()
+				{
+					<?php
+					if($aktion=='suche' && !isset($_POST['submit']))
 					{
-						//Value und Label fuer die Anzeige setzen
-						for(i in ui.content)
+						echo "
+						$('#firmenname').autocomplete(
 						{
-							ui.content[i].value=ui.content[i].firma_id;
-							ui.content[i].label=ui.content[i].gesperrt+ui.content[i].name;
-							if(ui.content[i].kurzbz!='')
-								ui.content[i].label+=' ('+ui.content[i].kurzbz+')';
-							ui.content[i].label+=' '+ui.content[i].firma_id;
+							source: \"wawi_autocomplete.php?work=wawi_firma_search\",
+							minLength:2,
+							response: function(event, ui)
+							{
+								//Value und Label fuer die Anzeige setzen
+								for(i in ui.content)
+								{
+									ui.content[i].value=ui.content[i].firma_id;
+									ui.content[i].label=ui.content[i].gesperrt+ui.content[i].name;
+									if(ui.content[i].kurzbz!='')
+										ui.content[i].label+=' ('+ui.content[i].kurzbz+')';
+									ui.content[i].label+=' '+ui.content[i].firma_id;
+								}
+							},
+							select: function(event, ui)
+							{
+								ui.item.value=ui.item.firma_id;
+								$('#firma_id').val(ui.item.firma_id);
+							}
+
+						});
+						$( \"#rechnungsdatum_von\" ).datepicker($.datepicker.regional['de']);
+						$( \"#rechnungsdatum_bis\" ).datepicker($.datepicker.regional['de']);
+						$( \"#buchungsdatum_von\" ).datepicker($.datepicker.regional['de']);
+						$( \"#buchungsdatum_bis\" ).datepicker($.datepicker.regional['de']);
+						$( \"#erstelldatum_bis\" ).datepicker($.datepicker.regional['de']);
+						$( \"#erstelldatum_von\" ).datepicker($.datepicker.regional['de']);
+						$( \"#bestelldatum_von\" ).datepicker($.datepicker.regional['de']);
+						$( \"#bestelldatum_bis\" ).datepicker($.datepicker.regional['de']);
+						";
+					}
+					?>
+					$("#myTable").tablesorter(
+					{
+						sortList: [[4,1]],
+						widgets: ['zebra']
+					});
+
+					<?php
+					if($aktion!='suche' && $aktion!='delete')
+					{
+					?>
+						renderRechnung();
+					<?php
+					}
+					?>
+				});
+
+				function getExtension(path) {
+					var basename = path.split(/[\\/]/).pop();
+
+					pos = basename.lastIndexOf(".");
+
+					if (basename === "" || pos < 1)
+						return "";
+
+					return basename.slice(pos + 1);
+				}
+
+				function getIcon(filename) {
+					if (!filename) return;
+					var ext = getExtension(filename);
+
+					if (ext == 'pdf' || ext == 'PDF')
+						return '../../../skin/images/pdf_icon.png';
+
+					return '../../../skin/images/ExcelIcon.png'
+				}
+
+				function renderRechnung()
+				{
+					//console.log("renderRechnung: rechnung_id=", rechnung_id);
+					var rechnungElement = $("#rechnungListe");
+					rechnungElement.empty();
+					$.post( "rechnungDoc.php", { method: 'list', rechnung_id: rechnung_id }, function(data)
+					{
+						if (data.result ==undefined || data.result != 1)
+						{
+							alert("Fehler: Check console");
+							console.log("data: ", data);
+							return;
+						}
+						rechnungElement.append(
+							$.map(data.list,function(al)
+							{
+								return $('<li>',{}).append(
+									$('<a>',{ target: '_blank', href: 'rechnungDoc.php?method=download&rechnung_id=' + rechnung_id }).append(
+									$('<img>',{ src : getIcon(al.name), class : 'cursor' }))
+									//.text(al.name)
+								).append(
+									$('<a style="background: transparent;padding-left:1px;padding-right:1px">',{ href: '#' }).append(
+									$('<img>',{ src :'../../../skin/images/delete_round.png', class : 'cursor' })
+									).click(function()
+									{
+										$('#currentRechnungId').val(al.rechnung_id);
+										$('#rechnungFilename').empty();
+										$('#rechnungFilename').append(al.name);
+										rechnungDeleteDialog.dialog("open");
+									})
+								);
+							})
+						); // rechnungElement
+					}) // post
+					.fail(function(d)
+					{
+						alert( d.responseText );
+					}, "json");
+				}
+
+
+
+			// ------------------------------------------------------
+
+			rechnungDeleteDialog = $( "#rechnung-delete" ).dialog(
+			{
+				autoOpen: false,
+				height: 300,
+				width: 550,
+				modal: true,
+				buttons:
+				{
+					"OK": doDelete,
+					Cancel: function()
+					{
+						rechnungDeleteDialog.dialog( "close" );
+					}
+				},
+				close: function()
+				{
+					//form[ 0 ].reset();
+				}
+			}); // Dialog
+
+			dialog = $( "#rechnung-upload" ).dialog(
+			{
+				autoOpen: false,
+				height: 300,
+				width: 550,
+				modal: true,
+				buttons:
+				[
+					{
+						id: "upload-button-ok",
+						text: "Ok",
+						click: function() {
+							doUpload();
 						}
 					},
-					select: function(event, ui)
 					{
-						ui.item.value=ui.item.firma_id;
-						$('#firma_id').val(ui.item.firma_id);
+						id: "button-cancel",
+						text: "Cancel",
+						click: function() {
+							$(this).dialog("close");
+						}
 					}
-
-				});
-				$( \"#rechnungsdatum_von\" ).datepicker($.datepicker.regional['de']);
-				$( \"#rechnungsdatum_bis\" ).datepicker($.datepicker.regional['de']);
-				$( \"#buchungsdatum_von\" ).datepicker($.datepicker.regional['de']);
-				$( \"#buchungsdatum_bis\" ).datepicker($.datepicker.regional['de']);
-				$( \"#erstelldatum_bis\" ).datepicker($.datepicker.regional['de']);
-				$( \"#erstelldatum_von\" ).datepicker($.datepicker.regional['de']);
-				$( \"#bestelldatum_von\" ).datepicker($.datepicker.regional['de']);
-				$( \"#bestelldatum_bis\" ).datepicker($.datepicker.regional['de']);
-				";
-			}
-			?>
-			$("#myTable").tablesorter(
+				],
+				close: function()
+				{
+					//form[ 0 ].reset();
+				}
+			}); // Dialog
+			$( "#rechnungBtn" ).on( "click", function()
 			{
-				sortList: [[4,1]],
-				widgets: ['zebra']
+				$('div#response').empty();
+				var controlInput = $(':file');
+				controlInput.replaceWith(controlInput = controlInput.val('').clone(true));
+				dialog.dialog( "open" );
+				callProgressBar(0);
 			});
+
+			$(':file').change(function()
+			{
+				var file = this.files[0];
+				var name = file.name;
+				var size = file.size;
+				var type = getExtension(file.name);
+				if (!type.match(/.*(ods|xlsx|xls|pdf)$/i))
+				{
+					$("<div title='Fehler'>Es werden nur Dateien mit folgenden Endungen akzeptiert: PDF, XLS, XLSX, ODS<br/>Diese Datei hat die Endung <i>" + type.toUpperCase() + "</i>.</div>").dialog(
+					{
+						title: 'Fehler',
+						resizable: false,
+						modal: true,
+						buttons:
+						{
+							"OK": function ()
+							{
+								$(this).dialog("close");
+							}
+						}
+					});
+					$("#upload-button-ok").button("disable");
+					$(':file').value='';
+				} else {
+					$("#upload-button-ok").button("enable");
+				}
+			});
+
+			function doUpload()
+			{
+				var formData = new FormData($('#uploadFrm')[0]);
+				//formData.append('upload',$('#uploadFrm')[0].files[0]);
+				formData.append('method','upload');
+				formData.append('rechnung_id',rechnung_id);
+				$.ajax(
+				{
+					url: 'rechnungDoc.php',  //Server script to process data
+					type: 'POST',
+					xhr: function()
+					{  // Custom XMLHttpRequest
+						var myXhr = $.ajaxSettings.xhr();
+						if(myXhr.upload)
+						{ // Check if upload property exists
+							myXhr.upload.addEventListener('progress',progressHandlingFunction, false); // For handling the progress of the upload
+						}
+						return myXhr;
+					},
+					//Ajax events
+					//beforeSend: beforeSendHandler,
+					success: function (res)
+					{
+						$('div#response').html("<br>Datei erfolgreich geladen.");
+						renderRechnung();
+						dialog.dialog('close');
+					},
+					error: errorHandler,
+					// Form data
+					data: formData,
+					//Options to tell jQuery not to process data or worry about content-type.
+					cache: false,
+					contentType: false,
+					processData: false
+				});
+			};
+			
+
+			function doDelete()
+			{
+				var formData = new FormData($('#deleteFrm')[0]);
+				formData.append('method','delete');
+				formData.append('rechnung_id',rechnung_id);
+
+				$.ajax(
+				{
+					url: 'rechnungDoc.php',
+					type: 'POST',
+					success: function (res)
+					{
+						renderRechnung();
+						rechnungDeleteDialog.dialog("close");
+					},
+					error: errorHandler,
+					processData: false,
+					contentType: false,
+					data: formData
+				});
+			}
+
+			function errorHandler(e)
+			{
+				alert(e);
+			}
+
+			function progressHandlingFunction(e)
+			{
+				console.log(e);
+				if(e.lengthComputable)
+				{
+					callProgressBar( (e.loaded/e.total)*100);
+				}
+			}
+
+			function callProgressBar(step)
+			{
+				$( "#progressbar" ).progressbar(
+				{
+					value: step
+				});
+			};
+
+			
 		});
 
 	</script>
@@ -513,7 +784,7 @@ elseif($aktion == 'save')
 	if(!$rechte->isBerechtigt('wawi/rechnung',null,'su'))
 		die('Sie haben keine Berechtigung zum Speichern der Rechnungen');
 
-	if(isset($_POST['rechnung_id'])
+	if(isset($_POST['id'])
 	&& isset($_POST['rechnungsnummer'])
 	&& isset($_POST['buchungstext'])
 	&& isset($_POST['rechnungsdatum'])
@@ -521,7 +792,7 @@ elseif($aktion == 'save')
 	&& isset($_POST['rechnungstyp_kurzbz'])
 	&& isset($_POST['buchungsdatum']))
 	{
-		$rechnung_id = $_POST['rechnung_id'];
+		$rechnung_id = $_POST['id'];
 		$rechnungsnummer = $_POST['rechnungsnummer'];
 		$buchungstext = $_POST['buchungstext'];
 		$rechnungsdatum = $_POST['rechnungsdatum'];
@@ -644,7 +915,7 @@ elseif($aktion=='delete')
 	}
 }
 
-if($aktion=='update')
+if($aktion=='update' || $next_aktion=='new')
 {
 	if(!$rechte->isBerechtigt('wawi/rechnung',null,'su'))
 		die('Sie haben keine Berechtigung zum Bearbeiten der Rechnungen');
@@ -654,9 +925,8 @@ if($aktion=='update')
 	$kostenstelle = new wawi_kostenstelle();
 	$konto = new wawi_konto();
 	$firma = new firma();
-	$oe_kurzbz='';
-
-	if(isset($_GET['id']))
+	$oe_kurzbz='';	
+	if(isset($_GET['id']) && !$next_aktion=='new')
 	{
 		echo '<div style="float:right">'.$ausgabemsg.'</div>';
 		echo '<h1>Rechnung bearbeiten</h1>';
@@ -705,10 +975,10 @@ if($aktion=='update')
 		$kostenstelle_id = $_GET['kostenstelle_id'];
 		$rechnung->buchungsdatum=date('Y-m-d');
 	}
-	elseif(isset($_GET['bestellung_id']))
+	elseif(isset($_REQUEST['bestellung_id']))
 	{
 		echo '<h1>Rechnung Neu</h1>';
-		$bestellung_id=$_GET['bestellung_id'];
+		$bestellung_id=$_REQUEST['bestellung_id'];
 		$rechnung_id='';
 		if(!$bestellung->load($bestellung_id))
 			die('Bestellung existiert nicht');
@@ -722,8 +992,8 @@ if($aktion=='update')
 	}
 	echo '
 	<br />
-	<form action="'.$_SERVER['PHP_SELF'].'?method=save" method="POST">
-	<input type="hidden" name="rechnung_id" value="'.$rechnung->rechnung_id.'">
+	<form action="'.$_SERVER['PHP_SELF'].'?method=save" method="POST" id="rechnungFrm">
+	<input type="hidden" name="id" value="'.$rechnung->rechnung_id.'">
 	<table>
 	<tr>
 		<td>Rechnungsnummer</td>
@@ -818,7 +1088,7 @@ if($aktion=='update')
 		</td>
 		<td valign="top">
 			Buchungsdatum (tt.mm.JJJJ)<br />
-			<input type="text" name="buchungsdatum" size="10" id="buchungsdatum" value="'.$date->formatDatum($rechnung->buchungsdatum,'d.m.Y').'">
+			<input type="text" name="buchungsdatum" size="11" id="buchungsdatum" value="'.$date->formatDatum($rechnung->buchungsdatum,'d.m.Y').'">
 			<script type="text/javascript">
 			$(document).ready(function()
 			{
@@ -834,7 +1104,7 @@ if($aktion=='update')
 	else
 	{
 		echo '
-			<input type="text" name="transfer_datum" size="10" id="transfer_datum" value="'.$date->formatDatum($rechnung->transfer_datum,'d.m.Y').'">
+			<input type="text" name="transfer_datum" size="11" id="transfer_datum" value="'.$date->formatDatum($rechnung->transfer_datum,'d.m.Y').'">
 			<script type="text/javascript">
 			$(document).ready(function()
 			{
@@ -1036,15 +1306,32 @@ if($aktion=='update')
 					brutto(id);
 				}
 			}
+
+			
 			</script>
 		</td>
 	</tr>
 	<tr>
-		<td><input type="submit" value="Speichern" class="cursor"/></td>
+		<td colspan="3">
+			Rechnung (PDF):<br/>
+			<ul id="rechnungListe"><li>1</li></ul>
+			<input type="button" name="rechnungBtn" id="rechnungBtn" value="upload" >	
+		</td>
+	</tr>
+	<tr>
+	<td colspan="3">
+		&nbsp;
+	</td>
+</tr>
+	<tr>
+		<td rowspan="3"><input type="submit" value="Speichern" class="cursor"/>			
+			<input type="submit" name="weitere" value="Speichern & weitere Rechnung hinzufügen" class="cursor"/>
+		 	</td>
 	</tr>
 	</table>
 	</form>
 	';
+	
 
 	if($bestellung_id!='')
 	{
@@ -1052,6 +1339,7 @@ if($aktion=='update')
 		$bestellung->load($bestellung_id);
 
 		echo '<br><br><br><a href="rechnung.php?method=suche&submit=true&bestellnummer='.$bestellung->bestell_nr.'" style="font-size: small">alle Rechnungen zu Bestellung ',$bestellung->bestell_nr,' anzeigen</a>';
+		echo '<br><a href="bestellung.php?method=update&id='.$bestellung->bestellung_id.'" style="font-size: small">Bestellung '.$bestellung->bestell_nr.' anzeigen</a>';
 	}
 
 }
@@ -1082,7 +1370,7 @@ function getBetragRow($i, $rechnungsbetrag_id='', $bezeichnung='', $betrag='', $
 					<input class="number" type="text" size="12" maxlength="12" id="betrag_'.$i.'" name="betrag_'.$i.'" value="'.$betrag.'" onblur="checkNewRow('.$i.'); replaceKomma('.$i.');" onchange="brutto('.$i.'); summe()"> &euro;
 				</td>
 				<td nowrap>
-					<input class="number" type="text" size="5" maxlength="5" id="mwst_'.$i.'" name="mwst_'.$i.'" value="'.$mwst.'" onblur="replaceKomma('.$i.');" onchange="bruttonetto('.$i.'); summe(); "> %
+					<input class="number" type="text" size="6" maxlength="5" id="mwst_'.$i.'" name="mwst_'.$i.'" value="'.$mwst.'" onblur="replaceKomma('.$i.');" onchange="bruttonetto('.$i.'); summe(); "> %
 				</td>
 				<td nowrap>
 					<input class="number" type="text" size="12" maxlength="15" id="brutto_'.$i.'" name="brutto_'.$i.'" value="'.sprintf("%01.2f",$brutto).'" onblur="replaceKomma('.$i.');" onchange="netto('.$i.'); summe();"> &euro;
@@ -1096,6 +1384,29 @@ function getBetragRow($i, $rechnungsbetrag_id='', $bezeichnung='', $betrag='', $
 if ($export == '' || $export == 'html')
   {
 ?>
+
+<div id="rechnung-upload" title="Rechnung hochladen">
+	<form enctype="multipart/form-data" id="uploadFrm">
+		<input name="file" type="file" />
+		<br><br>
+		<div id="progressbar">
+		</div>
+		<div id="response">
+		</div>
+	</form>
+
+
+</div>
+
+<div id="rechnung-delete" title="Rechnung löschen">
+	<form method="post" id="deleteFrm">
+		<input type="hidden" name="currentRechnungId" id="currentRechnungId" value="" />
+		<br><br>
+		Rechnung '<span id="rechnungFilename"></span>' wirklich löschen?
+	</form>
+</div>
+
+
 </body>
 </html>
 <?php
