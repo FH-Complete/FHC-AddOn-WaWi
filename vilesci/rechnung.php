@@ -93,335 +93,10 @@ if ($export == '' || $export == 'html')
 	<link rel="stylesheet" type="text/css" href="../skin/jquery-ui.structure.min.css"/>
 	<link rel="stylesheet" type="text/css" href="../skin/jquery-ui.theme.min.css"/>
 
-	<script type="text/javascript">
-
-		function conf_del()
-		{
-			return confirm('Wollen Sie diese Rechnung wirklich löschen?');
-		}
-
-		$(function()
-		{
-			var dialog;
-			var rechnungDeleteDialog;
-
-			// -----------------------------------------------------
-			<?php
-				if (isset($_REQUEST['id']))
-				{
-			?>
-				var rechnung_id =<?php echo $_REQUEST['id']; ?>;
-			<?php
-				}
-			?>
-				function loadFirma(id)
-				{
-					$.post("bestellung.php", {id: id, getFirma: 'true'},
-					function(data){
-						$('#firma').html(data);
-					});
-				}
-
-				
-
-				function formatItem(row)
-				{
-					return row[0] + " <br>" + row[1];
-				}
-
-
-				$(document).ready(function()
-				{
-					<?php
-					if($aktion=='suche' && !isset($_POST['submit']))
-					{
-						echo "
-						$('#firmenname').autocomplete(
-						{
-							source: \"wawi_autocomplete.php?work=wawi_firma_search\",
-							minLength:2,
-							response: function(event, ui)
-							{
-								//Value und Label fuer die Anzeige setzen
-								for(i in ui.content)
-								{
-									ui.content[i].value=ui.content[i].firma_id;
-									ui.content[i].label=ui.content[i].gesperrt+ui.content[i].name;
-									if(ui.content[i].kurzbz!='')
-										ui.content[i].label+=' ('+ui.content[i].kurzbz+')';
-									ui.content[i].label+=' '+ui.content[i].firma_id;
-								}
-							},
-							select: function(event, ui)
-							{
-								ui.item.value=ui.item.firma_id;
-								$('#firma_id').val(ui.item.firma_id);
-							}
-
-						});
-						$( \"#rechnungsdatum_von\" ).datepicker($.datepicker.regional['de']);
-						$( \"#rechnungsdatum_bis\" ).datepicker($.datepicker.regional['de']);
-						$( \"#buchungsdatum_von\" ).datepicker($.datepicker.regional['de']);
-						$( \"#buchungsdatum_bis\" ).datepicker($.datepicker.regional['de']);
-						$( \"#erstelldatum_bis\" ).datepicker($.datepicker.regional['de']);
-						$( \"#erstelldatum_von\" ).datepicker($.datepicker.regional['de']);
-						$( \"#bestelldatum_von\" ).datepicker($.datepicker.regional['de']);
-						$( \"#bestelldatum_bis\" ).datepicker($.datepicker.regional['de']);
-						";
-					}
-					?>
-					$("#myTable").tablesorter(
-					{
-						sortList: [[4,1]],
-						widgets: ['zebra']
-					});
-
-					<?php
-					if($aktion!='suche' && $aktion!='delete')
-					{
-					?>
-						renderRechnung();
-					<?php
-					}
-					?>
-				});
-
-				function getExtension(path) {
-					var basename = path.split(/[\\/]/).pop();
-
-					pos = basename.lastIndexOf(".");
-
-					if (basename === "" || pos < 1)
-						return "";
-
-					return basename.slice(pos + 1);
-				}
-
-				function getIcon(filename) {
-					if (!filename) return;
-					var ext = getExtension(filename);
-
-					if (ext == 'pdf' || ext == 'PDF')
-						return '../../../skin/images/pdf_icon.png';
-
-					return '../../../skin/images/ExcelIcon.png'
-				}
-
-				function renderRechnung()
-				{
-					//console.log("renderRechnung: rechnung_id=", rechnung_id);
-					var rechnungElement = $("#rechnungListe");
-					rechnungElement.empty();
-					$.post( "rechnungDoc.php", { method: 'list', rechnung_id: rechnung_id }, function(data)
-					{
-						if (data.result ==undefined || data.result != 1)
-						{
-							alert("Fehler: Check console");
-							console.log("data: ", data);
-							return;
-						}
-						rechnungElement.append(
-							$.map(data.list,function(al)
-							{
-								return $('<li>',{}).append(
-									$('<a>',{ target: '_blank', href: 'rechnungDoc.php?method=download&rechnung_id=' + rechnung_id }).append(
-									$('<img>',{ src : getIcon(al.name), class : 'cursor' }))
-									//.text(al.name)
-								).append(
-									$('<a style="background: transparent;padding-left:1px;padding-right:1px">',{ href: '#' }).append(
-									$('<img>',{ src :'../../../skin/images/delete_round.png', class : 'cursor' })
-									).click(function()
-									{
-										$('#currentRechnungId').val(al.rechnung_id);
-										$('#rechnungFilename').empty();
-										$('#rechnungFilename').append(al.name);
-										rechnungDeleteDialog.dialog("open");
-									})
-								);
-							})
-						); // rechnungElement
-					}) // post
-					.fail(function(d)
-					{
-						alert( d.responseText );
-					}, "json");
-				}
+	
 
 
 
-			// ------------------------------------------------------
-
-			rechnungDeleteDialog = $( "#rechnung-delete" ).dialog(
-			{
-				autoOpen: false,
-				height: 300,
-				width: 550,
-				modal: true,
-				buttons:
-				{
-					"OK": doDelete,
-					Cancel: function()
-					{
-						rechnungDeleteDialog.dialog( "close" );
-					}
-				},
-				close: function()
-				{
-					//form[ 0 ].reset();
-				}
-			}); // Dialog
-
-			dialog = $( "#rechnung-upload" ).dialog(
-			{
-				autoOpen: false,
-				height: 300,
-				width: 550,
-				modal: true,
-				buttons:
-				[
-					{
-						id: "upload-button-ok",
-						text: "Ok",
-						click: function() {
-							doUpload();
-						}
-					},
-					{
-						id: "button-cancel",
-						text: "Cancel",
-						click: function() {
-							$(this).dialog("close");
-						}
-					}
-				],
-				close: function()
-				{
-					//form[ 0 ].reset();
-				}
-			}); // Dialog
-			$( "#rechnungBtn" ).on( "click", function()
-			{
-				$('div#response').empty();
-				var controlInput = $(':file');
-				controlInput.replaceWith(controlInput = controlInput.val('').clone(true));
-				dialog.dialog( "open" );
-				callProgressBar(0);
-			});
-
-			$(':file').change(function()
-			{
-				var file = this.files[0];
-				var name = file.name;
-				var size = file.size;
-				var type = getExtension(file.name);
-				if (!type.match(/.*(ods|xlsx|xls|pdf)$/i))
-				{
-					$("<div title='Fehler'>Es werden nur Dateien mit folgenden Endungen akzeptiert: PDF, XLS, XLSX, ODS<br/>Diese Datei hat die Endung <i>" + type.toUpperCase() + "</i>.</div>").dialog(
-					{
-						title: 'Fehler',
-						resizable: false,
-						modal: true,
-						buttons:
-						{
-							"OK": function ()
-							{
-								$(this).dialog("close");
-							}
-						}
-					});
-					$("#upload-button-ok").button("disable");
-					$(':file').value='';
-				} else {
-					$("#upload-button-ok").button("enable");
-				}
-			});
-
-			function doUpload()
-			{
-				var formData = new FormData($('#uploadFrm')[0]);
-				//formData.append('upload',$('#uploadFrm')[0].files[0]);
-				formData.append('method','upload');
-				formData.append('rechnung_id',rechnung_id);
-				$.ajax(
-				{
-					url: 'rechnungDoc.php',  //Server script to process data
-					type: 'POST',
-					xhr: function()
-					{  // Custom XMLHttpRequest
-						var myXhr = $.ajaxSettings.xhr();
-						if(myXhr.upload)
-						{ // Check if upload property exists
-							myXhr.upload.addEventListener('progress',progressHandlingFunction, false); // For handling the progress of the upload
-						}
-						return myXhr;
-					},
-					//Ajax events
-					//beforeSend: beforeSendHandler,
-					success: function (res)
-					{
-						$('div#response').html("<br>Datei erfolgreich geladen.");
-						renderRechnung();
-						dialog.dialog('close');
-					},
-					error: errorHandler,
-					// Form data
-					data: formData,
-					//Options to tell jQuery not to process data or worry about content-type.
-					cache: false,
-					contentType: false,
-					processData: false
-				});
-			};
-			
-
-			function doDelete()
-			{
-				var formData = new FormData($('#deleteFrm')[0]);
-				formData.append('method','delete');
-				formData.append('rechnung_id',rechnung_id);
-
-				$.ajax(
-				{
-					url: 'rechnungDoc.php',
-					type: 'POST',
-					success: function (res)
-					{
-						renderRechnung();
-						rechnungDeleteDialog.dialog("close");
-					},
-					error: errorHandler,
-					processData: false,
-					contentType: false,
-					data: formData
-				});
-			}
-
-			function errorHandler(e)
-			{
-				alert(e);
-			}
-
-			function progressHandlingFunction(e)
-			{
-				console.log(e);
-				if(e.lengthComputable)
-				{
-					callProgressBar( (e.loaded/e.total)*100);
-				}
-			}
-
-			function callProgressBar(step)
-			{
-				$( "#progressbar" ).progressbar(
-				{
-					value: step
-				});
-			};
-
-			
-		});
-
-	</script>
 </head>
 <body>
 
@@ -883,6 +558,7 @@ elseif($aktion == 'save')
 
 			$ausgabemsg.='<span class="ok">Daten wurden gespeichert!</span><br>';
 			$_GET['id']=$rechnung->rechnung_id;
+			$_REQUEST['id']=$rechnung->rechnung_id;
 			$aktion = 'update';
 		}
 		else
@@ -1311,13 +987,25 @@ if($aktion=='update' || $next_aktion=='new')
 			</script>
 		</td>
 	</tr>
+	<td colspan="3">
+		&nbsp;
+	</td>
+	'.((isset($_REQUEST['id']) && !$next_aktion=='new')?'
 	<tr>
 		<td colspan="3">
 			Rechnung (PDF):<br/>
-			<ul id="rechnungListe"><li>1</li></ul>
+			<ul id="rechnungListe" style="list-style-type: none;"><li></li></ul>
 			<input type="button" name="rechnungBtn" id="rechnungBtn" value="upload" >	
 		</td>
+	</tr>':'
+	<tr>
+		<td colspan="3">
+			Rechnung (PDF):<br/>
+			Upload nach erstmaligem Speichern verfügbar	
+		</td>
 	</tr>
+	').
+	'
 	<tr>
 	<td colspan="3">
 		&nbsp;
@@ -1405,6 +1093,340 @@ if ($export == '' || $export == 'html')
 		Rechnung '<span id="rechnungFilename"></span>' wirklich löschen?
 	</form>
 </div>
+
+
+
+
+<script type="text/javascript">
+
+		function conf_del()
+		{
+			return confirm('Wollen Sie diese Rechnung wirklich löschen?');
+		}
+
+		$(function()
+		{
+			var dialog;
+			var rechnungDeleteDialog;
+
+			// -----------------------------------------------------
+			<?php
+				if (isset($_REQUEST['id']))
+				{
+			?>
+				var rechnung_id =<?php echo $_REQUEST['id']; ?>;
+			<?php
+				}
+			?>
+				function loadFirma(id)
+				{
+					$.post("bestellung.php", {id: id, getFirma: 'true'},
+					function(data){
+						$('#firma').html(data);
+					});
+				}
+
+				
+
+				function formatItem(row)
+				{
+					return row[0] + " <br>" + row[1];
+				}
+
+
+				$(document).ready(function()
+				{
+					<?php
+					if($aktion=='suche' && !isset($_POST['submit']))
+					{
+						echo "
+						$('#firmenname').autocomplete(
+						{
+							source: \"wawi_autocomplete.php?work=wawi_firma_search\",
+							minLength:2,
+							response: function(event, ui)
+							{
+								//Value und Label fuer die Anzeige setzen
+								for(i in ui.content)
+								{
+									ui.content[i].value=ui.content[i].firma_id;
+									ui.content[i].label=ui.content[i].gesperrt+ui.content[i].name;
+									if(ui.content[i].kurzbz!='')
+										ui.content[i].label+=' ('+ui.content[i].kurzbz+')';
+									ui.content[i].label+=' '+ui.content[i].firma_id;
+								}
+							},
+							select: function(event, ui)
+							{
+								ui.item.value=ui.item.firma_id;
+								$('#firma_id').val(ui.item.firma_id);
+							}
+
+						});
+						$( \"#rechnungsdatum_von\" ).datepicker($.datepicker.regional['de']);
+						$( \"#rechnungsdatum_bis\" ).datepicker($.datepicker.regional['de']);
+						$( \"#buchungsdatum_von\" ).datepicker($.datepicker.regional['de']);
+						$( \"#buchungsdatum_bis\" ).datepicker($.datepicker.regional['de']);
+						$( \"#erstelldatum_bis\" ).datepicker($.datepicker.regional['de']);
+						$( \"#erstelldatum_von\" ).datepicker($.datepicker.regional['de']);
+						$( \"#bestelldatum_von\" ).datepicker($.datepicker.regional['de']);
+						$( \"#bestelldatum_bis\" ).datepicker($.datepicker.regional['de']);
+						";
+					}
+					?>
+					$("#myTable").tablesorter(
+					{
+						sortList: [[4,1]],
+						widgets: ['zebra']
+					});
+
+					<?php
+					if($aktion!='suche' && $aktion!='delete' && $aktion!='new' && isset($_REQUEST['id']) && !$next_aktion=='new')
+					{
+					?>
+						renderRechnung();
+					<?php
+					}
+					?>
+				});
+
+				function getExtension(path) {
+					var basename = path.split(/[\\/]/).pop();
+
+					pos = basename.lastIndexOf(".");
+
+					if (basename === "" || pos < 1)
+						return "";
+
+					return basename.slice(pos + 1);
+				}
+
+				function getIcon(filename) {
+					if (!filename) return;
+					var ext = getExtension(filename);
+
+					if (ext == 'pdf' || ext == 'PDF')
+						return '../../../skin/images/pdf_icon.png';
+
+					return '../../../skin/images/ExcelIcon.png'
+				}
+
+				function renderRechnung()
+				{
+					//console.log("renderRechnung: rechnung_id=", rechnung_id);
+					
+					var rechnungElement = $("#rechnungListe");
+					rechnungElement.empty();
+					$.post( "rechnungDoc.php", { method: 'list', rechnung_id: rechnung_id }, function(data)
+					{
+						if (data.result ==undefined || data.result != 1)
+						{
+							alert("Fehler: Check console");
+							console.log("data: ", data);
+							return;
+						}
+						rechnungElement.append(
+							$.map(data.list,function(al)
+							{
+								return $('<li>',{}).append(
+									$('<a>',{ target: '_blank', href: 'rechnungDoc.php?method=download&rechnung_id=' + rechnung_id }).append(
+									$('<img>',{ src : getIcon(al.name), class : 'cursor' }))
+									//.text(al.name)
+								).append(
+									$('<a style="background: transparent;padding-left:1px;padding-right:1px">',{ href: '#' }).append(
+									$('<img>',{ src :'../../../skin/images/delete_round.png', class : 'cursor' })
+									).click(function()
+									{
+										$('#currentRechnungId').val(al.rechnung_id);
+										$('#rechnungFilename').empty();
+										$('#rechnungFilename').append(al.name);
+										rechnungDeleteDialog.dialog("open");
+									})
+								);
+							})
+						); // rechnungElement
+					}) // post
+					.fail(function(d)
+					{
+						alert( d.responseText );
+					}, "json");
+				}
+
+
+
+			// ------------------------------------------------------
+
+			rechnungDeleteDialog = $( "#rechnung-delete" ).dialog(
+			{
+				autoOpen: false,
+				height: 300,
+				width: 550,
+				modal: true,
+				buttons:
+				{
+					"OK": doDelete,
+					Cancel: function()
+					{
+						rechnungDeleteDialog.dialog( "close" );
+					}
+				},
+				close: function()
+				{
+					//form[ 0 ].reset();
+				}
+			}); // Dialog
+
+			dialog = $( "#rechnung-upload" ).dialog(
+			{
+				autoOpen: false,
+				height: 300,
+				width: 550,
+				modal: true,
+				buttons:
+				[
+					{
+						id: "upload-button-ok",
+						text: "Ok",
+						click: function() {
+							doUpload();
+						}
+					},
+					{
+						id: "button-cancel",
+						text: "Cancel",
+						click: function() {
+							$(this).dialog("close");
+						}
+					}
+				],
+				close: function()
+				{
+					//form[ 0 ].reset();
+				}
+			}); // Dialog
+			$( "#rechnungBtn" ).on( "click", function()
+			{
+				$('div#response').empty();
+				var controlInput = $(':file');
+				controlInput.replaceWith(controlInput = controlInput.val('').clone(true));
+				dialog.dialog( "open" );
+				callProgressBar(0);
+			});
+
+			$(':file').change(function()
+			{
+				var file = this.files[0];
+				var name = file.name;
+				var size = file.size;
+				var type = getExtension(file.name);
+				if (!type.match(/.*(ods|xlsx|xls|pdf)$/i))
+				{
+					$("<div title='Fehler'>Es werden nur Dateien mit folgenden Endungen akzeptiert: PDF, XLS, XLSX, ODS<br/>Diese Datei hat die Endung <i>" + type.toUpperCase() + "</i>.</div>").dialog(
+					{
+						title: 'Fehler',
+						resizable: false,
+						modal: true,
+						buttons:
+						{
+							"OK": function ()
+							{
+								$(this).dialog("close");
+							}
+						}
+					});
+					$("#upload-button-ok").button("disable");
+					$(':file').value='';
+				} else {
+					$("#upload-button-ok").button("enable");
+				}
+			});
+
+			function doUpload()
+			{
+				var formData = new FormData($('#uploadFrm')[0]);
+				//formData.append('upload',$('#uploadFrm')[0].files[0]);
+				formData.append('method','upload');
+				formData.append('rechnung_id',rechnung_id);
+				$.ajax(
+				{
+					url: 'rechnungDoc.php',  //Server script to process data
+					type: 'POST',
+					xhr: function()
+					{  // Custom XMLHttpRequest
+						var myXhr = $.ajaxSettings.xhr();
+						if(myXhr.upload)
+						{ // Check if upload property exists
+							myXhr.upload.addEventListener('progress',progressHandlingFunction, false); // For handling the progress of the upload
+						}
+						return myXhr;
+					},
+					//Ajax events
+					//beforeSend: beforeSendHandler,
+					success: function (res)
+					{
+						$('div#response').html("<br>Datei erfolgreich geladen.");
+						renderRechnung();
+						dialog.dialog('close');
+					},
+					error: errorHandler,
+					// Form data
+					data: formData,
+					//Options to tell jQuery not to process data or worry about content-type.
+					cache: false,
+					contentType: false,
+					processData: false
+				});
+			};
+			
+
+			function doDelete()
+			{
+				var formData = new FormData($('#deleteFrm')[0]);
+				formData.append('method','delete');
+				formData.append('rechnung_id',rechnung_id);
+
+				$.ajax(
+				{
+					url: 'rechnungDoc.php',
+					type: 'POST',
+					success: function (res)
+					{
+						renderRechnung();
+						rechnungDeleteDialog.dialog("close");
+					},
+					error: errorHandler,
+					processData: false,
+					contentType: false,
+					data: formData
+				});
+			}
+
+			function errorHandler(e)
+			{
+				alert(e);
+			}
+
+			function progressHandlingFunction(e)
+			{
+				console.log(e);
+				if(e.lengthComputable)
+				{
+					callProgressBar( (e.loaded/e.total)*100);
+				}
+			}
+
+			function callProgressBar(step)
+			{
+				$( "#progressbar" ).progressbar(
+				{
+					value: step
+				});
+			};
+
+			
+		});
+
+	</script>
 
 
 </body>

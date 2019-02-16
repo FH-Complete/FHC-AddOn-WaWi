@@ -1372,10 +1372,11 @@ else
             $qry = "
                 update  wawi.tbl_zahlungstyp set reihenfolge = 1 where zahlungstyp_kurzbz='rechnung';
                 update  wawi.tbl_zahlungstyp set reihenfolge = 2 where zahlungstyp_kurzbz='kreditkarte';
-                update  wawi.tbl_zahlungstyp set reihenfolge = 3 where zahlungstyp_kurzbz='vorauszahlung';
-                update  wawi.tbl_zahlungstyp set reihenfolge = 4,bezeichnung='Nachnahme/Barzahlung' where zahlungstyp_kurzbz='nachnahme';
-                update  wawi.tbl_zahlungstyp set reihenfolge = 5 where zahlungstyp_kurzbz='honorarnote';
-                update  wawi.tbl_zahlungstyp set reihenfolge = 6 where zahlungstyp_kurzbz='dienstreise';
+                insert into wawi.tbl_zahlungstyp(zahlungstyp_kurzbz, bezeichnung, reihenfolge) values('kreditkarte_sonst','sonstige Kreditkarte',3);
+                update  wawi.tbl_zahlungstyp set reihenfolge = 4 where zahlungstyp_kurzbz='vorauszahlung';
+                update  wawi.tbl_zahlungstyp set reihenfolge = 5,bezeichnung='Nachnahme/Barzahlung' where zahlungstyp_kurzbz='nachnahme';
+                update  wawi.tbl_zahlungstyp set reihenfolge = 6 where zahlungstyp_kurzbz='honorarnote';
+                update  wawi.tbl_zahlungstyp set reihenfolge = 7 where zahlungstyp_kurzbz='dienstreise';
 
             ";
             if(!$db->db_query($qry))
@@ -1445,7 +1446,9 @@ if(!tableExists($schemaName,$tableName))
                     REFERENCES tbl_rechnungstyp(rechnungstyp_kurzbz)
                     ON UPDATE CASCADE ON DELETE RESTRICT;
                 ALTER TABLE $tableName
-                    ADD CONSTRAINT ${tableName}_dms_id_fkey FOREIGN KEY (dms_id) REFERENCES campus.tbl_dms(dms_id) ON UPDATE CASCADE ON DELETE CASCADE;
+                    ADD CONSTRAINT ${tableName}_dms_id_fkey FOREIGN KEY (dms_id) 
+                    REFERENCES campus.tbl_dms(dms_id) 
+                    ON UPDATE CASCADE ON DELETE SET NULL;
 
 
                 GRANT SELECT ON $tableName TO web;
@@ -1759,8 +1762,16 @@ if (!columnExists($schemaName, $tableName, $columnName))
     $qry = "alter table $schemaName.$tableName add column $columnName bigint;";
     if(!$db->db_query($qry))
             echo "<strong>$columnName: '.$db->db_last_error().'</strong><br>";
-    else
-            echo " $columnName: Attribut $columnName hinzugefuegt!<br>";
+    else {
+            
+        $qry="ALTER TABLE $schemaName.$tableName
+              ADD CONSTRAINT ${tableName}_dms_id_fkey FOREIGN KEY (dms_id) REFERENCES campus.tbl_dms(dms_id) ON UPDATE CASCADE ON DELETE SET NULL";
+        
+        if(!$db->db_query($qry))
+            echo "<strong>$columnName: '.$db->db_last_error().'</strong><br>";
+        else
+        echo " $columnName: Attribut $columnName und Constraint hinzugefuegt!<br>";
+    }
 }
 else
 {
