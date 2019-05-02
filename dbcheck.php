@@ -1446,8 +1446,8 @@ if(!tableExists($schemaName,$tableName))
                     REFERENCES tbl_rechnungstyp(rechnungstyp_kurzbz)
                     ON UPDATE CASCADE ON DELETE RESTRICT;
                 ALTER TABLE $tableName
-                    ADD CONSTRAINT ${tableName}_dms_id_fkey FOREIGN KEY (dms_id) 
-                    REFERENCES campus.tbl_dms(dms_id) 
+                    ADD CONSTRAINT ${tableName}_dms_id_fkey FOREIGN KEY (dms_id)
+                    REFERENCES campus.tbl_dms(dms_id)
                     ON UPDATE CASCADE ON DELETE SET NULL;
 
 
@@ -1650,8 +1650,29 @@ if (!columnExists($schemaName, $tableName, $columnName))
 }
 else
 {
+    print "<br>Attribut $columnName exitiert bereits<br>";
+}
+
+
+$schemaName = "wawi";
+$tableName = "tbl_bestellung";
+$columnName = 'budgetposition_id';
+print "Erstelle Attribute für Tabelle $tableName:";
+if (!columnExists($schemaName, $tableName, $columnName))
+{
+    $qry = "alter table $schemaName.$tableName add column $columnName integer default null;".
+           "ALTER TABLE $schemaName.$tableName ADD CONSTRAINT fk_bestellung_budgetposition_id
+            FOREIGN KEY (budgetposition_id) REFERENCES extension.tbl_budget_position(budgetposition_id)  ON UPDATE CASCADE ON DELETE RESTRICT;";
+    if(!$db->db_query($qry))
+            echo "<strong>$columnName: '.$db->db_last_error().'</strong><br>";
+    else
+            echo " $columnName: Attribut $columnName hinzugefuegt!<br>";
+}
+else
+{
     print "<br>Attribut $columnName exitiert bereits";
 }
+
 
 // TABLE wawi.tbl_kontotyp
 if (!@$db->db_query("SELECT 0 FROM wawi.tbl_kontotyp WHERE 0 = 1"))
@@ -1763,10 +1784,10 @@ if (!columnExists($schemaName, $tableName, $columnName))
     if(!$db->db_query($qry))
             echo "<strong>$columnName: '.$db->db_last_error().'</strong><br>";
     else {
-            
+
         $qry="ALTER TABLE $schemaName.$tableName
               ADD CONSTRAINT ${tableName}_dms_id_fkey FOREIGN KEY (dms_id) REFERENCES campus.tbl_dms(dms_id) ON UPDATE CASCADE ON DELETE SET NULL";
-        
+
         if(!$db->db_query($qry))
             echo "<strong>$columnName: '.$db->db_last_error().'</strong><br>";
         else

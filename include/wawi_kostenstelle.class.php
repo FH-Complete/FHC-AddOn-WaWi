@@ -495,7 +495,7 @@ class wawi_kostenstelle extends basis_db
 			$geschaeftsjahr_kurzbz = $gj->getAkt();
 		}
 
-		$qry = "SELECT budget FROM wawi.tbl_budget
+		$qry = "SELECT sum(betrag) as budget FROM extension.vw_budget_approved
 				WHERE kostenstelle_id=".$this->db_add_param($kostenstelle_id, FHC_INTEGER)."
 				AND geschaeftsjahr_kurzbz=".$this->db_add_param($geschaeftsjahr_kurzbz).";";
 

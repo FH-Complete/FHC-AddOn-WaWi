@@ -43,6 +43,7 @@ require_once '../include/wawi_aufteilung.class.php';
 require_once '../include/wawi_bestellstatus.class.php';
 require_once '../include/wawi_zahlungstyp.class.php';
 require_once '../include/wawi_angebot.class.php';
+require_once '../include/wawi_budget.class.php';
 require_once dirname(__FILE__).'/../../../include/tags.class.php';
 require_once dirname(__FILE__).'/../../../include/projekt.class.php';
 require_once '../include/functions.inc.php';
@@ -124,6 +125,42 @@ if(isset($_POST['getFirma']))
 	}
 	else
 		echo "<option value =''>Keine Firmen zu dieser OE</option>";
+	exit;
+}
+
+if(isset($_POST['getBudgetposten']))
+{
+	$id = $_POST['id'];
+	if(is_numeric($id))
+	{
+		// geschaeftsjahr init
+		$gjDAO = new geschaeftsjahr();
+		$date = new datum();
+		$gj = $gjDAO->getakt();
+		if (isset($_POST['erstelldatum_override']))
+		{
+			$erstelldatum_override = $date->formatDatum($_POST['erstelldatum_override']);
+			if ($erstelldatum_override !== false)
+			{
+				$gj = $gjDAO->getSpecific($_POST['erstelldatum_override']);
+			}
+		}
+
+		$budgetposten = new wawi_budget();
+		$budgetposten->getBudgetFromKostenstelle($gj,$id);
+		if(count($budgetposten->result)>0)
+		{
+			echo "<option value=''>-- auswählen --</option>\n";
+			foreach($budgetposten->result as $ko)
+			{
+				echo '<option value="'.$ko->budgetposition_id.'" data-konto="'.$ko->konto_id.'" >'.$ko->budgetposten."</option>\n";
+			}
+		}
+		else
+			echo "<option value =''>Keine Budgetposten zu dieser Kst</option>";
+	}
+	else
+		echo "<option value =''>Keine Budgetposten zu dieser Kst</option>";
 	exit;
 }
 
@@ -399,6 +436,24 @@ if ($export == '' || $export == 'html')
 		function(data){
 			$('#firma').html(data);
 		});
+	}
+
+	function loadBudgetposten(id)
+	{
+		$.post("bestellung.php", {id: id, getBudgetposten: 'true'},
+		function(data){
+			$('#budgetposten').html(data);
+			$('#budgetposten').prop( "disabled", false );
+			//selectKonto($('#budgetposten'));
+		});
+	}
+
+	function selectKonto(el)
+	{
+		var selected = $(el).find('option:selected');
+		var konto_id = selected.data('konto');
+		console.log('konto_id=',konto_id);
+		$("#konto option[value="+konto_id+"]").prop('selected', true);
 	}
 
 	function formatItem(row)
@@ -971,7 +1026,7 @@ elseif($aktion == 'new')
 	echo "<tr>\n";
 	echo "<td>Zuordnung:</td><td>";
 	$index = 0;
-	$zuordnungListe = wawi_zuordnung::getAll();		
+	$zuordnungListe = wawi_zuordnung::getAll();
 	foreach ($zuordnungListe as $key => $val)
 	{
 		echo '<input type="radio" id="zuordnung_'.$key.'" name="zuordnung" value="'.$key.'" '.($index==0?'checked="1"':'').'\"><label for="zuordnung_'.$key.'"> '.$val.'</label> ';
@@ -980,12 +1035,18 @@ elseif($aktion == 'new')
 	echo "</td>\n";
 	echo "</tr>\n";
 	echo "<tr>\n";
-	echo "<td>Kostenstelle:</td><td><SELECT name='filter_kst' onchange=\"loadKonto(this.value)\" required>\n";
+	echo "<td>Kostenstelle:</td><td><SELECT name='filter_kst' onchange=\"loadKonto(this.value);loadBudgetposten(this.value);\" required>\n";
 	echo "<option value =\"\">-- Kostenstelle auswählen --</option>\n";
 	foreach ($kst->result as $ks)
 	{
 		echo "<option value=".$ks->kostenstelle_id.">".$ks->bezeichnung."(".mb_strtoupper($ks->kurzbz).") - ".mb_strtoupper($ks->oe_kurzbz)."</option>\n";
 	}
+	echo "</SELECT></td>\n";
+	echo "</tr>\n";
+
+	echo "<td>Budgetposten:</td><td>";
+	echo "<SELECT name='budgetposition_id' id='budgetposten'  onchange=\"selectKonto(this)\"  >";
+	echo "<option value =\"\">-- Budgetposten auswählen --</option>\n";
 	echo "</SELECT></td>\n";
 	echo "</tr>\n";
 
@@ -1057,6 +1118,11 @@ elseif($aktion == 'save')
 			$newBestellung->konto_id = null;
 		else
 			$newBestellung->konto_id = $_POST['konto'];
+
+		if(!isset($_POST['budgetposition_id']))
+			$newBestellung->budgetposition_id = null;
+		else
+			$newBestellung->budgetposition_id = $_POST('budgetposition_id');
 
 		if (isset($_POST['erstelldatum_override']) &&
 			trim($_POST['erstelldatum_override']) != '' &&
@@ -1238,6 +1304,7 @@ if($_GET['method']=='update')
 				$bestellung_new->updatevon = $user;
 				$bestellung_new->zahlungstyp_kurzbz = $_POST['filter_zahlungstyp'];
 				$bestellung_new->kostenstelle_id = $_POST['filter_kst'];
+				$bestellung_new->budgetposition_id = $_POST['budgetposition_id'];
 
 				if (isset($_POST['auftragsbestaetigung']))
 				{
@@ -2225,6 +2292,8 @@ echo $js;
 	echo "	<input type='hidden' name='zuordnung_uid' id='zuordnung_uid' size='5' maxlength='7' value ='".$bestellung->zuordnung_uid."'>\n";
 	echo "</td>";
 	echo "</tr>\n";
+
+	// Kostenstelle
 	echo "<tr>\n";
 	$disabled = '';
 	if($status->isStatiVorhanden($bestellung->bestellung_id, 'Bestellung') || $status->isStatiVorhanden($bestellung->bestellung_id, 'Storno') || $status->isStatiVorhanden($bestellung->bestellung_id, 'Abgeschickt'))
@@ -2232,7 +2301,7 @@ echo $js;
 	if($rechte->isberechtigt('wawi/bestellung_advanced',null, 'suid', $bestellung->kostenstelle_id) || ($rechte->isBerechtigt('wawi/freigabe', null, 'suid',$bestellung->kostenstelle_id) && $bestellung->freigegeben))
 		$disabled = '';
 
-	echo "<td>Kostenstelle:</td><td><SELECT name='filter_kst' style='width: 483px;' onchange='loadKonto(this.value)' $disabled id='filter_kst'>\n";
+	echo "<td>Kostenstelle:</td><td><SELECT name='filter_kst' style='width: 483px;' onchange='loadBudgetposten(this.value);loadKonto(this.value)' $disabled id='filter_kst'>\n";
 
 	foreach ($kst->result as $ks)
 	{
@@ -2265,8 +2334,57 @@ echo $js;
 		echo "<option value='".$standort_lieferadresse->adresse_id."' ". $selected.">".$standorte->kurzbz.' - '.$standort_lieferadresse->strasse.', '.$standort_lieferadresse->plz.' '.$standort_lieferadresse->gemeinde."</option>\n";
 	}
 	echo "</select></td></tr>\n";
-	echo "<tr>\n";
 
+  // Budget
+	echo "<tr>";
+	echo "<td>Budget:</td>\n";
+	echo "<td>";
+	echo "<SELECT name='budgetposition_id' id='budgetposten'  onchange=\"selectKonto(this)\"  style='width: 400px;' >";
+
+	$gjDAO = new geschaeftsjahr();
+	$gj = $gjDAO->getSpecific($bestellung->insertamum);
+	$budgetposten = new wawi_budget();
+	$budgetposten->getBudgetFromKostenstelle($gj,$bestellung->kostenstelle_id);
+
+	if(count($budgetposten->result)>0)
+	{
+		echo "<option value=''>-- auswählen --</option>\n";
+		foreach($budgetposten->result as $ko)
+		{
+			$selected = '';
+			if($bestellung->budgetposition_id == $ko->budgetposition_id)
+			{
+				$selected ='selected';
+			}
+
+			echo '<option value="'.$ko->budgetposition_id.'" data-konto="'.$ko->konto_id.'" '.$selected.' >'.$ko->budgetposten."</option>\n";
+		}
+	}
+	else
+		echo "<option value =''>Keine Budgetposten zu dieser Kst</option>";
+	echo "</SELECT>";
+	//echo "DEBUG: id=$bestellung->kostenstelle_id, gj=$gj, bestellung->budgetposition_id=".$bestellung->budgetposition_id.", selected=$selected";
+	echo "</td>";
+
+	// Rechnungsadresse
+	echo "<td>Rechnungsadresse:</td>\n";
+	echo "<td colspan ='2'><Select name='filter_rechnungsadresse' id='filter_rechnungsadresse' style='width: 400px;'>\n";
+	foreach($allStandorte->result as $standorte)
+	{
+		$selected ='';
+		$standort_rechnungsadresse = new adresse();
+		$standort_rechnungsadresse->load($standorte->adresse_id);
+
+		if($standort_rechnungsadresse->adresse_id == $bestellung->rechnungsadresse)
+			$selected ='selected';
+
+		echo "<option value='".$standort_rechnungsadresse->adresse_id."' ". $selected.">".$standorte->kurzbz.' - '.$standort_rechnungsadresse->strasse.', '.$standort_rechnungsadresse->plz.' '.$standort_rechnungsadresse->ort."</option>\n";
+	}
+	echo "</select></td></tr>\n";
+
+
+  // Konto
+	echo "<tr>\n";
 	echo "	<td>Konto: </td>\n";
 	echo "	<td><SELECT name='filter_konto' id='konto' style='width: 230px;'>\n";
 	foreach($konto->result as $ko)
@@ -2289,22 +2407,10 @@ echo $js;
 	echo "&nbsp; <label for=\"nicht_bestellen\">nicht bestellen</label> <input type=\"checkbox\" id=\"nicht_bestellen\" name=\"nicht_bestellen\" ".($bestellung->nicht_bestellen != null && $bestellung->nicht_bestellen === true ?'checked':'').">";
 	echo "</td>";
 
+	echo "<td colspan='3'></td>";
+	echo "</tr>\n";
 
-	// Rechnungsadresse
-	echo "<td>Rechnungsadresse:</td>\n";
-	echo "<td colspan ='2'><Select name='filter_rechnungsadresse' id='filter_rechnungsadresse' style='width: 400px;'>\n";
-	foreach($allStandorte->result as $standorte)
-	{
-		$selected ='';
-		$standort_rechnungsadresse = new adresse();
-		$standort_rechnungsadresse->load($standorte->adresse_id);
-
-		if($standort_rechnungsadresse->adresse_id == $bestellung->rechnungsadresse)
-			$selected ='selected';
-
-		echo "<option value='".$standort_rechnungsadresse->adresse_id."' ". $selected.">".$standorte->kurzbz.' - '.$standort_rechnungsadresse->strasse.', '.$standort_rechnungsadresse->plz.' '.$standort_rechnungsadresse->ort."</option>\n";
-	}
-	echo "</select></td></tr>\n";
+  // Interne Bemerkungen
 	echo "<tr>\n";
 	echo "	<td >Interne Bemerkungen: </td>\n";
 	echo "	<td ><textarea name='bemerkung' cols=\"70\" rows=\"2\" style='width: 482px;'>$bestellung->bemerkung</textarea></td>\n";
@@ -3362,8 +3468,16 @@ function sendFreigabeMails($uids, $bestellung, $user)
 	$email.="Erstellt am: ".$date->formatDatum($bestellung->insertamum,'d.m.Y')."<br>";
 	$email.="Kostenstelle: ".$kst_mail->bezeichnung."<br>Konto: ".$konto_mail->kurzbz."<br>";
 	$email.="Tags: ".$tagsAusgabe."<br>";
+	// Link zu Budget wenn Budgetposten angegeben wurde
+	if ($bestellung->budgetposition_id>0)
+	{
+		$geschaeftsjahr = new geschaeftsjahr();
+	  $gJahr = $geschaeftsjahr->getSpecific($bestellung->insertamum);
+		$email.="Budget: <a href='".APP_ROOT."/index.ci.php/extensions/FHC-Core-Budget/Budgetantrag/showVerwalten/".$gJahr."/".$bestellung->kostenstelle_id."'>Budgetübersicht</a><br>";
+	}
 
-	$email.="Link: <a href='".APP_ROOT."vilesci/indexFrameset.php?content=bestellung.php&method=update&id=$bestellung->bestellung_id'>zur Bestellung </a>";
+	$email.="Link: <a href='".APP_ROOT."vilesci/indexFrameset.php?content=bestellung.php&method=update&id=$bestellung->bestellung_id'>zur Bestellung </a><br>";
+
 
 	foreach($uids as $uid)
 	{
@@ -3481,14 +3595,14 @@ function sendBestellerMail($bestellung, $status)
 	$email.="Link: <a href='".APP_ROOT."vilesci/indexFrameset.php?content=bestellung.php&method=update&id=$bestellung->bestellung_id'>zur Bestellung </a>";
 
 	$to_address = $bestellung->besteller_uid.'@'.DOMAIN;
-	
+
 	// [WM] 3.12.18: Mail auch an zugeordnete Person schicken
 	if (isset($bestellung->zuordnung_uid) && $bestellung->zuordnung_uid != '')
 	{
-		$to_address = $to_address.','.$bestellung->zuordnung_uid.'@'.DOMAIN;		
-	}	
+		$to_address = $to_address.','.$bestellung->zuordnung_uid.'@'.DOMAIN;
+	}
 
-	$mail = new mail($to_address, 'no-reply', 'Bestellung '.$bestellung->bestell_nr, 'Bitte sehen Sie sich die Nachricht in HTML Sicht an, um den Link vollständig darzustellen.');	
+	$mail = new mail($to_address, 'no-reply', 'Bestellung '.$bestellung->bestell_nr, 'Bitte sehen Sie sich die Nachricht in HTML Sicht an, um den Link vollständig darzustellen.');
 	$mail->setHTMLContent($email);
 	if(!$mail->send())
 		$msg.= '<span class="error">Fehler beim Senden des Mails</span><br />';
