@@ -26,8 +26,9 @@ define("DB_PASSWORD","password");
 define("DB_CONNECT_PERSISTENT",TRUE);
 define('CONN_CLIENT_ENCODING','UTF-8' );
 
-define('SERVER_ROOT','http://www.technikum-wien.at/');
-define('APP_ROOT','http://www.technikum-wien.at/wawi/');
+define('SERVER_ROOT','https://www.technikum-wien.at/');
+define('APP_ROOT','https://www.technikum-wien.at/addons/wawi/');
+define('FHC_ROOT','https://www.technikum-wien.at/');
 
 // Externe Funktionen - Unterordner im Include-Verzeichnis
 define('EXT_FKT_PATH','tw');

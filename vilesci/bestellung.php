@@ -1122,7 +1122,7 @@ elseif($aktion == 'save')
 		if(!isset($_POST['budgetposition_id']))
 			$newBestellung->budgetposition_id = null;
 		else
-			$newBestellung->budgetposition_id = $_POST('budgetposition_id');
+			$newBestellung->budgetposition_id = $_POST['budgetposition_id'];
 
 		if (isset($_POST['erstelldatum_override']) &&
 			trim($_POST['erstelldatum_override']) != '' &&
@@ -3473,7 +3473,7 @@ function sendFreigabeMails($uids, $bestellung, $user)
 	{
 		$geschaeftsjahr = new geschaeftsjahr();
 	  $gJahr = $geschaeftsjahr->getSpecific($bestellung->insertamum);
-		$email.="Budget: <a href='".APP_ROOT."/index.ci.php/extensions/FHC-Core-Budget/Budgetantrag/showVerwalten/".$gJahr."/".$bestellung->kostenstelle_id."'>Budgetübersicht</a><br>";
+		$email.="Budget: <a href='".FHC_ROOT."/index.ci.php/extensions/FHC-Core-Budget/Budgetantrag/showVerwalten?geschaeftsjahr=".$gJahr."&kostenstelle_id=".$bestellung->kostenstelle_id."'>Budgetübersicht</a><br>";
 	}
 
 	$email.="Link: <a href='".APP_ROOT."vilesci/indexFrameset.php?content=bestellung.php&method=update&id=$bestellung->bestellung_id'>zur Bestellung </a><br>";
