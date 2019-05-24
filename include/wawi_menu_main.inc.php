@@ -86,7 +86,8 @@ $menu=array
 			'Firmen angelegt'=>array ('name'=>'Firmen angelegt', 'permissions'=>array('basis/firma'),'link'=>'auswertungen/firmen_angelegt.php', 'target'=>'content'),
 			'Lieferanten Ranking'=>array ('name'=>'Lieferanten Ranking', 'permissions'=>array('wawi/bestellung_advanced'),'link'=>'auswertungen/lieferanten_ranking.php', 'target'=>'content'),
 			'Bestellungen'=>array ('name'=>'Bestellungen', 'permissions'=>array('wawi/bestellung'),'link'=>'auswertungen/bestellungen.php', 'target'=>'content'),
-			'Buchhaltung'=>array ('name'=>'Buchhaltung', 'permissions'=>array('wawi/bestellung_advanced'),'link'=>'auswertungen/buchhaltung.php', 'target'=>'content')
+			'Buchhaltung'=>array ('name'=>'Buchhaltung', 'permissions'=>array('wawi/bestellung_advanced'),'link'=>'auswertungen/buchhaltung.php', 'target'=>'content'),
+			'Rechnungen'=>array ('name'=>'Rechnungen', 'permissions'=>array('wawi/bestellung_advanced'),'link'=>'auswertungen/rechnungen.php', 'target'=>'content')
 		)
 	)
 
