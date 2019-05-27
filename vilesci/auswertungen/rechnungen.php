@@ -207,7 +207,7 @@ if (strrpos($_SERVER['REQUEST_URI'], "rechnungen.php"))
     $keine_parameter = true;
   }
 
-echo "<a href=\"".htmlspecialchars($_SERVER['REQUEST_URI']).($keine_parameter?'?kalenderjahr='.$kalenderjahr.'&kalenderwoche='.$kalenderwoche:'')."&export=zip\"><IMG src=\"../../../../skin/images/zippic.gif\" > ZIP</a></p>";
+echo "<a href=\"".htmlspecialchars($_SERVER['REQUEST_URI']).($keine_parameter?'?kalenderjahr='.$kalenderjahr.'&kalenderwoche='.$kalenderwoche:'')."&export=zip\"><IMG src=\"../../../../skin/images/zip_icon.png\" > ZIP</a></p>";
 
 
 echo '<span style="font-size: small">Zeitraum: ',$datum_obj->formatDatum($vondatum,'d.m.Y'),' - ',$datum_obj->formatDatum($endedatum,'d.m.Y').'</span>';
