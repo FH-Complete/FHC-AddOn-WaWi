@@ -79,7 +79,7 @@ class wawi_budget extends basis_db
 			$this->kostenstelle_id = $row->kostenstelle_id;
 			$this->geschaeftsjahr_kurzbz = $row->geschaeftsjahr_kurzbz;
 			$this->bezeichnung = $row->bezeichnung;
-			$this->budgetposition_id = $row->budgetposition;
+			$this->budgetposition_id = $row->budgetposition_id;
 			$this->budgetposten = $row->budgetposten;
 			$this->konto_id = $row->konto_id;
 			$this->betrag = $row->betrag;
