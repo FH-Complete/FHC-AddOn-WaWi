@@ -3472,9 +3472,14 @@ function sendFreigabeMails($uids, $bestellung, $user)
 	if ($bestellung->budgetposition_id>0)
 	{
 		$geschaeftsjahr = new geschaeftsjahr();
-	  $gJahr = $geschaeftsjahr->getSpecific($bestellung->insertamum);
-		$email.="Budget: <a href='".FHC_ROOT."/index.ci.php/extensions/FHC-Core-Budget/Budgetantrag/showVerwalten?geschaeftsjahr=".$gJahr."&kostenstelle_id=".$bestellung->kostenstelle_id."'>Budgetübersicht</a><br>";
+		$gJahr = $geschaeftsjahr->getSpecific($bestellung->insertamum);
+		$budget = new wawi_budget();
+		$budget->load($bestellung->budgetposition_id);
+
+		$email.="Budgetantrag: '".$budget->bezeichnung ."' <a href='".FHC_ROOT."/index.ci.php/extensions/FHC-Core-Budget/Budgetantrag/showVerwalten?geschaeftsjahr=".$gJahr."&kostenstelle_id=".$bestellung->kostenstelle_id."'>zur Budgetübersicht</a><br>";
 	}
+	else
+		$email.="Budgetantrag: kein Budgetantrag zugeordnet<br>";
 
 	$email.="Link: <a href='".APP_ROOT."vilesci/indexFrameset.php?content=bestellung.php&method=update&id=$bestellung->bestellung_id'>zur Bestellung </a><br>";
 

@@ -39,7 +39,8 @@ $menu=array
 			'name'=>'Kostenstelle', 'permissions'=>array('wawi/kostenstelle'),'link'=>'kostenstellenuebersicht.php', 'target'=>'content',
 			'KostenstelleNeu'=>array('name'=>'Neu', 'link'=>'kostenstellenuebersicht.php?method=update', 'target'=>'content'),
 			'KostenstelleZusammenlegen'=>array('name'=>'Zusammenlegen', 'link'=>'kostenstellenuebersicht.php?method=merge', 'target'=>'content'),
-			'Budgeteingabe'=>array('name'=>'Budgeteingabe', 'permissions'=>array('wawi/budget'), 'link'=>'budget.php', 'target'=>'content'),
+			//'Budgeteingabe'=>array('name'=>'Budgeteingabe', 'permissions'=>array('wawi/budget'), 'link'=>'budget.php', 'target'=>'content'),
+			'Budgeteingabe'=>array('name'=>'Budgeteingabe', 'permissions'=>array('wawi/budget'), 'link'=>FHC_ROOT.'index.ci.php/extensions/FHC-Core-Budget/Budgetantrag', 'target'=>'_blank'),
 		),
 	),
 	'Benutzerbereich'=> 	array
