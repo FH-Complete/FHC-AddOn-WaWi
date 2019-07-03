@@ -311,14 +311,34 @@ if(isset($_GET['method']))
 		$kostenstelle = new wawi_kostenstelle();
 		$konto = new wawi_konto();
 
+		$nuraktive = ((isset($_REQUEST['nuraktive']))?true:false);
+
 		$kontos = array();	// Array der Konten die einer Kostenstelle zugewiesen sind
 
-		$konto->getAll();
+		$konto->getAll($nuraktive?true:null);
 		$kontouebersicht = $konto->result;
 		$kostenstelle_id = isset($_GET['id'])?$_GET['id']:'';
 
+		echo "<form name=\"filterFrm\" id=\"filterFrm\" action=\"kostenstellenuebersicht.php?method=allocate&id=$kostenstelle_id\" method=\"POST\">\n";
+		echo '<p><label><input type="checkbox" id="nuraktive" name="nuraktive" value="1" '.($nuraktive?'checked="" ':'').'> nur aktive Konten</label></p>';
+		echo '</form>';
+		// refresh
+?>
+	<script>
+		var form = document.getElementById("filterFrm");
+
+		document.getElementById("nuraktive").addEventListener("click", function () {
+			console.log(document.getElementById("nuraktive").checked);
+			form.submit();
+		});
+	</script>
+<?php
 	//	echo "<a href='kostenstellenuebersicht.php'>zurück</a>\n";
-		echo "<form name=\"save\" action=\"kostenstellenuebersicht.php?method=allocate&id=$kostenstelle_id\", method=\"POST\">\n";
+		echo "<form name=\"save\" id=\"save\" action=\"kostenstellenuebersicht.php?method=allocate&id=$kostenstelle_id\" method=\"POST\">\n";
+		if ($nuraktive)
+		{
+			echo '<label><input type="hidden" name="nuraktive" value="1" > ';
+		}
 		echo "<table border =0 width ='80%' ><tr><td><table border ='0' width=25% align=left >\n";
 
 		if(isset($_POST['submit']))
@@ -366,13 +386,15 @@ if(isset($_GET['method']))
 			}
 			$i ++;
 			echo "<tr> <td>\n";
-			echo '<input type="checkbox" name="checkbox_'.$ko->konto_id.'" value='.$ko->konto_id." $checked>".(!$ko->aktiv?'<strike>':'').$db->convert_html_chars($ko->kurzbz).(!$ko->aktiv?'</strike>':'').'<br>';
+			echo '<label><input type="checkbox" name="checkbox_'.$ko->konto_id.'" value='.$ko->konto_id." $checked>".(!$ko->aktiv?'<strike>':'').$db->convert_html_chars($ko->kurzbz).(!$ko->aktiv?'</strike>':'').'</label><br>';
  			echo '</td> </tr>';
 		}
 
 		echo "</table>\n";
 		echo "</td></tr><tr><td>&nbsp;</td></tr></table>";
-		echo "<table border =0 width =100><tr><td><input name ='submit' type='submit' value='Speichern'></form></td></tr></table>\n";
+		echo "<table border =0 width =100><tr><td><a href=\"kostenstellenuebersicht.php\">zurück </a></td>";
+		echo "<td><input type=\"button\" name=\"allemarkieren\" id=\"allemarkieren\" onclick=\"$('#save :checkbox').prop('checked',true);\" value=\"alle markieren\"></td>";
+		echo "<td><input name ='submit' type='submit' value='Speichern'></form></td></tr></table>\n";
 	}
 	else if ($_GET['method']=="merge")
 	{
@@ -539,7 +561,7 @@ else
 			echo "<tr>\n";
 			echo "
 				<td nowrap>
-				<a href=\"kostenstellenuebersicht.php?method=allocate&amp;id=$row->kostenstelle_id\" title=\"Konten zuordnen\"> <img src=\"../../../skin/images/addKonto.png\"></a>
+				<a href=\"kostenstellenuebersicht.php?method=allocate&amp;nuraktive=1&amp;id=$row->kostenstelle_id\" title=\"Konten zuordnen\"> <img src=\"../../../skin/images/addKonto.png\"></a>
 				<a href= \"kostenstellenuebersicht.php?method=update&amp;id=$row->kostenstelle_id\" title=\"Bearbeiten\"> <img src=\"../skin/images/edit_wawi.gif\"> </a>
 				<a href=\"kostenstellenuebersicht.php?method=delete&amp;id=$row->kostenstelle_id\" onclick='return conf_del()' title='Löschen'> <img src=\"../../../skin/images/delete_x.png\"></a>\n
 				</td>
