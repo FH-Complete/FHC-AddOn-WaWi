@@ -3476,7 +3476,7 @@ function sendFreigabeMails($uids, $bestellung, $user)
 		$budget = new wawi_budget();
 		$budget->load($bestellung->budgetposition_id);
 
-		$email.="Budgetantrag: '".$budget->bezeichnung ."' <a href='".FHC_ROOT."/index.ci.php/extensions/FHC-Core-Budget/Budgetantrag/showVerwalten?geschaeftsjahr=".$gJahr."&kostenstelle_id=".$bestellung->kostenstelle_id."'>zur Budgetübersicht</a><br>";
+		$email.="Budgetantrag: '".$budget->bezeichnung ."' <a href='".FHC_ROOT."index.ci.php/extensions/FHC-Core-Budget/Budgetantrag/showVerwalten?geschaeftsjahr=".$gJahr."&kostenstelle_id=".$bestellung->kostenstelle_id."'>zur Budgetübersicht</a><br>";
 	}
 	else
 		$email.="Budgetantrag: kein Budgetantrag zugeordnet<br>";
