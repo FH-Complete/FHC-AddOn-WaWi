@@ -32,7 +32,7 @@ require_once('../include/wawi_kostenstelle.class.php');
 require_once('../include/wawi_bestellung.class.php');
 require_once('../include/wawi_zahlungstyp.class.php');
 require_once('../include/wawi_benutzerberechtigung.class.php');
-require_once '../../../vendor/autoload.php';
+require_once '../vendor/autoload.php';
 
 use PhpOffice\PhpSpreadsheet\Spreadsheet;
 use PhpOffice\PhpSpreadsheet\Writer\Xlsx;
