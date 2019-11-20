@@ -62,7 +62,7 @@ function KW2Date($jahr, $kw)
 
 function maybeSelect($haystack, $needle)
   {
-    if (in_array($needle, $haystack)) return 'selected';
+    if (is_array($haystack) && in_array($needle, $haystack)) return 'selected';
     return '';
   }
 
