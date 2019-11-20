@@ -272,7 +272,7 @@
                                     <text:span text:style-name="MT2">einkauf@technikum-wien.at</text:span>
                                 </text:a>
                                 <text:span text:style-name="MT2">
-                                    <text:line-break/>Tel.: +43 333 40 77 DW 212</text:span>
+                                    <text:line-break/>Tel.: +43 333 40 77 DW 5426</text:span>
                             </text:p>
                         </table:table-cell>
                         <table:table-cell table:style-name="KopfTab.A1" office:value-type="string">
