@@ -55,7 +55,7 @@ require_once dirname(__FILE__).'/../../../include/nation.class.php';
 <?php
 $user=get_uid();
 
-$rechte = new benutzerberechtigung();
+$rechte = new wawi_benutzerberechtigung();
 $rechte->getBerechtigungen($user);
 
 if(!$rechte->isBerechtigt('wawi/firma', null, 's'))

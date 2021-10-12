@@ -245,13 +245,13 @@ function printPersonBerechtigungenList($rights, $uid)
 		$berechtigung_arr[] = $berechtigung->berechtigung_kurzbz;
 		$berechtigung_beschreibung_arr[] = $berechtigung->beschreibung;
 	}
-	$bn = new benutzerberechtigung();
+	$bn = new wawi_benutzerberechtigung();
 	$bn->getBerechtigungen($uid);
 	foreach($bn->berechtigungen as $berechtigung)
 	{
 		$berechtigung_user_arr[] = $berechtigung->berechtigung_kurzbz;
 	}
-	$kostenstelle = new wawi_kostenstelle();
+	$kostenstelle = new wawi_kostenstelle_extended();
 	$kostenstelle->getAll();
 
 	$benutzer_user = new benutzer();
@@ -409,7 +409,7 @@ function printPersonBerechtigungenList($rights, $uid)
 
 
 			//Kostenstelle
-			$kst = new wawi_kostenstelle();
+			$kst = new wawi_kostenstelle_extended();
 			$kst->load($b->kostenstelle_id);
 			if(!$kst->aktiv)
 				$style='style="text-decoration:line-through;"';
@@ -573,7 +573,7 @@ function createOrUpdateBerechtigung()
 		return 'Diese Berechtigung kann nicht bearbeitet werden';
 	}
 
-	$ber = new benutzerberechtigung();
+	$ber = new wawi_benutzerberechtigung();
 	if (isset($_POST['neu']))
 	{
 		$ber->insertamum=date('Y-m-d H:i:s');
@@ -619,7 +619,7 @@ function deleteBerechtigung()
 	global $user;
 	$benutzerberechtigung_id = $_POST['benutzerberechtigung_id'];
 
-	$ber = new benutzerberechtigung();
+	$ber = new wawi_benutzerberechtigung();
 	if(!$ber->delete($benutzerberechtigung_id))
 		return 'Datensatz konnte nicht gel&ouml;scht werden!';
 
@@ -629,7 +629,7 @@ function control()
 {
 	global $user;
 
-	$rechte = new benutzerberechtigung();
+	$rechte = new wawi_benutzerberechtigung();
 	$rechte->getBerechtigungen($user);
 	if(!$rechte->isBerechtigt('wawi/bestellung_advanced'))
 	{
@@ -638,7 +638,7 @@ function control()
 		printPersonAuswahl();
 
 		$uid = $_POST['uid'];
-		$rechte_user = new benutzerberechtigung();
+		$rechte_user = new wawi_benutzerberechtigung();
 		$rechte_user->loadBenutzerRollen($uid);
 		printPersonBerechtigungenList($rechte_user, $uid);
 	} elseif (isset($_POST['del']) && isset($_POST['uid']) && isset($_POST['benutzerberechtigung_id'])) {
@@ -653,7 +653,7 @@ function control()
 			echo '<div style="background:green; color: white; padding: 5px; margin: 5px 0px">Berechtigung gelöscht.</div>';
 		}
 		$uid = $_POST['uid'];
-		$rechte_user = new benutzerberechtigung();
+		$rechte_user = new wawi_benutzerberechtigung();
 		$rechte_user->loadBenutzerRollen($uid);
 		printPersonBerechtigungenList($rechte_user, $uid);
 	} elseif (isset($_POST['schick']) && isset($_POST['uid'])) {
@@ -669,7 +669,7 @@ function control()
 			echo '<div style="background:green; color: white; padding: 5px; margin: 5px 0px">Berechtigung '.($_POST['schick'] == 'neu'?'hinzugefügt':'gespeichert').'.</div>';
 		}
 		$uid = $_POST['uid'];
-		$rechte_user = new benutzerberechtigung();
+		$rechte_user = new wawi_benutzerberechtigung();
 		$rechte_user->loadBenutzerRollen($uid);
 		printPersonBerechtigungenList($rechte_user, $uid);
 
@@ -677,7 +677,7 @@ function control()
 		printPersonAuswahl();
 		// Berechtigungen anzeigen (nach Auswahl der Person via AJAX)
 		$uid = $_POST['person_uid'];
-		$rechte_user = new benutzerberechtigung();
+		$rechte_user = new wawi_benutzerberechtigung();
 		$rechte_user->loadBenutzerRollen($uid);
 		printPersonBerechtigungenList($rechte_user, $uid);
 

@@ -45,7 +45,7 @@ echo '<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN"
 <h1>Addon Datenbank Check</h1>';
 
 $uid = get_uid();
-$rechte = new benutzerberechtigung();
+$rechte = new wawi_benutzerberechtigung();
 $rechte->getBerechtigungen($uid);
 
 if(!$rechte->isBerechtigt('basis/addon', null, 'suid'))

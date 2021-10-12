@@ -26,7 +26,7 @@ require_once(dirname(__FILE__).'/../../../include/basis_db.class.php');
 require_once(dirname(__FILE__).'/../../../include/geschaeftsjahr.class.php');
 
 
-class wawi_kostenstelle extends basis_db
+class wawi_kostenstelle_extended extends basis_db
 {
 	public $new; 						// boolean
 	public $result = array();
@@ -132,7 +132,7 @@ class wawi_kostenstelle extends basis_db
 
 		while($row = $this->db_fetch_object())
 		{
-			$obj = new wawi_kostenstelle();
+			$obj = new wawi_kostenstelle_extended();
 
 			$obj->kostenstelle_id = $row->kostenstelle_id;
 			$obj->oe_kurzbz = $row->oe_kurzbz;
@@ -612,7 +612,7 @@ class wawi_kostenstelle extends basis_db
 
 		while($row = $this->db_fetch_object($result))
 		{
-			$obj = new wawi_kostenstelle();
+			$obj = new wawi_kostenstelle_extended();
 
 			$obj->kostenstelle_id = $row->kostenstelle_id;
 			$obj->oe_kurzbz = $row->oe_kurzbz;

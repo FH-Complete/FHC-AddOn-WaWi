@@ -65,7 +65,7 @@ function maybeSelect($haystack, $needle)
 
 
 $user = get_uid();
-$rechte = new benutzerberechtigung();
+$rechte = new wawi_benutzerberechtigung();
 $rechte->getBerechtigungen($user);
 
 if (!$rechte->isBerechtigt('wawi/bestellung_advanced',null,'suid'))

@@ -48,9 +48,9 @@ $user=get_uid();
 $ausgabemsg='';
 
 $berechtigung_kurzbz='wawi/bestellung';
-$rechte = new benutzerberechtigung();
+$rechte = new wawi_benutzerberechtigung();
 $rechte->getBerechtigungen($user);
-$kst=new wawi_kostenstelle();
+$kst=new wawi_kostenstelle_extended();
 $kst->loadArray($rechte->getKostenstelle($berechtigung_kurzbz),'bezeichnung');
 //$bestellung_kategorie=new wawi_bestellung_kategorie();
 //$bestellung_kategorie->getAll(true);

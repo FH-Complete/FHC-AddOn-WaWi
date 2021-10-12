@@ -37,7 +37,7 @@ require_once(dirname(__FILE__).'/../../../../include/geschaeftsjahr.class.php');
 require_once(dirname(__FILE__).'/../../../../include/datum.class.php');
 
 $user = get_uid();
-$rechte = new benutzerberechtigung();
+$rechte = new wawi_benutzerberechtigung();
 $rechte->getBerechtigungen($user);
 
 $kst_array = $rechte->getKostenstelle('wawi/bestellung');
@@ -265,7 +265,7 @@ $datum_obj = new datum();
 			$brutto['rechnung']=0;
 		}
 
-		$kostenstelle = new wawi_kostenstelle();
+		$kostenstelle = new wawi_kostenstelle_extended();
 		$kostenstelle->load($id);
 
 		if($kostenstelle->aktiv)

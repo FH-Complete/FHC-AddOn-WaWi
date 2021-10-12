@@ -57,7 +57,7 @@ if (isset($_REQUEST["xmlformat"]) && $_REQUEST["xmlformat"] == "xml")
 		$konto = new wawi_konto();
 		$konto->load($bestellung->konto_id);
 
-		$kostenstelle = new wawi_kostenstelle();
+		$kostenstelle = new wawi_kostenstelle_extended();
 		$kostenstelle->load($bestellung->kostenstelle_id);
 
 		$rechnungsadresse = new adresse();

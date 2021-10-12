@@ -37,7 +37,7 @@ require_once(dirname(__FILE__).'/../../../../include/geschaeftsjahr.class.php');
 require_once(dirname(__FILE__).'/../../../../include/datum.class.php');
 
 $user = get_uid();
-$rechte = new benutzerberechtigung();
+$rechte = new wawi_benutzerberechtigung();
 $rechte->getBerechtigungen($user);
 $datum_obj = new datum();
 
@@ -184,7 +184,7 @@ if(isset($_POST['show']))
 }
 else
 {
-	$kostenstelle = new wawi_kostenstelle();
+	$kostenstelle = new wawi_kostenstelle_extended();
 
 	$kostenstelle->loadArray($kst_array, 'bezeichnung',false);
 	echo 'Bitte markieren sie die Kostenstellen die auf der Auswertung aufscheinen sollen:<br /><br />
@@ -292,7 +292,7 @@ function draw_tag_table($tags_array, $kst_tags, $table_id, $gj)
 	{
 		$kst_summe=0;
 
-		$kostenstelle = new wawi_kostenstelle();
+		$kostenstelle = new wawi_kostenstelle_extended();
 		$kostenstelle->load($kst);
 		echo '<tr>';
 		if($kostenstelle->aktiv)

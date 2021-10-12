@@ -93,7 +93,7 @@ if ($export == '' || $export == 'html')
 	<link rel="stylesheet" type="text/css" href="../skin/jquery-ui.structure.min.css"/>
 	<link rel="stylesheet" type="text/css" href="../skin/jquery-ui.theme.min.css"/>
 
-	
+
 
 
 
@@ -107,10 +107,10 @@ $date = new datum();
 $user=get_uid();
 
 $berechtigung_kurzbz='wawi/rechnung';
-$rechte = new benutzerberechtigung();
+$rechte = new wawi_benutzerberechtigung();
 $rechte->getBerechtigungen($user);
 
-$kst=new wawi_kostenstelle();
+$kst=new wawi_kostenstelle_extended();
 $kst->loadArray($rechte->getKostenstelle($berechtigung_kurzbz), 'bezeichnung');
 
 if($aktion == 'suche')
@@ -598,10 +598,10 @@ if($aktion=='update' || $next_aktion=='new')
 
 	$rechnung = new wawi_rechnung();
 	$bestellung = new wawi_bestellung();
-	$kostenstelle = new wawi_kostenstelle();
+	$kostenstelle = new wawi_kostenstelle_extended();
 	$konto = new wawi_konto();
 	$firma = new firma();
-	$oe_kurzbz='';	
+	$oe_kurzbz='';
 	if(isset($_GET['id']) && !$next_aktion=='new')
 	{
 		echo '<div style="float:right">'.$ausgabemsg.'</div>';
@@ -983,7 +983,7 @@ if($aktion=='update' || $next_aktion=='new')
 				}
 			}
 
-			
+
 			</script>
 		</td>
 	</tr>
@@ -995,13 +995,13 @@ if($aktion=='update' || $next_aktion=='new')
 		<td colspan="3">
 			Rechnung (PDF):<br/>
 			<ul id="rechnungListe" style="list-style-type: none;"><li></li></ul>
-			<input type="button" name="rechnungBtn" id="rechnungBtn" value="upload" >	
+			<input type="button" name="rechnungBtn" id="rechnungBtn" value="upload" >
 		</td>
 	</tr>':'
 	<tr>
 		<td colspan="3">
 			Rechnung (PDF):<br/>
-			Upload nach erstmaligem Speichern verfügbar	
+			Upload nach erstmaligem Speichern verfügbar
 		</td>
 	</tr>
 	').
@@ -1012,14 +1012,14 @@ if($aktion=='update' || $next_aktion=='new')
 	</td>
 </tr>
 	<tr>
-		<td rowspan="3"><input type="submit" value="Speichern" class="cursor"/>			
+		<td rowspan="3"><input type="submit" value="Speichern" class="cursor"/>
 			<input type="submit" name="weitere" value="Speichern & weitere Rechnung hinzufügen" class="cursor"/>
 		 	</td>
 	</tr>
 	</table>
 	</form>
 	';
-	
+
 
 	if($bestellung_id!='')
 	{
@@ -1126,7 +1126,7 @@ if ($export == '' || $export == 'html')
 					});
 				}
 
-				
+
 
 				function formatItem(row)
 				{
@@ -1214,7 +1214,7 @@ if ($export == '' || $export == 'html')
 				function renderRechnung()
 				{
 					//console.log("renderRechnung: rechnung_id=", rechnung_id);
-					
+
 					var rechnungElement = $("#rechnungListe");
 					rechnungElement.empty();
 					$.post( "rechnungDoc.php", { method: 'list', rechnung_id: rechnung_id }, function(data)
@@ -1377,7 +1377,7 @@ if ($export == '' || $export == 'html')
 					processData: false
 				});
 			};
-			
+
 
 			function doDelete()
 			{
@@ -1423,7 +1423,7 @@ if ($export == '' || $export == 'html')
 				});
 			};
 
-			
+
 		});
 
 	</script>

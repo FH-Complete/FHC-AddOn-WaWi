@@ -41,7 +41,7 @@
 	if (!$uid = get_uid())
 		die('Keine UID gefunden:'.$uid.' !  <a href="javascript:history.back()">Zur&uuml;ck</a>');
 
-	$rechte = new benutzerberechtigung();
+	$rechte = new wawi_benutzerberechtigung();
 	if(!$rechte->getBerechtigungen($uid))
 		die('Sie haben keine Berechtigung fuer diese Seite');
 

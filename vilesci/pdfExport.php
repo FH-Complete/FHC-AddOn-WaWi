@@ -1,4 +1,4 @@
-<?php
+p<?php
 /* Copyright (C) 2016 Technikum-Wien
  *
  * This program is free software; you can redistribute it and/or modify
@@ -75,7 +75,7 @@ if(isset($_GET['xsl_oe_kurzbz']))
 else
 	$xsl_oe_kurzbz='';
 
-$rechte = new benutzerberechtigung();
+$rechte = new wawi_benutzerberechtigung();
 $rechte->getBerechtigungen($user);
 
 //OE fuer Output ermitteln
@@ -100,7 +100,7 @@ $model = bestellungReadModel((int)$_GET['id']);
 $addonpath = dirname(dirname($_SERVER['SCRIPT_FILENAME'])).DIRECTORY_SEPARATOR;
 $odt = $addonpath.'system/vorlage_zip/Bestellschein.odt';
 $contentTemplate = $addonpath.'system/vorlage_zip/Bestellschein.content.php';
-$styleTemplate = $addonpath.'system/vorlage_zip/Bestellschein.styles.php'; 
+$styleTemplate = $addonpath.'system/vorlage_zip/Bestellschein.styles.php';
 $logoGmbH = ($xsl_oe_kurzbz=='gmbh'?$addonpath.'system/vorlage_zip/Logo_GMBH.png':null);
 $converter = new BestellungPDFConverter();
 $tempPdfName = $converter->convert2pdf($model, $odt, $contentTemplate, !$model->lieferant->deutsch, $styleTemplate, $logoGmbH);

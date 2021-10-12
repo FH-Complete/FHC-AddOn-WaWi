@@ -29,7 +29,7 @@ require_once('../include/wawi_menu_main.inc.php');
 
 $user_original = get_original_uid();
 
-$berechtigung_orig = new benutzerberechtigung();
+$berechtigung_orig = new wawi_benutzerberechtigung();
 $berechtigung_orig->getBerechtigungen($user_original);
 
 if(isset($_GET['loginasuser']) && $berechtigung_orig->isBerechtigt('system/loginasuser'))
@@ -38,7 +38,7 @@ if(isset($_GET['loginasuser']) && $berechtigung_orig->isBerechtigt('system/login
 }
 
 $user = get_uid();
-$berechtigung = new benutzerberechtigung();
+$berechtigung = new wawi_benutzerberechtigung();
 $berechtigung->getBerechtigungen($user);
 
 

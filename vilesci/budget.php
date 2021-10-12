@@ -59,10 +59,10 @@ require_once dirname(__FILE__).'/../../../include/geschaeftsjahr.class.php';
 <body>
 <?php
 
-$kostenstelle = new wawi_kostenstelle();
+$kostenstelle = new wawi_kostenstelle_extended();
 $user=get_uid();
 
-$rechte = new benutzerberechtigung();
+$rechte = new wawi_benutzerberechtigung();
 $rechte->getBerechtigungen($user);
 
 if(!$rechte->isBerechtigt('wawi/budget'))
@@ -88,7 +88,7 @@ if(isset($_POST['save']))
 		if(mb_strstr($key,"budget_"))
 		{
 			$kostenstelle_id = mb_substr($key,mb_strlen('budget_'));
-			$kst = new wawi_kostenstelle();
+			$kst = new wawi_kostenstelle_extended();
 			$budget = mb_str_replace(',', '.', $value);
 
 			if(!$kst->setBudget($kostenstelle_id, $geschaeftsjahr_kurzbz, $budget))
@@ -120,7 +120,7 @@ echo ' <input type="submit" value="Anzeigen">';
 echo '<label style="margin-left:50px"><input type="checkbox" name="nuraktive" value="1" '.($filter_aktive?'checked':'').'/> nur aktive Konten</label>';
 echo '</form>';
 
-$kst = new wawi_kostenstelle();
+$kst = new wawi_kostenstelle_extended();
 $kst->getAll();
 
 echo '<form action="'.$_SERVER['PHP_SELF'].'?geschaeftsjahr_kurzbz='.$geschaeftsjahr_kurzbz.'" method="POST">';

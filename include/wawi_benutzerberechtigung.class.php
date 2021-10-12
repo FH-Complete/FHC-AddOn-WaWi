@@ -20,7 +20,6 @@
  *          Rudolf Hangl <rudolf.hangl@technikum-wien.at> and
  *			Gerald Simane-Sequens <gerald.simane-sequens@technikum-wien.at>
  */
-
 require_once(dirname(__FILE__).'/../../../include/basis_db.class.php');
 require_once(dirname(__FILE__).'/../../../include/organisationseinheit.class.php');
 require_once(dirname(__FILE__).'/../../../include/studiengang.class.php');
@@ -39,7 +38,7 @@ require_once(dirname(__FILE__).'/wawi_kostenstelle.class.php');
  * alle Zugriffe auf Kostenstellen von der Verfügbarkeit des WAWI-AddOns
  * abhängig gemacht werden.
  */
-class benutzerberechtigung extends basis_db
+class wawi_benutzerberechtigung extends basis_db
 {
 	public $new;      // boolean
 	public $berechtigungen = array(); // benutzerberechtigung Objekt
@@ -326,7 +325,7 @@ class benutzerberechtigung extends basis_db
 		{
 			while($row = $this->db_fetch_object())
 			{
-				$obj = new benutzerberechtigung();
+				$obj = new wawi_benutzerberechtigung();
 
 				$obj->benutzerberechtigung_id = $row->benutzerberechtigung_id;
 				$obj->rolle_kurzbz = $row->rolle_kurzbz;
@@ -460,7 +459,7 @@ class benutzerberechtigung extends basis_db
 
 		while($row=$this->db_fetch_object($result))
 		{
-   			$b=new benutzerberechtigung();
+   			$b=new wawi_benutzerberechtigung();
 
    			$b->benutzerberechtigung_id = $row->benutzerberechtigung_id;
    			$b->uid=$row->uid;
@@ -578,7 +577,7 @@ class benutzerberechtigung extends basis_db
 		{
 			//Kostenstelle laden und schauen, ob auf die Organisationseinheit der Kostenstelle
 			//die Berechtigung vorhanden ist
-			$kostenstelle = new wawi_kostenstelle();
+			$kostenstelle = new wawi_kostenstelle_extended();
 			if($kostenstelle->load($kostenstelle_id))
 			{
 				return $this->isBerechtigt($berechtigung_kurzbz, $kostenstelle->oe_kurzbz, $art);
@@ -823,7 +822,7 @@ class benutzerberechtigung extends basis_db
 				{
 					if($b->kostenstelle_id != '')
 					{
-						$kst = new wawi_kostenstelle();
+						$kst = new wawi_kostenstelle_extended();
 						$kst->load($b->kostenstelle_id);
 						$oe_kurzbz[] = $kst->oe_kurzbz;
 					}
@@ -1052,7 +1051,7 @@ class benutzerberechtigung extends basis_db
 		{
 			while($row = $this->db_fetch_object($result))
 			{
-				$obj = new benutzerberechtigung();
+				$obj = new wawi_benutzerberechtigung();
 
 				$obj->berechtigung_kurzbz = $row->berechtigung_kurzbz;
 				$obj->uid = $row->uid;

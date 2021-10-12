@@ -39,7 +39,7 @@ use PhpOffice\PhpSpreadsheet\Writer\Xlsx;
 use PhpOffice\PhpSpreadsheet\Style;
 
 $user = get_uid();
-$rechte = new benutzerberechtigung();
+$rechte = new wawi_benutzerberechtigung();
 $rechte->getBerechtigungen($user);
 
 $kst_array = $rechte->getKostenstelle('wawi/bestellung');
@@ -212,7 +212,7 @@ if ($export == '' || $export == 'html')
 	echo '<td>Filter: </td>';
 
 	//$kst_array = $rechte->getKostenstelle('wawi/bestellung');
-	$kostenstelle = new wawi_kostenstelle();
+	$kostenstelle = new wawi_kostenstelle_extended();
 	$kostenstelle->loadArray($kst_array,'bezeichnung');
 
 	echo "<td> Kostenstelle: ";

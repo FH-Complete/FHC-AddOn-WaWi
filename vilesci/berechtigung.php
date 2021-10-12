@@ -45,10 +45,10 @@ require_once(dirname(__FILE__).'/../../../include/benutzer.class.php');
 <body>
 <?php
 
-$kostenstelle = new wawi_kostenstelle();
+$kostenstelle = new wawi_kostenstelle_extended();
 $uid=get_uid();
 
-$rechte = new benutzerberechtigung();
+$rechte = new wawi_benutzerberechtigung();
 $rechte->getBerechtigungen($uid);
 
 if(isset($_GET['kostenstelle_id']))
@@ -59,13 +59,13 @@ if(isset($_GET['kostenstelle_id']))
 	|| $rechte->isBerechtigt('wawi/bestellung',null, null, $kostenstelle_id)
 	|| $rechte->isBerechtigt('wawi/freigabe',null, null, $kostenstelle_id))
 	{
-		$kst = new wawi_kostenstelle();
+		$kst = new wawi_kostenstelle_extended();
 		if(!$kst->load($kostenstelle_id))
 			die('Fehler beim Laden der Kostenstelle');
 
 		echo '<h1>Berechtigungen - Kostenstelle '.$kst->bezeichnung.'</h1>';
 		echo '<a href="berechtigung.php">Zurück</a>';
-		$rechte = new benutzerberechtigung();
+		$rechte = new wawi_benutzerberechtigung();
 		$rechte->getKostenstelleUser($kostenstelle_id);
 
 		$rights = array();
@@ -176,7 +176,7 @@ else
 	if(count($kst_array)==0)
 		die('Sie benoetigen eine Kostenstellenberechtigung um diese Seite anzuzeigen');
 
-	$kst = new wawi_kostenstelle();
+	$kst = new wawi_kostenstelle_extended();
 	$kst->loadArray($kst_array);
 	echo '
 	<script type="text/javascript">

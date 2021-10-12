@@ -66,10 +66,10 @@ require_once('../include/wawi_benutzerberechtigung.class.php');
 <body>
 <?php
 
-$kostenstelle = new wawi_kostenstelle();
+$kostenstelle = new wawi_kostenstelle_extended();
 $user=get_uid();
 $db = new basis_db();
-$rechte = new benutzerberechtigung();
+$rechte = new wawi_benutzerberechtigung();
 $rechte->getBerechtigungen($user);
 
 if(!$rechte->isBerechtigt('wawi/kostenstelle'))
@@ -91,7 +91,7 @@ if(isset($_GET['method']))
 			if(is_numeric($id))
 			{
 				// Kostenstelle mit der ID updaten
-				$kostenstelle = new wawi_kostenstelle();
+				$kostenstelle = new wawi_kostenstelle_extended();
 				$checked ='';
 				$oe = new organisationseinheit();
 				$oe->getAll();
@@ -242,7 +242,7 @@ if(isset($_GET['method']))
 	else if($_GET['method']== "save")
 	{
 		//Daten in der DB speichern
-		$kostenstelle = new wawi_kostenstelle();
+		$kostenstelle = new wawi_kostenstelle_extended();
 		$aktiv = '';
 		$ausgabe ="Kostenstelle wurde erfolgreich upgedated!";
 
@@ -308,7 +308,7 @@ if(isset($_GET['method']))
 
 		echo '<h1>Kostenstelle - Konten zuordnen</h1><br>';
 		$i = 0;
-		$kostenstelle = new wawi_kostenstelle();
+		$kostenstelle = new wawi_kostenstelle_extended();
 		$konto = new wawi_konto();
 
 		$nuraktive = ((isset($_REQUEST['nuraktive']))?true:false);
@@ -403,7 +403,7 @@ if(isset($_GET['method']))
 
 		echo '<h1>Kostenstelle - Zusammenlegen</h1>';
 		//Kostenstellen zusammenlegen
-		$kostenstelle = new wawi_kostenstelle();
+		$kostenstelle = new wawi_kostenstelle_extended();
 
 		if(isset($_POST['radio_1']) && isset($_POST['radio_2']))
 		{
@@ -464,7 +464,7 @@ if(isset($_GET['method']))
 		echo "<th>Aktiv</th>\n";
 		echo "<th>&nbsp;</th></tr></thead><tbody>\n";
 
-		$kostenstelle = new wawi_kostenstelle();
+		$kostenstelle = new wawi_kostenstelle_extended();
 		$kostenstelle->getAll($filter1);
 		$i=0;
 
@@ -503,7 +503,7 @@ if(isset($_GET['method']))
 		echo "<th>&nbsp;</th></tr></thead><tbody>\n";
 
 
-		$kostenstelle = new wawi_kostenstelle();
+		$kostenstelle = new wawi_kostenstelle_extended();
 		$kostenstelle->getAll($filter2);
 		$i=0;
 		foreach($kostenstelle->result as $row)

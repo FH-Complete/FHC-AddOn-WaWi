@@ -38,7 +38,7 @@ require_once(dirname(__FILE__).'/../../../../include/datum.class.php');
 require_once(dirname(__FILE__).'/../../../../include/firma.class.php');
 
 $user = get_uid();
-$rechte = new benutzerberechtigung();
+$rechte = new wawi_benutzerberechtigung();
 $rechte->getBerechtigungen($user);
 
 $kst_array = $rechte->getKostenstelle();

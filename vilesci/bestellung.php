@@ -60,9 +60,9 @@ $user=get_uid();
 $ausgabemsg='';
 
 $berechtigung_kurzbz='wawi/bestellung';
-$rechte = new benutzerberechtigung();
+$rechte = new wawi_benutzerberechtigung();
 $rechte->getBerechtigungen($user);
-$kst=new wawi_kostenstelle();
+$kst=new wawi_kostenstelle_extended();
 $kst->loadArray($rechte->getKostenstelle($berechtigung_kurzbz),'bezeichnung');
 
 $projekt = new projekt();
@@ -649,7 +649,7 @@ if($aktion == 'suche')
 		$zahlungstyp = new wawi_zahlungstyp();
 		$zahlungstyp->getAll();
 
-		$kostenstelle = new wawi_kostenstelle();
+		$kostenstelle = new wawi_kostenstelle_extended();
 		$oe_berechtigt = new organisationseinheit();
 
 		$datum = new datum();
@@ -1556,7 +1556,7 @@ if($_GET['method']=='update')
 						echo "Fehler beim Setzen auf Status Abgeschickt.";
 
 					// wer ist freigabeberechtigt auf kostenstelle
-					$rechte_fg = new benutzerberechtigung();
+					$rechte_fg = new wawi_benutzerberechtigung();
 					$uids = $rechte_fg->getFreigabeBenutzer($bestellung_new->kostenstelle_id, null);
 					if(empty($uids))
 						$ausgabemsg .='<span class="error">Es ist niemand zur Freigabe der Kostenstelle berechtigt.</span><br>';
@@ -1610,7 +1610,7 @@ if($_GET['method']=='update')
 						{
 							if(!$status->isStatiVorhanden($bestellung_new->bestellung_id, 'Freigabe', $o))
 							{
-								$rechte_fg = new benutzerberechtigung();
+								$rechte_fg = new wawi_benutzerberechtigung();
 								$uids = $rechte_fg->getFreigabeBenutzer(null, $o);
 								if(empty($uids))
 									$ausgabemsg .='<span class="error">Es ist niemand zur Freigabe der Kostenstelle berechtigt.</span><br>';
@@ -1675,7 +1675,7 @@ if($_GET['method']=='update')
 						{
 							if(!$status->isStatiVorhanden($bestellung_new->bestellung_id, 'Freigabe', $o))
 							{
-								$rechte_fg = new benutzerberechtigung();
+								$rechte_fg = new wawi_benutzerberechtigung();
 								$uids = $rechte_fg->getFreigabeBenutzer(null, $o);
 								if(empty($uids))
 									$ausgabemsg .='<span class="error">Es ist niemand zur Freigabe der Kostenstelle berechtigt. Bitte wenden Sie sich an den Support.</span><br>';
@@ -1710,7 +1710,7 @@ if($_GET['method']=='update')
 			if(!$status->isStatiVorhanden($bestellung_new->bestellung_id, 'Freigabe'))
 			{
 				// KST hat noch nicht freigegeben
-				$rechte_fg = new benutzerberechtigung();
+				$rechte_fg = new wawi_benutzerberechtigung();
 				$uids = $rechte_fg->getFreigabeBenutzer($bestellung_new->kostenstelle_id, null);
 				if(empty($uids))
 					$ausgabemsg .='<span class="error">Es ist niemand zur Freigabe der Kostenstelle berechtigt.</span><br>';
@@ -1730,7 +1730,7 @@ if($_GET['method']=='update')
 						if(!$status->isStatiVorhanden($bestellung_new->bestellung_id, 'Freigabe', $o))
 						{
 
-							$rechte_fg = new benutzerberechtigung();
+							$rechte_fg = new wawi_benutzerberechtigung();
 							$uids = $rechte_fg->getFreigabeBenutzer(null, $o);
 							if(empty($uids))
 								$ausgabemsg .='<span class="error">Es ist niemand zur Freigabe der Kostenstelle berechtigt.</span><br>';
@@ -1793,7 +1793,7 @@ if($_GET['method']=='update')
 	$konto->getKontoFromKostenstelle($bestellung->kostenstelle_id);
 	$konto_bestellung = new wawi_konto();
 	$konto_bestellung->load($bestellung->konto_id);
-	$kostenstelle = new wawi_kostenstelle();
+	$kostenstelle = new wawi_kostenstelle_extended();
 	$kostenstelle->load($bestellung->kostenstelle_id);
 	$aufteilung = new wawi_aufteilung();
 
@@ -3360,7 +3360,7 @@ function getDetailRow($i, $bestelldetail_id='', $sort='', $menge='', $ve='', $be
 	$replaceKomma = "replaceKomma(".$i.");";
 	$user=get_uid();
 	$status= new wawi_bestellstatus();
-	$rechte = new benutzerberechtigung();
+	$rechte = new wawi_benutzerberechtigung();
 	$rechte->getBerechtigungen($user);
 	$bestellung = new wawi_bestellung();
 	$bestellung->load($bestell_id);
@@ -3449,7 +3449,7 @@ function sendFreigabeMails($uids, $bestellung, $user)
 	}
 	$msg = '';
 
-	$kst_mail = new wawi_kostenstelle();
+	$kst_mail = new wawi_kostenstelle_extended();
 	$kst_mail->load($bestellung->kostenstelle_id);
 	$firma_mail = new firma();
 	$firma_mail->load($bestellung->firma_id);
@@ -3516,7 +3516,7 @@ function sendZentraleinkaufFreigegeben($bestellung)
 	}
 	$msg = '';
 
-	$kst_mail = new wawi_kostenstelle();
+	$kst_mail = new wawi_kostenstelle_extended();
 	$kst_mail->load($bestellung->kostenstelle_id);
 	$firma_mail = new firma();
 	$firma_mail->load($bestellung->firma_id);
@@ -3570,7 +3570,7 @@ function sendBestellerMail($bestellung, $status)
 	}
 	$msg = '';
 
-	$kst_mail = new wawi_kostenstelle();
+	$kst_mail = new wawi_kostenstelle_extended();
 	$kst_mail->load($bestellung->kostenstelle_id);
 	$firma_mail = new firma();
 	$firma_mail->load($bestellung->firma_id);
