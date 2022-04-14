@@ -141,6 +141,10 @@ if(isset($_GET['method']))
 					echo "<option value=\"".$k->kontotyp_kurzbz."\"".$sel.">".$k->bezeichnung."</option>";
 				}
 				echo "</select>";
+				echo "</tr>\n";
+				echo "<tr>\n";
+				echo "<td>externe ID</td>\n";
+				echo "<td><input type=\"text\" size=\"32\" name=\"extId\" value=\"$konto->ext_id\"></td>\n";
 				echo "</td>\n";
 				echo "</tr>\n";
 				echo "<tr>\n";
@@ -201,7 +205,11 @@ if(isset($_GET['method']))
 					echo "<option value=\"".$k->kontotyp_kurzbz."\">".$k->bezeichnung."</option>";
 				}
 				echo "</select>";
-				echo "</td>\n";
+				echo "</tr>\n";
+				echo "<tr>\n";
+				echo "<td>externe ID</td>\n";
+				echo "<td><input type=\"text\" size=\"32\" name=\"extId\" value=\"$konto->ext_id\"></td>\n";
+				//echo "</td>\n";
 				echo "</tr>\n";
 				echo "<tr><td>&nbsp;</td></tr>\n";
 				echo "<tr>\n";
@@ -250,6 +258,7 @@ if(isset($_GET['method']))
 		$konto->updateamum = date('Y-m-d H:i:s');
 		$konto->updatevon = $user;
 		$konto->kontotyp_kurzbz = $_POST['kontotyp'];
+		$konto->ext_id = $_POST['extId'];
 
 		if(!$konto->save())
 		{
@@ -344,6 +353,7 @@ if(isset($_GET['method']))
 				echo "<th>$s->sprache</th>\n";
 
 		echo "<th>Aktiv</th>\n";
+		echo "<th>externe Id</th>\n";
 		echo "<th>&nbsp;</th></tr></thead><tbody>\n";
 
 		$konto = new wawi_konto();
@@ -361,6 +371,7 @@ if(isset($_GET['method']))
 					echo '<td>'.$row->beschreibung[$s->sprache]."</td>\n";
 
 			echo '<td>'.$aktiv=($row->aktiv)?'ja':'nein'."</td>\n";
+			echo '<td>'.$row->ext_id."</td>\n";
 			echo "<td><input type='radio' name='radio_1' value='$row->konto_id' </td>\n";
 			echo "</tr>\n";
 		}
@@ -382,6 +393,7 @@ if(isset($_GET['method']))
 				echo "<th>$s->sprache</th>\n";
 
 		echo "<th>Aktiv</th>\n";
+		echo "<th>externe Id</th>\n";
 		echo "</tr></thead><tbody>\n";
 
 		$konto = new wawi_konto();
@@ -399,6 +411,7 @@ if(isset($_GET['method']))
 					echo '<td>'.$row->beschreibung[$s->sprache]."</td>\n";
 
 			echo '<td>'.($row->aktiv?'ja':'nein')."</td>\n";
+			echo '<td>'.$row->ext_id."</td>\n";
 			echo '</tr>';
 		}
 		echo "</table>\n";
@@ -435,8 +448,9 @@ else
 			$i++;
 		}
 		echo "<th>Kontotyp</th>";
-		echo "<th>aktiv</th>
-			</tr> </thead><tbody>\n";
+		echo "<th>aktiv</th>";
+		echo "<th>externe ID</th>";
+		echo "</tr> </thead><tbody>\n";
 
 		foreach($konto->result as $row)
 		{
@@ -461,6 +475,7 @@ else
 
 			echo "<td>".$row->kontotyp_kurzbz."</td>\n";
 			echo '<td>'.($row->aktiv?'ja':'nein')."</td>\n";
+			echo "<td>".$row->ext_id."</td>\n";
 			echo "</tr>\n";
 
 		}

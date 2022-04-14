@@ -44,6 +44,7 @@ class wawi_konto extends basis_db
 	public $updateamum;         	//  timestamp
 	public $updatevon;				//  string
 	public $person_id;				//  integer
+	public $ext_id;						//  integer
 
 	public $sprache;
 
@@ -101,6 +102,7 @@ class wawi_konto extends basis_db
 			$this->updateamum = $row->updateamum;
 			$this->updatevon = $row->updatevon;
 			$this->kontotyp_kurzbz = $row->kontotyp_kurzbz;
+			$this->ext_id	= $row->ext_id;
 		}
 		else
 		{
@@ -153,6 +155,7 @@ class wawi_konto extends basis_db
 			$obj->updateamum = $row->updateamum;
 			$obj->updatevon = $row->updatevon;
 			$obj->kontotyp_kurzbz = $row->kontotyp_kurzbz;
+			$obj->ext_id = $row->ext_id;
 
 			$this->result[] = $obj;
 		}
@@ -169,6 +172,11 @@ class wawi_konto extends basis_db
 		if(mb_strlen($this->kontonr)>32)
 		{
 			$this->errormsg = 'Kontonummer darf nicht laenger als 32 Zeichen sein.';
+		}
+
+		if(mb_strlen($this->ext_id)>32)
+		{
+			$this->errormsg = 'ext_id darf nicht laenger als 32 Zeichen sein.';
 		}
 
 		/*$i = 1;
@@ -237,7 +245,7 @@ class wawi_konto extends basis_db
 				$qry.=" beschreibung[$idx],";
 			}
 			$qry.=' kurzbz, hilfe, aktiv, insertamum,
-			insertvon, updateamum, updatevon, person_id, kontotyp_kurzbz) VALUES('.
+			insertvon, updateamum, updatevon, person_id, ext_id, kontotyp_kurzbz) VALUES('.
 			      $this->db_add_param($this->kontonr).', ';
 
 			reset($this->beschreibung);
@@ -252,6 +260,7 @@ class wawi_konto extends basis_db
 				  $this->db_add_param($this->updateamum).', '.
 			      $this->db_add_param($this->updatevon).', '.
 				  $this->db_add_param($this->person_id).', '.
+					$this->db_add_param($this->ext_id).', '.
 				  $this->db_add_param($this->kontotyp_kurzbz).');';
 		}
 		else
@@ -260,6 +269,13 @@ class wawi_konto extends basis_db
 			if(!is_numeric($this->konto_id))
 			{
 				$this->errormsg = 'konto_id muss eine gültige Zahl sein';
+				return false;
+			}
+
+			//Pruefen ob ext_id eine gueltige Zahl ist
+			if(!is_numeric($this->ext_id))
+			{
+				$this->errormsg = 'ext_id muss eine gültige Zahl sein';
 				return false;
 			}
 
@@ -280,7 +296,8 @@ class wawi_konto extends basis_db
 				' insertvon='.$this->db_add_param($this->insertvon).', '.
 				' updateamum='.$this->db_add_param($this->updateamum).', '.
 		      	' updatevon='.$this->db_add_param($this->updatevon).', '.
-				' kontotyp_kurzbz='.$this->db_add_param($this->kontotyp_kurzbz).' '.
+				' kontotyp_kurzbz='.$this->db_add_param($this->kontotyp_kurzbz).', '.
+				' ext_id='.$this->db_add_param($this->ext_id).' '.
 		      	' WHERE konto_id='.$this->db_add_param($this->konto_id, FHC_INTEGER).';';
 		}
 
@@ -388,6 +405,7 @@ class wawi_konto extends basis_db
 				$obj->insertvon = $row->insertvon;
 				$obj->updateamum = $row->updateamum;
 				$obj->updatevon = $row->updatevon;
+				$obj->ext_id = $row->ext_id;
 
 				$this->result[] = $obj;
 
@@ -468,6 +486,7 @@ class wawi_konto extends basis_db
 				$obj->insertvon = $row->insertvon;
 				$obj->updateamum = $row->updateamum;
 				$obj->updatevon = $row->updatevon;
+				$obj->ext_id = $row->ext_id;
 
 				$this->result[] = $obj;
 			}
@@ -520,6 +539,7 @@ class wawi_konto extends basis_db
 			$obj->insertvon = $row->insertvon;
 			$obj->updateamum = $row->updateamum;
 			$obj->updatevon = $row->updatevon;
+			$obj->ext_id = $row->ext_id;
 
 			$this->result[] = $obj;
 		}
@@ -561,6 +581,7 @@ class wawi_konto extends basis_db
 				$obj->insertvon = $row->insertvon;
 				$obj->updateamum = $row->updateamum;
 				$obj->updatevon = $row->updatevon;
+				$obj->ext_id = $row->ext_id;
 
 				$this->result[] = $obj;
 
