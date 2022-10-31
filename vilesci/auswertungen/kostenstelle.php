@@ -63,7 +63,7 @@ $datum_obj = new datum();
 	<link rel="stylesheet" href="../../skin/wawi.css" type="text/css">
 
 
-	<script type="text/javascript" src="../../../../vendor/jquery/jqueryV1/jquery-1.12.4.min.js"></script>
+	<script type="text/javascript" src="../../../../vendor/jquery/jquery1/jquery-1.12.4.min.js"></script>
 	<script type="text/javascript" src="../../../../vendor/christianbach/tablesorter/jquery.tablesorter.min.js"></script>
 
 	<script type="text/javascript">
