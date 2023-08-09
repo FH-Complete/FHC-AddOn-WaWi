@@ -74,7 +74,7 @@
 				exit($sFirma->errormsg."\n");
 
 			$result=array();
-			for ($i=0;$i<count($sFirma->result);$i++)
+			for ($i=0;$i<numberOfElements($sFirma->result);$i++)
 			{
 				$standort = new standort();
 				$standort->load_firma($sFirma->result[$i]->firma_id);
@@ -103,7 +103,7 @@
 				exit($tags->errormsg."\n");
 
 			$result=array();
-			for ($i=0;$i<count($tags->result);$i++)
+			for ($i=0;$i<numberOfElements($tags->result);$i++)
 			{
 				$item['tag']=$tags->result[$i]->tag;
 				$result[]=$item;
@@ -122,7 +122,7 @@
 			if (!$tags->getAll())
 				exit($tags->errormsg."\n");
 			$result=array();
-			for ($i=0;$i<count($tags->result);$i++)
+			for ($i=0;$i<numberOfElements($tags->result);$i++)
 			{
 				$item['tag']=$tags->result[$i]->tag;
 				$result[]=$item;
@@ -159,7 +159,7 @@
 				exit(' |'.$sOrt->errormsg."\n");
 
 			$oRresult=$sOrt->result;
-			for ($i=0;$i<count($oRresult);$i++)
+			for ($i=0;$i<numberOfElements($oRresult);$i++)
 			{
 				$item['ort_kurzbz']=html_entity_decode($oRresult[$i]->ort_kurzbz);
 				$item['bezeichnung']=is_null($oRresult[$i]->bezeichnung) || empty($oRresult[$i]->bezeichnung) || $oRresult[$i]->bezeichnung=='NULL' || $oRresult[$i]->bezeichnung=='null'?'':html_entity_decode($oRresult[$i]->bezeichnung);

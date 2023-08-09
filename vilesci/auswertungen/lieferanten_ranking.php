@@ -48,7 +48,7 @@ $kst_array = array_merge($kst_array, $rechte->getKostenstelle('wawi/kostenstelle
 $kst_array = array_merge($kst_array, $rechte->getKostenstelle('wawi/freigabe'));
 $kst_array = array_merge($kst_array, $rechte->getKostenstelle('wawi/berichte'));
 $kst_array = array_unique($kst_array);
-if(count($kst_array)==0)
+if(numberOfElements($kst_array)==0)
 	die('Sie benoetigen eine Kostenstellenberechtigung um diese Seite anzuzeigen');
 
 $ohne_monat = (boolean)filter_input(INPUT_GET, 'ohne_monat');
@@ -64,11 +64,11 @@ $geschaeftsjahr = isset($_REQUEST['geschaeftsjahr'])?$_REQUEST['geschaeftsjahr']
 
 $gj->getAll();
 
-if(!count($gj->result))
+if(!numberOfElements($gj->result))
 	die("Es sind noch keine Geschäftsjahre angelegt");
 
 if(!$geschaeftsjahr || $geschaeftsjahr == "")
-	$geschaeftsjahr = $gj->result[count($gj->result)-1]->geschaeftsjahr_kurzbz;
+	$geschaeftsjahr = $gj->result[numberOfElements($gj->result)-1]->geschaeftsjahr_kurzbz;
 
 $kalenderjahr = isset($_REQUEST['kalenderjahr'])?$_REQUEST['kalenderjahr']:date('Y');
 
@@ -349,7 +349,7 @@ if ($export == '' || $export == 'html')
 		$spalten_bezeichnung = ['Lieferant-ID','Lieferant','Monat','Jahr','Brutto','Rang','Lieferant','Homepage'];
 
 		$spalten_anzahl = 0;
-		for ($i=0; $i < count($spalten); $i++) {
+		for ($i=0; $i < numberOfElements($spalten); $i++) {
 			if ($ohne_monat && $spalten_bezeichnung[$i] == 'Monat')
 				continue;
 			$sheet->setCellValue($spalten[$spalten_anzahl].'1',$spalten_bezeichnung[$i]);

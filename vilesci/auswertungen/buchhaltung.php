@@ -275,7 +275,7 @@ echo '<select name="konto" id="konto" >';
 echo '<option value="" ></option>';
 $konto = new wawi_konto();
 $konto->getAll(true);
-if(count($konto->result)>0)
+if(numberOfElements($konto->result)>0)
   {
     foreach($konto->result as $ko)
       {
@@ -415,7 +415,7 @@ else if ($export == 'xlsx')
         $spalten_bezeichnung = ['WAWI-Bestellnr','Lieferant-ID','Firma','Land','Rechnungsnr','Rechnungsdatum','Text/Zweck','Konto','Zahlungsweise','Brutto-Betrag in €','Netto-Betrag in €','IGE'];
 
         $spalten_anzahl = 0;
-        for ($i=0; $i < count($spalten); $i++) {
+        for ($i=0; $i < numberOfElements($spalten); $i++) {
             $sheet->setCellValue($spalten[$spalten_anzahl].'1',$spalten_bezeichnung[$i]);
             $spalten_anzahl++;
         }

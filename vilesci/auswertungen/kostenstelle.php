@@ -46,7 +46,7 @@ $kst_array = array_merge($kst_array, $rechte->getKostenstelle('wawi/kostenstelle
 $kst_array = array_merge($kst_array, $rechte->getKostenstelle('wawi/freigabe'));
 $kst_array = array_merge($kst_array, $rechte->getKostenstelle('wawi/berichte'));
 $kst_array = array_unique($kst_array);
-if(count($kst_array)==0)
+if(numberOfElements($kst_array)==0)
 	die('Sie benoetigen eine Kostenstellenberechtigung um diese Seite anzuzeigen');
 
 $datum_obj = new datum();
@@ -107,11 +107,11 @@ $datum_obj = new datum();
 
 	$gj->getAll();
 
-	if(!count($gj->result))
+	if(!numberOfElements($gj->result))
 		die("Es sind noch keine Geschäftsjahre angelegt");
 
 	if(!$geschaeftsjahr || $geschaeftsjahr == "")
-		$geschaeftsjahr = $gj->result[count($gj->result)-1]->geschaeftsjahr_kurzbz;
+		$geschaeftsjahr = $gj->result[numberOfElements($gj->result)-1]->geschaeftsjahr_kurzbz;
 
 	foreach ($gj->result as $gjahr)
 	{

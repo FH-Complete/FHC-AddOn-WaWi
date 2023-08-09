@@ -72,7 +72,7 @@ $projektZugeordnet = false;
 $export = (string)filter_input(INPUT_GET, 'export');
 
 // Abfrage ob dem user ein oder mehrere Projekte zugeordnet sind
-if(count($projekt->result) > 0)
+if(numberOfElements($projekt->result) > 0)
 	$projektZugeordnet = true;
 
 if(isset($_POST['getKonto']))
@@ -82,7 +82,7 @@ if(isset($_POST['getKonto']))
 	{
 		$konto = new wawi_konto();
 		$konto->getKontoFromKostenstelle($id);
-		if(count($konto->result)>0)
+		if(numberOfElements($konto->result)>0)
 		{
 			foreach($konto->result as $ko)
 			{
@@ -111,7 +111,7 @@ if(isset($_POST['getFirma']))
 			// anzeige der Firmen die oe zugeordnet sind
 			$firma = new firma();
 			$firma->get_firmaorganisationseinheit(null,$id);
-			if(count($firma->result)>0)
+			if(numberOfElements($firma->result)>0)
 			{
 				echo "<option value=''>-- auswählen --</option>\n";
 				foreach($firma->result as $fi)
@@ -148,7 +148,7 @@ if(isset($_POST['getBudgetposten']))
 
 		$budgetposten = new wawi_budget();
 		$budgetposten->getBudgetFromKostenstelle($gj,$id);
-		if(count($budgetposten->result)>0)
+		if(numberOfElements($budgetposten->result)>0)
 		{
 			echo "<option value=''>-- auswählen --</option>\n";
 			foreach($budgetposten->result as $ko)
@@ -185,7 +185,7 @@ if(isset($_POST['getSearchKonto']))
 			// anzeige aller Konten die der Kostenstelle zugeordnet sind
 			$konto = new wawi_konto();
 			$konto->getKontoFromOE($id);
-			if(count($konto->result)>0)
+			if(numberOfElements($konto->result)>0)
 			{
 				echo "<option value=''>-- auswählen --</option>\n";
 				foreach($konto->result as $ko)
@@ -1788,7 +1788,7 @@ if($_GET['method']=='update')
 
 	$detail = new wawi_bestelldetail();
 	$detail->getAllDetailsFromBestellung($id);
-	$anz_detail = count($detail->result);
+	$anz_detail = numberOfElements($detail->result);
 	$konto = new wawi_konto();
 	$konto->getKontoFromKostenstelle($bestellung->kostenstelle_id);
 	$konto_bestellung = new wawi_konto();
@@ -2346,7 +2346,7 @@ echo $js;
 	$budgetposten = new wawi_budget();
 	$budgetposten->getBudgetFromKostenstelle($gj,$bestellung->kostenstelle_id);
 
-	if(count($budgetposten->result)>0)
+	if(numberOfElements($budgetposten->result)>0)
 	{
 		echo "<option value=''>-- auswählen --</option>\n";
 		foreach($budgetposten->result as $ko)

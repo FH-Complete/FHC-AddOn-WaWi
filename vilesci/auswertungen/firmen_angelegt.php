@@ -43,7 +43,7 @@ $rechte->getBerechtigungen($user);
 
 $kst_array = $rechte->getKostenstelle();
 
-if(count($kst_array)==0)
+if(numberOfElements($kst_array)==0)
 	die('Sie benoetigen eine Kostenstellenberechtigung um diese Seite anzuzeigen');
 
 $datum_obj = new datum();

@@ -215,8 +215,8 @@ function printPersonBerechtigungen($rollenIds, $freigabeIds)
 {
 	$wawiRolle = false;
 	$freigabeBerechtigung = false;
-	if (count($rollenIds) > 0) $wawiRolle = true;
-	if (count($freigabeIds) > 0) $freigabeBerechtigung = true;
+	if (numberOfElements($rollenIds) > 0) $wawiRolle = true;
+	if (numberOfElements($freigabeIds) > 0) $freigabeBerechtigung = true;
 	header('Content-Type: application/json');
 	$data = array('wawiRolle' => $wawiRolle, 'freigabeBerechtigung' => $freigabeBerechtigung);
 	echo json_encode($data);

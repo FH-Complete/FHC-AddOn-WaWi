@@ -62,7 +62,7 @@ $projektZugeordnet = false;
 $kategorie_kurzbz = 'angebote';
 
 // Abfrage ob dem user ein oder mehrere Projekte zugeordnet sind
-if(count($projekt->result) > 0)
+if(numberOfElements($projekt->result) > 0)
 	$projektZugeordnet = true;
 
 

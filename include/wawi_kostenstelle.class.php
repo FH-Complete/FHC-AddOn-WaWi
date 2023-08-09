@@ -592,7 +592,7 @@ class wawi_kostenstelle_extended extends basis_db
 	 */
 	public function loadArray($kst_id, $order=null, $aktiv=true)
 	{
-		if(count($kst_id)==0)
+		if(numberOfElements($kst_id)==0)
 			return true;
 
 		$kst_id = $this->implode4SQL($kst_id);

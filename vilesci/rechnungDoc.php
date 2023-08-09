@@ -63,7 +63,7 @@ $projektZugeordnet = false;
 $kategorie_kurzbz = 'rechnungen';
 
 // Abfrage ob dem user ein oder mehrere Projekte zugeordnet sind
-if(count($projekt->result) > 0)
+if(numberOfElements($projekt->result) > 0)
 	$projektZugeordnet = true;
 	$rechnung = new wawi_rechnung();
 //var_dump($_FILES);

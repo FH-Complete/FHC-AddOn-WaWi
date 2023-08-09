@@ -921,23 +921,23 @@ class wawi_benutzerberechtigung extends basis_db
 
 		if(!$all)
 		{
-			if(count($kst_id)==0 && count($oe_kurzbz)==0)
+			if(numberOfElements($kst_id)==0 && numberOfElements($oe_kurzbz)==0)
 				return array();
 			$qry.="
 				WHERE
 					(";
-			if(count($kst_id)>0)
+			if(numberOfElements($kst_id)>0)
 				$qry.=" kostenstelle_id IN(".$this->db_implode4SQL($kst_id).")";
-			if(count($oe_kurzbz)>0)
+			if(numberOfElements($oe_kurzbz)>0)
 			{
-				if(count($kst_id)>0)
+				if(numberOfElements($kst_id)>0)
 					$qry.= ' OR ';
 				$qry.=" oe_kurzbz IN(".$this->db_implode4SQL($oe_kurzbz).")";
 			}
 			$qry.=")";
-			if(count($not_id)>0)
+			if(numberOfElements($not_id)>0)
 				$qry.=" AND kostenstelle_id NOT IN(".$this->db_implode4SQL($not_id).")";
-			if(count($not)>0)
+			if(numberOfElements($not)>0)
 				$qry.=" AND oe_kurzbz NOT IN(".$this->db_implode4SQL($not).")";
 		}
 

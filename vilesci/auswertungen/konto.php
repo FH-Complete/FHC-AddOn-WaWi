@@ -50,7 +50,7 @@ $kst_array = array_merge($kst_array, $rechte->getKostenstelle('wawi/freigabe'));
 
 $kst_array = array_unique($kst_array);
 
-if(count($kst_array)==0)
+if(numberOfElements($kst_array)==0)
 	die('Sie benoetigen eine Kostenstellenberechtigung um diese Seite anzuzeigen');
 ?>
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
@@ -185,7 +185,7 @@ if(isset($_POST['show']))
 
 		<tbody>';
 	$anzahl=0;
-	$gesamt = count($kst_array);
+	$gesamt = numberOfElements($kst_array);
 	echo '<tr><td valign="top"><table>';
 
 	foreach($kostenstelle->result as $kst)
